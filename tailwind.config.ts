@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ['Amiri', 'serif'],
+        body: ['Cairo', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -47,15 +51,31 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        sky: {
+          midnight: "hsl(var(--sky-midnight))",
+          "deep-night": "hsl(var(--sky-deep-night))",
+          "late-night": "hsl(var(--sky-late-night))",
+          twilight: "hsl(var(--sky-twilight))",
+          golden: "hsl(var(--sky-golden))",
+          sunset: "hsl(var(--sky-sunset))",
+          horizon: "hsl(var(--sky-horizon))",
+          morning: "hsl(var(--sky-morning))",
+          noon: "hsl(var(--sky-noon))",
+          afternoon: "hsl(var(--sky-afternoon))",
+        },
+        celestial: {
+          star: "hsl(var(--star))",
+          moon: "hsl(var(--moon))",
+          "sun-glow": "hsl(var(--sun-glow))",
+          "sun-core": "hsl(var(--sun-core))",
+        },
+        clock: {
+          face: "hsl(var(--clock-face))",
+          ring: "hsl(var(--clock-ring))",
+          "hand-hour": "hsl(var(--clock-hand-hour))",
+          "hand-minute": "hsl(var(--clock-hand-minute))",
+          markers: "hsl(var(--clock-markers))",
+          center: "hsl(var(--clock-center))",
         },
       },
       borderRadius: {
@@ -65,25 +85,32 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
+        },
+        "rotate-slow": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "float": "float 6s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        "rotate-slow": "rotate-slow 120s linear infinite",
       },
     },
   },
