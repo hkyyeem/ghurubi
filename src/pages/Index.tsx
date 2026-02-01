@@ -86,8 +86,8 @@ const Index = () => {
               />
               
               <LocationDisplay
-                latitude={location?.latitude ?? null}
-                longitude={location?.longitude ?? null}
+                latitude={location.latitude}
+                longitude={location.longitude}
                 loading={loading}
                 error={error}
               />

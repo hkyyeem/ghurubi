@@ -41,20 +41,26 @@ const DEFAULT_LOCATION: Location = {
 };
 
 export function useGeolocation() {
-  const [location, setLocation] = useState<Location | null>(null);
+  // Start with default location immediately so clock renders right away
+  const [location, setLocation] = useState<Location>(DEFAULT_LOCATION);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!navigator.geolocation) {
       setError('Geolocation not supported');
-      setLocation(DEFAULT_LOCATION);
       setLoading(false);
       return;
     }
 
+    // Set a short timeout to show default location quickly
+    const fallbackTimer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        clearTimeout(fallbackTimer);
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -63,12 +69,12 @@ export function useGeolocation() {
         setLoading(false);
       },
       (err) => {
+        clearTimeout(fallbackTimer);
         console.warn('Geolocation error, using default:', err.message);
-        setLocation(DEFAULT_LOCATION);
         setError(err.message);
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
     );
   }, []);
 
