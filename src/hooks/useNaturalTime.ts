@@ -45,40 +45,60 @@ export function useGeolocation() {
   const [location, setLocation] = useState<Location>(DEFAULT_LOCATION);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isUsingDefault, setIsUsingDefault] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
 
-  useEffect(() => {
+  const requestLocation = () => {
     if (!navigator.geolocation) {
-      setError('Geolocation not supported');
+      setError('متصفحك لا يدعم تحديد الموقع');
       setLoading(false);
       return;
     }
 
-    // Set a short timeout to show default location quickly
-    const fallbackTimer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    setLoading(true);
+    setError(null);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        clearTimeout(fallbackTimer);
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           altitude: position.coords.altitude || 0,
         });
+        setIsUsingDefault(false);
         setLoading(false);
       },
       (err) => {
-        clearTimeout(fallbackTimer);
-        console.warn('Geolocation error, using default:', err.message);
-        setError(err.message);
+        console.warn('Geolocation error:', err.message);
+        let errorMessage = 'تعذر تحديد الموقع';
+        if (err.code === 1) {
+          errorMessage = 'يرجى السماح بالوصول للموقع';
+        } else if (err.code === 2) {
+          errorMessage = 'الموقع غير متاح حالياً';
+        } else if (err.code === 3) {
+          errorMessage = 'انتهت مهلة تحديد الموقع';
+        }
+        setError(errorMessage);
         setLoading(false);
       },
-      { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
-  }, []);
+  };
 
-  return { location, error, loading };
+  useEffect(() => {
+    // Initial location request
+    const timer = setTimeout(() => {
+      requestLocation();
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [retryCount]);
+
+  const retryLocation = () => {
+    setRetryCount(c => c + 1);
+  };
+
+  return { location, error, loading, isUsingDefault, retryLocation };
 }
 
 function getSunTimes(date: Date, location: Location) {

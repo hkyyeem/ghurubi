@@ -11,7 +11,7 @@ import { LocationDisplay } from '@/components/LocationDisplay';
 import { StarField } from '@/components/StarField';
 
 const Index = () => {
-  const { location, loading, error } = useGeolocation();
+  const { location, loading, error, isUsingDefault, retryLocation } = useGeolocation();
   const [showSeasonalHours, setShowSeasonalHours] = useState(false);
   const [showPrayerTimes, setShowPrayerTimes] = useState(false);
   
@@ -90,6 +90,8 @@ const Index = () => {
                 longitude={location.longitude}
                 loading={loading}
                 error={error}
+                isUsingDefault={isUsingDefault}
+                onRetryLocation={retryLocation}
               />
             </div>
             
