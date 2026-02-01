@@ -132,44 +132,52 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
         </g>
         
         {/* Hour hand */}
-        <motion.line
-          x1={center}
-          y1={center}
-          x2={center}
-          y2={center - size * 0.25}
-          className="stroke-clock-hand-hour"
-          strokeWidth={size > 250 ? 6 : 4}
-          strokeLinecap="round"
+        <g
           style={{ 
+            transform: `rotate(${hourRotation}deg)`,
             transformOrigin: `${center}px ${center}px`,
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
+            transition: 'transform 0.5s ease-out',
           }}
-          animate={{ rotate: hourRotation }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
-        />
+        >
+          <line
+            x1={center}
+            y1={center}
+            x2={center}
+            y2={center - size * 0.25}
+            className="stroke-clock-hand-hour"
+            strokeWidth={size > 250 ? 6 : 4}
+            strokeLinecap="round"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+          />
+        </g>
         
         {/* Minute hand */}
-        <motion.line
-          x1={center}
-          y1={center}
-          x2={center}
-          y2={center - size * 0.35}
-          className="stroke-clock-hand-minute"
-          strokeWidth={size > 250 ? 4 : 3}
-          strokeLinecap="round"
+        <g
           style={{ 
+            transform: `rotate(${minuteRotation}deg)`,
             transformOrigin: `${center}px ${center}px`,
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+            transition: 'transform 0.3s ease-out',
           }}
-          animate={{ rotate: minuteRotation }}
-          transition={{ type: "spring", stiffness: 60, damping: 15 }}
-        />
+        >
+          <line
+            x1={center}
+            y1={center}
+            x2={center}
+            y2={center - size * 0.35}
+            className="stroke-clock-hand-minute"
+            strokeWidth={size > 250 ? 4 : 3}
+            strokeLinecap="round"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
+          />
+        </g>
         
         {/* Second hand */}
-        <motion.g
-          style={{ transformOrigin: `${center}px ${center}px` }}
-          animate={{ rotate: secondRotation }}
-          transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+        <g
+          style={{ 
+            transform: `rotate(${secondRotation}deg)`,
+            transformOrigin: `${center}px ${center}px`,
+            transition: 'transform 0.1s linear',
+          }}
         >
           <line
             x1={center}
@@ -181,7 +189,7 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
             strokeLinecap="round"
           />
           <circle cx={center} cy={center + 20} r="4" className="fill-sky-sunset" />
-        </motion.g>
+        </g>
         
         {/* Center cap */}
         <circle
