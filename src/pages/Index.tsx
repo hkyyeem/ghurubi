@@ -9,6 +9,7 @@ import { PrayerTimesDisplay } from '@/components/PrayerTimesDisplay';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { LocationDisplay } from '@/components/LocationDisplay';
 import { StarField } from '@/components/StarField';
+import { Menu } from 'lucide-react';
 
 const Index = () => {
   const { location, loading, error, isUsingDefault, retryLocation } = useGeolocation();
@@ -23,6 +24,15 @@ const Index = () => {
       document.documentElement.classList.toggle('day-mode', !time.isNight);
     }
   }, [time?.isNight]);
+
+  // Dynamic text contrast based on phase
+  const getTextContrastClass = () => {
+    if (!time) return '';
+    if (time.phase === 'dawn' || time.phase === 'dusk') {
+      return 'text-shadow-contrast';
+    }
+    return '';
+  };
 
   // Sky background based on phase
   const getSkyGradient = () => {
@@ -51,7 +61,7 @@ const Index = () => {
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
         <motion.header 
-          className="pt-8 pb-4 px-4 text-center"
+          className={`pt-8 pb-4 px-4 text-center ${getTextContrastClass()}`}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -86,8 +96,7 @@ const Index = () => {
               />
               
               <LocationDisplay
-                latitude={location.latitude}
-                longitude={location.longitude}
+                location={location}
                 loading={loading}
                 error={error}
                 isUsingDefault={isUsingDefault}
@@ -110,7 +119,7 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Prayer times section */}
+          {/* Prayer times section - secondary, expandable */}
           <AnimatePresence>
             {showPrayerTimes && (
               <motion.div
@@ -119,7 +128,10 @@ const Index = () => {
                 exit={{ opacity: 0, height: 0 }}
                 className="w-full max-w-2xl mt-8"
               >
-                <PrayerTimesDisplay location={location} />
+                <PrayerTimesDisplay 
+                  location={location} 
+                  useSeasonalHours={showSeasonalHours}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -127,7 +139,7 @@ const Index = () => {
         
         {/* Footer */}
         <motion.footer 
-          className="py-6 text-center"
+          className={`py-6 text-center ${getTextContrastClass()}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
@@ -136,7 +148,7 @@ const Index = () => {
             نظام زمني يعتمد على دورة الشمس الطبيعية
           </p>
           <p className="font-body text-xs text-muted-foreground/60 mt-1">
-            الغروب = ١٢:٠٠ • الليل يسبق النهار
+            الغروب = ٠٠:٠٠ • الليل يسبق النهار
           </p>
         </motion.footer>
       </div>
