@@ -18,25 +18,25 @@ export function TimeDisplay({ time, showSeasonalTime = false, className = '' }: 
 
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
   
-  // For seasonal time display
+  // Use the time values directly (they're already seasonal if SeasonalTime)
+  const displayHours = time.hours;
+  const displayMinutes = time.minutes;
+  const displaySeconds = time.seconds;
+
+  // Check if seasonal time
   const isSeasonalTime = 'seasonalHours' in time;
-  const displayHours = showSeasonalTime && isSeasonalTime 
-    ? (time as SeasonalTime).seasonalHours 
-    : time.hours;
-  const displayMinutes = showSeasonalTime && isSeasonalTime 
-    ? (time as SeasonalTime).seasonalMinutes 
-    : time.minutes;
 
   return (
     <div className={`text-center ${className}`}>
-      {/* Main time display */}
+      {/* Main time display - HH:MM:SS format (hours left, seconds right) */}
       <motion.div 
-        className="font-display text-5xl md:text-7xl text-primary tracking-wider"
+        className="font-display text-5xl md:text-7xl text-primary tracking-wider flex items-baseline justify-center"
+        style={{ direction: 'ltr' }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         key={`${displayHours}:${displayMinutes}`}
       >
-        <span className="inline-block min-w-[1.5ch] text-right">
+        <span className="inline-block min-w-[1.5ch] text-center">
           {formatNumber(displayHours)}
         </span>
         <motion.span
@@ -46,11 +46,18 @@ export function TimeDisplay({ time, showSeasonalTime = false, className = '' }: 
         >
           :
         </motion.span>
-        <span className="inline-block min-w-[1.5ch] text-left">
+        <span className="inline-block min-w-[1.5ch] text-center">
           {formatNumber(displayMinutes)}
         </span>
-        <span className="text-3xl md:text-4xl text-muted-foreground mr-2">
-          :{formatNumber(time.seconds)}
+        <motion.span
+          animate={{ opacity: [1, 0.3, 1] }}
+          transition={{ duration: 1, repeat: Infinity }}
+          className="mx-1"
+        >
+          :
+        </motion.span>
+        <span className="inline-block min-w-[1.5ch] text-center text-3xl md:text-4xl text-muted-foreground">
+          {formatNumber(displaySeconds)}
         </span>
       </motion.div>
 
@@ -70,6 +77,16 @@ export function TimeDisplay({ time, showSeasonalTime = false, className = '' }: 
         <span className="font-body text-lg text-muted-foreground">
           {time.isNight ? 'ليل' : 'نهار'}
         </span>
+        {time.isNight && displayHours < 12 && (
+          <span className="font-body text-sm text-muted-foreground/70">
+            (الساعة {displayHours + 1} من الليل)
+          </span>
+        )}
+        {!time.isNight && displayHours >= 12 && (
+          <span className="font-body text-sm text-muted-foreground/70">
+            (الساعة {displayHours - 11} من النهار)
+          </span>
+        )}
       </div>
 
       {/* Seasonal time indicator */}

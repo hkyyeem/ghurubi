@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SunCalc from 'suncalc';
+import { findNearestCity, DEFAULT_CITY, type CityInfo } from '@/lib/cityCoordinates';
 
 export interface NaturalTime {
   hours: number;
@@ -8,7 +9,7 @@ export interface NaturalTime {
   totalSeconds: number;
   isNight: boolean;
   phase: 'night' | 'dawn' | 'day' | 'dusk';
-  phaseProgress: number; // 0-1 progress through current phase
+  phaseProgress: number;
   sunsetCountdown: {
     hours: number;
     minutes: number;
@@ -18,31 +19,29 @@ export interface NaturalTime {
   nextSunset: Date;
   lastSunset: Date;
   sunrise: Date;
-  dayLength: number; // in hours
-  nightLength: number; // in hours
+  dayLength: number;
+  nightLength: number;
 }
 
 export interface SeasonalTime extends NaturalTime {
-  seasonalHours: number; // Hours in seasonal/temporal system
+  seasonalHours: number;
   seasonalMinutes: number;
-  hourDuration: number; // Length of current hour in standard minutes
+  seasonalSeconds: number;
+  hourDuration: number;
 }
 
-interface Location {
+export interface Location {
   latitude: number;
   longitude: number;
   altitude?: number;
+  city?: CityInfo;
 }
 
-const DEFAULT_LOCATION: Location = {
-  latitude: 21.4225, // Mecca
-  longitude: 39.8262,
-  altitude: 277,
-};
-
 export function useGeolocation() {
-  // Start with default location immediately so clock renders right away
-  const [location, setLocation] = useState<Location>(DEFAULT_LOCATION);
+  const [location, setLocation] = useState<Location>({
+    ...DEFAULT_CITY,
+    city: DEFAULT_CITY,
+  });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUsingDefault, setIsUsingDefault] = useState(true);
@@ -60,11 +59,28 @@ export function useGeolocation() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          altitude: position.coords.altitude || 0,
-        });
+        const { latitude, longitude, altitude } = position.coords;
+        
+        // Find nearest city and use its center coordinates
+        const nearestCity = findNearestCity(latitude, longitude);
+        
+        if (nearestCity) {
+          // Use city center coordinates for consistency
+          setLocation({
+            latitude: nearestCity.latitude,
+            longitude: nearestCity.longitude,
+            altitude: altitude || 0,
+            city: nearestCity,
+          });
+        } else {
+          // No nearby city found, use exact coordinates
+          setLocation({
+            latitude,
+            longitude,
+            altitude: altitude || 0,
+          });
+        }
+        
         setIsUsingDefault(false);
         setLoading(false);
       },
@@ -81,12 +97,11 @@ export function useGeolocation() {
         setError(errorMessage);
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 } // 5 min cache
     );
   };
 
   useEffect(() => {
-    // Initial location request
     const timer = setTimeout(() => {
       requestLocation();
     }, 500);
@@ -102,8 +117,7 @@ export function useGeolocation() {
 }
 
 function getSunTimes(date: Date, location: Location) {
-  const times = SunCalc.getTimes(date, location.latitude, location.longitude, location.altitude || 0);
-  return times;
+  return SunCalc.getTimes(date, location.latitude, location.longitude, location.altitude || 0);
 }
 
 function getPreviousSunset(now: Date, location: Location): Date {
@@ -115,8 +129,7 @@ function getPreviousSunset(now: Date, location: Location): Date {
   
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayTimes = getSunTimes(yesterday, location);
-  return yesterdayTimes.sunset;
+  return getSunTimes(yesterday, location).sunset;
 }
 
 function getNextSunset(now: Date, location: Location): Date {
@@ -128,8 +141,7 @@ function getNextSunset(now: Date, location: Location): Date {
   
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowTimes = getSunTimes(tomorrow, location);
-  return tomorrowTimes.sunset;
+  return getSunTimes(tomorrow, location).sunset;
 }
 
 function getNextSunrise(now: Date, location: Location): Date {
@@ -141,57 +153,46 @@ function getNextSunrise(now: Date, location: Location): Date {
   
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowTimes = getSunTimes(tomorrow, location);
-  return tomorrowTimes.sunrise;
+  return getSunTimes(tomorrow, location).sunrise;
 }
 
 function calculateNaturalTime(now: Date, location: Location): NaturalTime {
   const lastSunset = getPreviousSunset(now, location);
   const nextSunset = getNextSunset(now, location);
-  const nextSunrise = getNextSunrise(now, location);
+  const todayTimes = getSunTimes(now, location);
   
-  // Calculate time since last sunset in seconds
-  const secondsSinceSunset = (now.getTime() - lastSunset.getTime()) / 1000;
+  // Calculate time since last sunset in milliseconds
+  const msSinceSunset = now.getTime() - lastSunset.getTime();
+  const secondsSinceSunset = msSinceSunset / 1000;
   
-  // Full day is 24 hours from sunset to sunset
-  const fullDaySeconds = (nextSunset.getTime() - lastSunset.getTime()) / 1000;
+  // Full day is 24 standard hours (86400 seconds)
+  // Sunset = 00:00:00 (start of day, Night First!)
+  const SECONDS_PER_DAY = 86400;
+  const SECONDS_PER_HOUR = 3600;
+  const SECONDS_PER_MINUTE = 60;
   
-  // Convert to Natural Time (12:00 at sunset)
-  // Each natural hour = fullDaySeconds / 24
-  const naturalSecondsPerHour = fullDaySeconds / 24;
-  const naturalSecondsPerMinute = naturalSecondsPerHour / 60;
-  
-  const totalNaturalSeconds = secondsSinceSunset;
-  const totalNaturalMinutes = totalNaturalSeconds / 60;
-  const totalNaturalHours = totalNaturalMinutes / 60;
-  
-  // Start from 12:00 at sunset
-  const rawHours = 12 + (secondsSinceSunset / naturalSecondsPerHour);
-  const hours = rawHours % 24;
-  const minutes = (secondsSinceSunset % naturalSecondsPerHour) / naturalSecondsPerMinute;
-  const seconds = (secondsSinceSunset % 60);
+  // Natural time starts at 00:00:00 at sunset
+  const totalNaturalSeconds = secondsSinceSunset % SECONDS_PER_DAY;
+  const hours = Math.floor(totalNaturalSeconds / SECONDS_PER_HOUR);
+  const minutes = Math.floor((totalNaturalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  const seconds = Math.floor(totalNaturalSeconds % SECONDS_PER_MINUTE);
   
   // Determine if night or day based on actual sun position
-  const isNight = now < nextSunrise && now >= lastSunset && nextSunrise.getTime() > now.getTime();
-  const actualIsNight = now < nextSunrise || now >= getPreviousSunset(now, location);
-  
-  // More accurate night check
-  const todayTimes = getSunTimes(now, location);
   const isActuallyNight = now < todayTimes.sunrise || now >= todayTimes.sunset;
   
   // Calculate phase
   let phase: 'night' | 'dawn' | 'day' | 'dusk';
   let phaseProgress: number;
   
-  const dawnStart = new Date(todayTimes.sunrise.getTime() - 60 * 60 * 1000); // 1 hour before sunrise
-  const duskStart = new Date(todayTimes.sunset.getTime() - 60 * 60 * 1000); // 1 hour before sunset
+  const dawnStart = new Date(todayTimes.sunrise.getTime() - 60 * 60 * 1000);
+  const duskStart = new Date(todayTimes.sunset.getTime() - 60 * 60 * 1000);
   
   if (now >= todayTimes.sunset || now < dawnStart) {
     phase = 'night';
     if (now >= todayTimes.sunset) {
-      const nightEnd = new Date(todayTimes.sunset);
-      nightEnd.setDate(nightEnd.getDate() + 1);
-      const tomorrowTimes = getSunTimes(nightEnd, location);
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowTimes = getSunTimes(tomorrow, location);
       const nightDuration = tomorrowTimes.sunrise.getTime() - todayTimes.sunset.getTime();
       phaseProgress = (now.getTime() - todayTimes.sunset.getTime()) / nightDuration;
     } else {
@@ -220,9 +221,9 @@ function calculateNaturalTime(now: Date, location: Location): NaturalTime {
   const nightLengthMs = 24 * 60 * 60 * 1000 - dayLengthMs;
   
   return {
-    hours: Math.floor(hours),
-    minutes: Math.floor(minutes),
-    seconds: Math.floor(seconds),
+    hours,
+    minutes,
+    seconds,
     totalSeconds: Math.floor(totalNaturalSeconds),
     isNight: isActuallyNight,
     phase,
@@ -235,7 +236,7 @@ function calculateNaturalTime(now: Date, location: Location): NaturalTime {
     },
     nextSunset,
     lastSunset,
-    sunrise: nextSunrise,
+    sunrise: getNextSunrise(now, location),
     dayLength: dayLengthMs / (1000 * 60 * 60),
     nightLength: nightLengthMs / (1000 * 60 * 60),
   };
@@ -245,46 +246,49 @@ function calculateSeasonalTime(naturalTime: NaturalTime, now: Date, location: Lo
   const todayTimes = getSunTimes(now, location);
   const isNight = naturalTime.isNight;
   
-  // In seasonal/temporal hours:
-  // Night has 12 hours from sunset to sunrise
-  // Day has 12 hours from sunrise to sunset
+  // Seasonal/Temporal hours: Night = 12 hours, Day = 12 hours
+  // Each period's hour duration varies by season
   
   let seasonalHours: number;
   let seasonalMinutes: number;
-  let hourDuration: number; // in standard minutes
+  let seasonalSeconds: number;
+  let hourDuration: number;
   
   if (isNight) {
-    // Night period
-    const nightDuration = naturalTime.nightLength * 60; // in minutes
-    hourDuration = nightDuration / 12;
+    // Night period (starts at sunset = 00:00)
+    const nightDurationMs = naturalTime.nightLength * 60 * 60 * 1000;
+    hourDuration = naturalTime.nightLength * 60 / 12; // minutes per seasonal hour
     
     const msSinceSunset = now.getTime() - naturalTime.lastSunset.getTime();
-    const minutesSinceSunset = msSinceSunset / (1000 * 60);
+    const seasonalProgress = msSinceSunset / nightDurationMs;
+    const totalSeasonalTime = seasonalProgress * 12 * 60 * 60; // in seconds
     
-    const seasonalProgress = minutesSinceSunset / nightDuration;
-    const totalSeasonalHours = seasonalProgress * 12;
-    
-    seasonalHours = Math.floor(totalSeasonalHours);
-    seasonalMinutes = Math.floor((totalSeasonalHours % 1) * 60);
+    seasonalHours = Math.floor(totalSeasonalTime / 3600);
+    seasonalMinutes = Math.floor((totalSeasonalTime % 3600) / 60);
+    seasonalSeconds = Math.floor(totalSeasonalTime % 60);
   } else {
-    // Day period
-    const dayDuration = naturalTime.dayLength * 60; // in minutes
-    hourDuration = dayDuration / 12;
+    // Day period (starts at sunrise = 12:00)
+    const dayDurationMs = naturalTime.dayLength * 60 * 60 * 1000;
+    hourDuration = naturalTime.dayLength * 60 / 12;
     
     const msSinceSunrise = now.getTime() - todayTimes.sunrise.getTime();
-    const minutesSinceSunrise = msSinceSunrise / (1000 * 60);
+    const seasonalProgress = msSinceSunrise / dayDurationMs;
+    const totalSeasonalTime = seasonalProgress * 12 * 60 * 60;
     
-    const seasonalProgress = minutesSinceSunrise / dayDuration;
-    const totalSeasonalHours = seasonalProgress * 12;
-    
-    seasonalHours = Math.floor(totalSeasonalHours);
-    seasonalMinutes = Math.floor((totalSeasonalHours % 1) * 60);
+    seasonalHours = 12 + Math.floor(totalSeasonalTime / 3600);
+    seasonalMinutes = Math.floor((totalSeasonalTime % 3600) / 60);
+    seasonalSeconds = Math.floor(totalSeasonalTime % 60);
   }
   
   return {
     ...naturalTime,
-    seasonalHours: seasonalHours + (isNight ? 0 : 12), // Night: 0-11, Day: 12-23
+    // Override base time with seasonal time when in seasonal mode
+    hours: seasonalHours,
+    minutes: seasonalMinutes,
+    seconds: seasonalSeconds,
+    seasonalHours,
     seasonalMinutes,
+    seasonalSeconds,
     hourDuration,
   };
 }
@@ -312,38 +316,4 @@ export function useNaturalTime(location: Location | null, useSeasonalHours: bool
   }, [updateTime]);
   
   return time;
-}
-
-export function usePrayerTimes(location: Location | null) {
-  const [prayerTimes, setPrayerTimes] = useState<Record<string, NaturalTime> | null>(null);
-  
-  useEffect(() => {
-    if (!location) return;
-    
-    // Calculate prayer times in natural time format
-    const now = new Date();
-    const todayTimes = getSunTimes(now, location);
-    
-    // Simple prayer time calculations based on sun positions
-    // These are approximate and would need proper Islamic jurisprudence calculations
-    const fajrTime = new Date(todayTimes.sunrise.getTime() - 90 * 60 * 1000); // ~90 min before sunrise
-    const sunriseTime = todayTimes.sunrise;
-    const dhuhrTime = todayTimes.solarNoon;
-    const asrTime = new Date(todayTimes.solarNoon.getTime() + (todayTimes.sunset.getTime() - todayTimes.solarNoon.getTime()) / 2);
-    const maghribTime = todayTimes.sunset;
-    const ishaTime = new Date(todayTimes.sunset.getTime() + 90 * 60 * 1000); // ~90 min after sunset
-    
-    const calculatePrayerNaturalTime = (prayerDate: Date) => calculateNaturalTime(prayerDate, location);
-    
-    setPrayerTimes({
-      fajr: calculatePrayerNaturalTime(fajrTime),
-      sunrise: calculatePrayerNaturalTime(sunriseTime),
-      dhuhr: calculatePrayerNaturalTime(dhuhrTime),
-      asr: calculatePrayerNaturalTime(asrTime),
-      maghrib: calculatePrayerNaturalTime(maghribTime),
-      isha: calculatePrayerNaturalTime(ishaTime),
-    });
-  }, [location]);
-  
-  return prayerTimes;
 }

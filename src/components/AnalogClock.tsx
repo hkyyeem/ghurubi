@@ -15,6 +15,8 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
       const radius = size / 2 - 30;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
+      // For sunset-based clock: 12 at top = 0/24, then 1, 2, 3... clockwise
+      // But we display as 12 at top (sunset position)
       const number = i === 0 ? 12 : i;
       return { number, x, y, angle: i * 30 };
     });
@@ -36,16 +38,17 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
     });
   }, [size]);
 
-  // Calculate hand rotations
-  const hourRotation = time 
-    ? ((time.hours % 12) * 30) + (time.minutes * 0.5) 
-    : 0;
-  const minuteRotation = time 
-    ? (time.minutes * 6) + (time.seconds * 0.1) 
-    : 0;
-  const secondRotation = time 
-    ? time.seconds * 6 
-    : 0;
+  // Calculate hand rotations based on current time
+  // Hours go 0-23 with sunset at 0 (12 position on clock face)
+  const displayHours = time?.hours ?? 0;
+  const displayMinutes = time?.minutes ?? 0;
+  const displaySeconds = time?.seconds ?? 0;
+
+  // Convert 24-hour natural time to 12-hour clock rotation
+  // 0 hours = 0 degrees (12 o'clock position)
+  const hourRotation = ((displayHours % 12) * 30) + (displayMinutes * 0.5);
+  const minuteRotation = (displayMinutes * 6) + (displaySeconds * 0.1);
+  const secondRotation = displaySeconds * 6;
 
   const center = size / 2;
 
@@ -78,7 +81,7 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
           strokeWidth="2"
         />
         
-        {/* Inner decorative circle */}
+        {/* Inner decorative circle - Night/Day boundary at 6 o'clock position */}
         <circle
           cx={center}
           cy={center}
@@ -87,6 +90,28 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
           strokeWidth="0.5"
           opacity="0.3"
         />
+        
+        {/* Seasonal hour markers (if enabled) */}
+        {showSeasonalMarkers && time && (
+          <>
+            {/* Night period arc (0-12) - darker */}
+            <path
+              d={`M ${center} ${center - (center - 50)} 
+                  A ${center - 50} ${center - 50} 0 1 1 ${center} ${center + (center - 50)}`}
+              className="stroke-muted-foreground/30"
+              strokeWidth="3"
+              fill="none"
+            />
+            {/* Day period arc (12-24) - lighter */}
+            <path
+              d={`M ${center} ${center + (center - 50)} 
+                  A ${center - 50} ${center - 50} 0 1 1 ${center} ${center - (center - 50)}`}
+              className="stroke-primary/30"
+              strokeWidth="3"
+              fill="none"
+            />
+          </>
+        )}
         
         {/* Minute markers */}
         {minuteMarkers.map((marker, i) => (
@@ -118,7 +143,7 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
           </text>
         ))}
         
-        {/* Sunset indicator at 12 */}
+        {/* Sunset indicator at 12 (represents 00:00) */}
         <g transform={`translate(${center}, 25)`}>
           <motion.circle
             r="8"
@@ -129,6 +154,12 @@ export function AnalogClock({ time, size = 320, showSeasonalMarkers = false }: A
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
           <circle r="4" className="fill-sky-golden" />
+        </g>
+        
+        {/* Sunrise indicator at 6 position (represents ~12:00 - end of night) */}
+        <g transform={`translate(${center}, ${size - 25})`}>
+          <circle r="6" className="fill-sky-golden/50" />
+          <circle r="3" className="fill-sky-morning" />
         </g>
         
         {/* Hour hand */}

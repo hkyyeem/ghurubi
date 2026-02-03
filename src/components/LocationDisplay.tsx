@@ -2,10 +2,10 @@ import { motion } from 'framer-motion';
 import { MapPin, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
 import { useReverseGeocoding } from '@/hooks/useGeocoding';
 import { Button } from '@/components/ui/button';
+import type { Location } from '@/hooks/useNaturalTime';
 
 interface LocationDisplayProps {
-  latitude: number | null;
-  longitude: number | null;
+  location: Location;
   loading?: boolean;
   error?: string | null;
   isUsingDefault?: boolean;
@@ -14,17 +14,23 @@ interface LocationDisplayProps {
 }
 
 export function LocationDisplay({ 
-  latitude, 
-  longitude, 
+  location,
   loading = false,
   error = null,
   isUsingDefault = false,
   onRetryLocation,
   className = '' 
 }: LocationDisplayProps) {
-  const { city, country, loading: geocodingLoading } = useReverseGeocoding(latitude, longitude);
+  const { city, country, loading: geocodingLoading } = useReverseGeocoding(
+    location.latitude, 
+    location.longitude
+  );
   
   const isLoading = loading || geocodingLoading;
+  
+  // Prefer city info from location object (city-level coordinates)
+  const displayCity = location.city?.nameAr || city;
+  const displayCountry = location.city?.countryAr || country;
   
   return (
     <motion.div 
@@ -42,20 +48,24 @@ export function LocationDisplay({
         <>
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-primary" />
-            {city ? (
+            {displayCity ? (
               <span className="text-foreground font-semibold">
-                {city}{country ? ` - ${country}` : ''}
+                {displayCity}{displayCountry ? ` - ${displayCountry}` : ''}
               </span>
-            ) : latitude && longitude ? (
-              <span>موقع مخصص</span>
             ) : (
               <span className="text-destructive">{error || 'تعذر تحديد الموقع'}</span>
             )}
           </div>
           
-          {latitude && longitude && (
-            <span className="text-xs text-muted-foreground">
-              {latitude.toFixed(4)}° شمال، {longitude.toFixed(4)}° شرق
+          {/* Coordinates */}
+          <span className="text-xs text-muted-foreground" dir="ltr">
+            {location.latitude.toFixed(4)}°N, {location.longitude.toFixed(4)}°E
+          </span>
+          
+          {/* City-level indicator */}
+          {location.city && !isUsingDefault && (
+            <span className="text-xs text-muted-foreground/60">
+              (إحداثيات مركز المدينة)
             </span>
           )}
           
