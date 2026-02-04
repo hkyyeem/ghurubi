@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
+import { useLocalStorage, STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { AnalogClock } from '@/components/AnalogClock';
 import { TimeDisplay } from '@/components/TimeDisplay';
 import { SunsetCountdown } from '@/components/SunsetCountdown';
@@ -9,12 +10,19 @@ import { PrayerTimesDisplay } from '@/components/PrayerTimesDisplay';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { LocationDisplay } from '@/components/LocationDisplay';
 import { StarField } from '@/components/StarField';
-import { Menu } from 'lucide-react';
 
 const Index = () => {
   const { location, loading, error, isUsingDefault, retryLocation } = useGeolocation();
-  const [showSeasonalHours, setShowSeasonalHours] = useState(false);
-  const [showPrayerTimes, setShowPrayerTimes] = useState(false);
+  
+  // Persistent state with localStorage (sync initialization prevents flicker)
+  const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(
+    STORAGE_KEYS.SEASONAL_HOURS,
+    false
+  );
+  const [showPrayerTimes, setShowPrayerTimes] = useLocalStorage(
+    STORAGE_KEYS.SHOW_PRAYER_TIMES,
+    false
+  );
   
   const time = useNaturalTime(location, showSeasonalHours);
   

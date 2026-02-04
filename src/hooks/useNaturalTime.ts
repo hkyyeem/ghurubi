@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import SunCalc from 'suncalc';
 import { findNearestCity, DEFAULT_CITY, type CityInfo } from '@/lib/cityCoordinates';
+import { STORAGE_KEYS, type SavedLocation } from '@/hooks/useLocalStorage';
 
 export interface NaturalTime {
   hours: number;
@@ -37,17 +38,67 @@ export interface Location {
   city?: CityInfo;
 }
 
+// Read saved location from localStorage (sync read)
+function getSavedLocation(): SavedLocation | null {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEYS.SAVED_LOCATION);
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+}
+
+// Save location to localStorage
+function saveLocation(location: Location): void {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    const toSave: SavedLocation = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      cityName: location.city?.name,
+      cityNameAr: location.city?.nameAr,
+    };
+    window.localStorage.setItem(STORAGE_KEYS.SAVED_LOCATION, JSON.stringify(toSave));
+  } catch (error) {
+    console.warn('Error saving location:', error);
+  }
+}
+
 export function useGeolocation() {
-  const [location, setLocation] = useState<Location>({
-    ...DEFAULT_CITY,
-    city: DEFAULT_CITY,
+  // Initialize with saved location or default (sync read to prevent flicker)
+  const [location, setLocation] = useState<Location>(() => {
+    const saved = getSavedLocation();
+    if (saved) {
+      return {
+        latitude: saved.latitude,
+        longitude: saved.longitude,
+        city: saved.cityName ? {
+          name: saved.cityName,
+          nameAr: saved.cityNameAr || saved.cityName,
+          latitude: saved.latitude,
+          longitude: saved.longitude,
+          country: '',
+          countryAr: '',
+        } : undefined,
+      };
+    }
+    return {
+      ...DEFAULT_CITY,
+      city: DEFAULT_CITY,
+    };
   });
+  
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isUsingDefault, setIsUsingDefault] = useState(true);
+  const [isUsingDefault, setIsUsingDefault] = useState(() => {
+    return !getSavedLocation();
+  });
   const [retryCount, setRetryCount] = useState(0);
 
-  const requestLocation = () => {
+  const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError('متصفحك لا يدعم تحديد الموقع');
       setLoading(false);
@@ -64,23 +115,27 @@ export function useGeolocation() {
         // Find nearest city and use its center coordinates
         const nearestCity = findNearestCity(latitude, longitude);
         
+        let newLocation: Location;
+        
         if (nearestCity) {
           // Use city center coordinates for consistency
-          setLocation({
+          newLocation = {
             latitude: nearestCity.latitude,
             longitude: nearestCity.longitude,
             altitude: altitude || 0,
             city: nearestCity,
-          });
+          };
         } else {
           // No nearby city found, use exact coordinates
-          setLocation({
+          newLocation = {
             latitude,
             longitude,
             altitude: altitude || 0,
-          });
+          };
         }
         
+        setLocation(newLocation);
+        saveLocation(newLocation);
         setIsUsingDefault(false);
         setLoading(false);
       },
@@ -97,23 +152,39 @@ export function useGeolocation() {
         setError(errorMessage);
         setLoading(false);
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 } // 5 min cache
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
-  };
+  }, []);
 
   useEffect(() => {
+    // Only request new location if no saved location exists
+    const saved = getSavedLocation();
+    if (saved) {
+      setLoading(false);
+      return;
+    }
+    
     const timer = setTimeout(() => {
       requestLocation();
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [retryCount]);
+  }, [retryCount, requestLocation]);
 
-  const retryLocation = () => {
+  const retryLocation = useCallback(() => {
     setRetryCount(c => c + 1);
-  };
+    requestLocation();
+  }, [requestLocation]);
 
-  return { location, error, loading, isUsingDefault, retryLocation };
+  const clearSavedLocation = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(STORAGE_KEYS.SAVED_LOCATION);
+    }
+    setIsUsingDefault(true);
+    requestLocation();
+  }, [requestLocation]);
+
+  return { location, error, loading, isUsingDefault, retryLocation, clearSavedLocation };
 }
 
 function getSunTimes(date: Date, location: Location) {
