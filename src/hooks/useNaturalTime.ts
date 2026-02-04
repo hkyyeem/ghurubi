@@ -98,6 +98,15 @@ export function useGeolocation() {
   });
   const [retryCount, setRetryCount] = useState(0);
 
+  // Manual location setter for city search
+  const setManualLocation = useCallback((newLocation: Location) => {
+    setLocation(newLocation);
+    saveLocation(newLocation);
+    setIsUsingDefault(false);
+    setLoading(false);
+    setError(null);
+  }, []);
+
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError('متصفحك لا يدعم تحديد الموقع');
@@ -184,7 +193,7 @@ export function useGeolocation() {
     requestLocation();
   }, [requestLocation]);
 
-  return { location, error, loading, isUsingDefault, retryLocation, clearSavedLocation };
+  return { location, error, loading, isUsingDefault, retryLocation, clearSavedLocation, setManualLocation };
 }
 
 function getSunTimes(date: Date, location: Location) {

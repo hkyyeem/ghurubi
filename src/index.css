@@ -1,114 +1,91 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Earth Clock Design System - Natural Time Theme
-   A celestial design system inspired by the sky's daily journey
+/* Ghurubi Clock - Minimalist Reference Site Design
+   Swiss Style: Clean typography, high contrast, utilitarian
    All colors in HSL format
 */
 
 @layer base {
   :root {
-    /* Sky phases - Night */
-    --sky-midnight: 230 35% 7%;
-    --sky-deep-night: 225 40% 12%;
-    --sky-late-night: 220 35% 18%;
+    /* Clean, minimal palette - Dark mode (night) */
+    --background: 222 20% 10%;
+    --foreground: 0 0% 98%;
     
-    /* Sky phases - Dawn/Dusk */
-    --sky-twilight: 250 30% 25%;
-    --sky-golden: 35 85% 55%;
-    --sky-sunset: 20 90% 50%;
-    --sky-horizon: 15 80% 60%;
+    --card: 222 15% 14%;
+    --card-foreground: 0 0% 98%;
     
-    /* Sky phases - Day */
-    --sky-morning: 200 70% 70%;
-    --sky-noon: 205 85% 65%;
-    --sky-afternoon: 210 75% 60%;
+    --popover: 222 15% 12%;
+    --popover-foreground: 0 0% 98%;
     
-    /* Celestial elements */
-    --star: 45 100% 95%;
-    --moon: 45 30% 90%;
-    --sun-glow: 45 100% 70%;
-    --sun-core: 40 100% 60%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 222 20% 10%;
     
-    /* Semantic tokens */
-    --background: 230 35% 7%;
-    --foreground: 45 30% 95%;
+    --secondary: 222 15% 18%;
+    --secondary-foreground: 0 0% 90%;
     
-    --card: 225 30% 12%;
-    --card-foreground: 45 30% 95%;
+    --muted: 222 10% 20%;
+    --muted-foreground: 220 10% 55%;
     
-    --popover: 225 30% 10%;
-    --popover-foreground: 45 30% 95%;
-    
-    --primary: 45 100% 70%;
-    --primary-foreground: 230 35% 7%;
-    
-    --secondary: 220 30% 20%;
-    --secondary-foreground: 45 30% 90%;
-    
-    --muted: 220 25% 18%;
-    --muted-foreground: 220 15% 55%;
-    
-    --accent: 35 85% 55%;
-    --accent-foreground: 230 35% 7%;
+    --accent: 45 90% 55%;
+    --accent-foreground: 222 20% 10%;
     
     --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 220 20% 25%;
-    --input: 220 25% 20%;
-    --ring: 45 100% 70%;
+    --border: 222 15% 22%;
+    --input: 222 15% 18%;
+    --ring: 45 90% 55%;
     
-    --radius: 1rem;
+    --radius: 0.5rem;
     
-    /* Clock specific */
-    --clock-face: 225 30% 10%;
-    --clock-ring: 45 100% 70%;
-    --clock-hand-hour: 45 100% 85%;
-    --clock-hand-minute: 45 30% 90%;
-    --clock-markers: 45 20% 60%;
-    --clock-center: 40 100% 65%;
+    /* Time display specific */
+    --time-primary: 0 0% 100%;
+    --time-secondary: 220 10% 65%;
+    
+    /* Status colors */
+    --status-night: 230 50% 60%;
+    --status-day: 45 90% 55%;
     
     /* Typography */
-    --font-display: 'Amiri', serif;
-    --font-body: 'Cairo', sans-serif;
+    --font-display: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
   }
 
   .day-mode {
-    --background: 205 85% 92%;
-    --foreground: 225 50% 15%;
+    --background: 0 0% 100%;
+    --foreground: 222 20% 10%;
     
-    --card: 205 70% 97%;
-    --card-foreground: 225 50% 15%;
+    --card: 220 15% 97%;
+    --card-foreground: 222 20% 10%;
     
-    --popover: 200 60% 98%;
-    --popover-foreground: 225 50% 15%;
+    --popover: 220 15% 98%;
+    --popover-foreground: 222 20% 10%;
     
-    --primary: 35 85% 50%;
+    --primary: 222 20% 10%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 200 40% 90%;
-    --secondary-foreground: 225 50% 20%;
+    --secondary: 220 10% 94%;
+    --secondary-foreground: 222 15% 25%;
     
-    --muted: 200 30% 92%;
-    --muted-foreground: 220 20% 40%;
+    --muted: 220 10% 92%;
+    --muted-foreground: 220 10% 45%;
     
-    --accent: 40 100% 55%;
-    --accent-foreground: 225 50% 10%;
+    --accent: 35 90% 50%;
+    --accent-foreground: 0 0% 100%;
     
-    --border: 200 30% 80%;
-    --input: 200 30% 88%;
-    --ring: 35 85% 50%;
+    --border: 220 15% 88%;
+    --input: 220 10% 92%;
+    --ring: 35 90% 50%;
     
-    --clock-face: 200 50% 98%;
-    --clock-ring: 35 80% 50%;
-    --clock-hand-hour: 225 60% 25%;
-    --clock-hand-minute: 225 50% 35%;
-    --clock-markers: 220 30% 50%;
-    --clock-center: 40 100% 50%;
+    --time-primary: 222 20% 10%;
+    --time-secondary: 220 10% 40%;
+    
+    --status-night: 230 40% 45%;
+    --status-day: 35 90% 50%;
   }
 }
 
@@ -118,13 +95,15 @@
   }
 
   html {
-    font-family: var(--font-body);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: var(--font-body);
-    transition: background-color 2s ease, color 1s ease;
+    @apply bg-background text-foreground;
+    font-family: var(--font-display);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -133,85 +112,78 @@
     font-family: var(--font-display);
   }
   
-  .font-body {
-    font-family: var(--font-body);
+  .font-mono {
+    font-family: var(--font-mono);
   }
   
-  /* Clock animations */
-  @keyframes star-twinkle {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
+  /* Hero time display - massive typography */
+  .time-hero {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: hsl(var(--time-primary));
   }
   
-  @keyframes pulse-glow {
-    0%, 100% { filter: drop-shadow(0 0 8px hsl(var(--sun-glow) / 0.5)); }
-    50% { filter: drop-shadow(0 0 20px hsl(var(--sun-glow) / 0.8)); }
+  .time-hero-secondary {
+    font-family: var(--font-display);
+    font-weight: 400;
+    color: hsl(var(--time-secondary));
   }
   
-  @keyframes smooth-rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  /* Container max-width for content */
+  .container-narrow {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
   
-  .star-twinkle {
-    animation: star-twinkle 3s ease-in-out infinite;
+  /* Info table styling */
+  .info-table {
+    @apply w-full;
   }
   
-  .pulse-glow {
-    animation: pulse-glow 4s ease-in-out infinite;
+  .info-table-row {
+    @apply flex justify-between items-center py-3 border-b border-border last:border-b-0;
   }
   
-  .clock-shadow {
-    box-shadow: 
-      0 0 60px hsl(var(--primary) / 0.15),
-      0 0 100px hsl(var(--primary) / 0.1),
-      inset 0 0 80px hsl(var(--primary) / 0.05);
+  .info-table-label {
+    @apply text-muted-foreground font-medium;
   }
   
-  .glass-effect {
-    background: hsl(var(--card) / 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.5);
+  .info-table-value {
+    @apply font-mono text-foreground;
   }
   
-  /* Gradient overlays */
-  .sky-gradient-night {
-    background: linear-gradient(
-      180deg,
-      hsl(var(--sky-midnight)) 0%,
-      hsl(var(--sky-deep-night)) 50%,
-      hsl(var(--sky-twilight)) 100%
-    );
+  /* Search input styling */
+  .search-input {
+    @apply bg-secondary border-0 rounded-lg px-4 py-2 text-sm;
+    @apply placeholder:text-muted-foreground;
+    @apply focus:ring-2 focus:ring-accent focus:outline-none;
+    transition: all 0.2s ease;
   }
   
-  .sky-gradient-day {
-    background: linear-gradient(
-      180deg,
-      hsl(var(--sky-noon)) 0%,
-      hsl(var(--sky-afternoon)) 50%,
-      hsl(var(--sky-morning)) 100%
-    );
+  /* Status indicator dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
   }
   
-  .sky-gradient-sunset {
-    background: linear-gradient(
-      180deg,
-      hsl(var(--sky-twilight)) 0%,
-      hsl(var(--sky-sunset)) 40%,
-      hsl(var(--sky-golden)) 60%,
-      hsl(var(--sky-horizon)) 100%
-    );
+  .status-dot-night {
+    background-color: hsl(var(--status-night));
   }
   
-  /* Dynamic text contrast for sunrise/sunset phases */
-  .text-shadow-contrast {
-    text-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.5),
-      0 0 20px rgba(0, 0, 0, 0.3);
+  .status-dot-day {
+    background-color: hsl(var(--status-day));
   }
   
-  /* Celestial colors for indicators */
-  .bg-celestial-moon {
-    background-color: hsl(var(--moon));
+  /* Subtle divider */
+  .divider {
+    @apply w-full h-px bg-border my-8;
+  }
+  
+  /* Link styling */
+  .link-subtle {
+    @apply text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline;
   }
 }
