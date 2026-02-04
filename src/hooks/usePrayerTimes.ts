@@ -40,6 +40,13 @@ const PRAYER_INFO: Record<string, { nameAr: string; icon: string }> = {
 
 /**
  * Convert standard time to natural time (sunset = 00:00)
+ * 
+ * In Seasonal Hours mode:
+ * - Night (Sunset to Sunrise) = 00:00 to 12:00 (12 stretched hours)
+ * - Day (Sunrise to Sunset) = 12:00 to 24:00 (12 stretched hours)
+ * 
+ * Fajr occurs BEFORE sunrise, so it's during the night period,
+ * and should appear around 10:00-11:00 seasonal time (end of night).
  */
 function toNaturalTime(
   prayerTime: Date, 
@@ -48,28 +55,40 @@ function toNaturalTime(
 ): { hours: number; minutes: number; seconds: number } {
   const sunTimes = SunCalc.getTimes(prayerTime, location.latitude, location.longitude);
   
-  // Find the relevant sunset (either today's or yesterday's)
-  let sunset = sunTimes.sunset;
-  if (prayerTime < sunset) {
-    // Prayer is before today's sunset, use yesterday's sunset
-    const yesterday = new Date(prayerTime);
-    yesterday.setDate(yesterday.getDate() - 1);
-    sunset = SunCalc.getTimes(yesterday, location.latitude, location.longitude).sunset;
-  }
-  
-  const msSinceSunset = prayerTime.getTime() - sunset.getTime();
+  // Determine if prayer time is during night or day
+  // Night: from sunset to next sunrise
+  // Day: from sunrise to sunset
+  const isBeforeSunrise = prayerTime < sunTimes.sunrise;
+  const isAfterSunset = prayerTime >= sunTimes.sunset;
+  const isNight = isBeforeSunrise || isAfterSunset;
   
   if (useSeasonalHours) {
-    // Seasonal hours calculation
-    const isNight = prayerTime < sunTimes.sunrise || prayerTime >= sunTimes.sunset;
-    
     if (isNight) {
-      // Night: 12 hours from sunset to sunrise
-      const tomorrow = new Date(prayerTime);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowSunrise = SunCalc.getTimes(tomorrow, location.latitude, location.longitude).sunrise;
-      const nightDurationMs = tomorrowSunrise.getTime() - sunset.getTime();
-      const progress = msSinceSunset / nightDurationMs;
+      // Night period: 00:00 to 12:00 (seasonal)
+      let relevantSunset: Date;
+      let relevantSunrise: Date;
+      
+      if (isAfterSunset) {
+        // After today's sunset - use today's sunset and tomorrow's sunrise
+        relevantSunset = sunTimes.sunset;
+        const tomorrow = new Date(prayerTime);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        relevantSunrise = SunCalc.getTimes(tomorrow, location.latitude, location.longitude).sunrise;
+      } else {
+        // Before today's sunrise - use yesterday's sunset and today's sunrise
+        const yesterday = new Date(prayerTime);
+        yesterday.setDate(yesterday.getDate() - 1);
+        relevantSunset = SunCalc.getTimes(yesterday, location.latitude, location.longitude).sunset;
+        relevantSunrise = sunTimes.sunrise;
+      }
+      
+      const nightDurationMs = relevantSunrise.getTime() - relevantSunset.getTime();
+      const msSinceSunset = prayerTime.getTime() - relevantSunset.getTime();
+      
+      // Progress through the night (0 = sunset, 1 = sunrise)
+      const progress = Math.max(0, Math.min(1, msSinceSunset / nightDurationMs));
+      
+      // Night = 12 seasonal hours (00:00 to 12:00)
       const totalSeasonalSeconds = progress * 12 * 3600;
       
       return {
@@ -78,12 +97,16 @@ function toNaturalTime(
         seconds: Math.floor(totalSeasonalSeconds % 60),
       };
     } else {
-      // Day: 12 hours from sunrise to sunset
+      // Day period: 12:00 to 24:00 (seasonal)
       const sunrise = sunTimes.sunrise;
-      const sunsetToday = sunTimes.sunset;
-      const dayDurationMs = sunsetToday.getTime() - sunrise.getTime();
+      const sunset = sunTimes.sunset;
+      const dayDurationMs = sunset.getTime() - sunrise.getTime();
       const msSinceSunrise = prayerTime.getTime() - sunrise.getTime();
-      const progress = msSinceSunrise / dayDurationMs;
+      
+      // Progress through the day (0 = sunrise, 1 = sunset)
+      const progress = Math.max(0, Math.min(1, msSinceSunrise / dayDurationMs));
+      
+      // Day = 12 seasonal hours (12:00 to 24:00)
       const totalSeasonalSeconds = progress * 12 * 3600;
       
       return {
@@ -93,9 +116,20 @@ function toNaturalTime(
       };
     }
   } else {
-    // Standard natural time
+    // Standard natural time (fixed 24 hours starting at sunset)
+    let relevantSunset: Date;
+    
+    if (prayerTime >= sunTimes.sunset) {
+      relevantSunset = sunTimes.sunset;
+    } else {
+      const yesterday = new Date(prayerTime);
+      yesterday.setDate(yesterday.getDate() - 1);
+      relevantSunset = SunCalc.getTimes(yesterday, location.latitude, location.longitude).sunset;
+    }
+    
+    const msSinceSunset = prayerTime.getTime() - relevantSunset.getTime();
     const secondsSinceSunset = msSinceSunset / 1000;
-    const totalSeconds = secondsSinceSunset % 86400;
+    const totalSeconds = Math.max(0, secondsSinceSunset % 86400);
     
     return {
       hours: Math.floor(totalSeconds / 3600),
