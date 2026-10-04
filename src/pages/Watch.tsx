@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash } from 'lucide-react';
+import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash, LocateFixed } from 'lucide-react';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
 
@@ -128,6 +128,7 @@ export default function Watch() {
         <Link to="/" className="p-2 rounded-full" style={{ background: '#111' }} aria-label="Back"><ArrowLeft className="w-5 h-5" /></Link>
         <button className="p-2 rounded-full" style={btn(seasonal)} onClick={() => setSeasonal(!seasonal)} aria-label="Seasonal Hours" title="Seasonal Hours"><Hourglass className="w-5 h-5" /></button>
         <button className="p-2 rounded-full" style={btn(digital)} onClick={() => setDigital(!digital)} aria-label="Analog / Digital" title="Analog / Digital">{digital ? <Clock className="w-5 h-5" /> : <Hash className="w-5 h-5" />}</button>
+        <button className="p-2 rounded-full" style={btn(loading)} onClick={() => retryLocation()} aria-label="Locate" title="Update location"><LocateFixed className={`w-5 h-5 ${loading ? "animate-pulse" : ""}`} /></button>
         <button className="p-2 rounded-full" style={btn(ambient)} onClick={() => setAmbient(a => !a)} aria-label="Ambient"><Moon className="w-5 h-5" /></button>
         <button className="p-2 rounded-full" style={{ background: '#111' }} onClick={() => document.documentElement.requestFullscreen?.()} aria-label="Fullscreen"><Maximize className="w-5 h-5" /></button>
       </div>
