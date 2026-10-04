@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, X, Settings, Sun, Moon } from 'lucide-react';
+import { Search, X, Settings, Watch } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { MAJOR_CITIES, type CityInfo } from '@/lib/cityCoordinates';
 import { cn } from '@/lib/utils';
 
@@ -86,6 +87,13 @@ export function NavigationBar({
 
           {/* Right side controls */}
           <div className="flex items-center gap-2">
+            <Link
+              to="/watch"
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+              aria-label="Watch mode"
+            >
+              <Watch className="w-5 h-5" />
+            </Link>
             {/* Settings Dropdown */}
             <div ref={settingsRef} className="relative">
               <button
