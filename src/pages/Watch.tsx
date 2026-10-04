@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash, LocateFixed } from 'lucide-react';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
+import { STORAGE_KEYS } from '@/hooks/useLocalStorage';
 
 const pad = (n: number) => String(Math.max(0, n)).padStart(2, '0');
 
 export default function Watch() {
   const { location, retryLocation, loading } = useGeolocation();
-  const [seasonal, setSeasonal] = useStoredState('ghurubi-watch-seasonal', false);
+  const [seasonal, setSeasonal] = useStoredState<boolean>(STORAGE_KEYS.SEASONAL_HOURS, false);
   const [digital, setDigital] = useStoredState('ghurubi-watch-digital', false);
   const time = useNaturalTime(location, seasonal);
   const [ambient, setAmbient] = useState(false);

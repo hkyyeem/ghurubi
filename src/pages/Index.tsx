@@ -9,7 +9,10 @@ import { PrayerTimesDisplay } from '@/components/PrayerTimesDisplay';
 import type { CityInfo } from '@/lib/cityCoordinates';
 
 const Index = () => {
-  const { location, setManualLocation } = useGeolocation();
+  const { location, setManualLocation, retryLocation } = useGeolocation();
+  // Always refresh real location on open (same behaviour as the watch)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { retryLocation(); }, []);
   
   // Persistent state with localStorage (sync initialization prevents flicker)
   const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(
