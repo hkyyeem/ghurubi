@@ -7,7 +7,7 @@ import { useStoredState } from '@/hooks/useWatchPrefs';
 const pad = (n: number) => String(Math.max(0, n)).padStart(2, '0');
 
 export default function Watch() {
-  const { location } = useGeolocation();
+  const { location, retryLocation, loading } = useGeolocation();
   const [seasonal, setSeasonal] = useStoredState('ghurubi-watch-seasonal', false);
   const [digital, setDigital] = useStoredState('ghurubi-watch-digital', false);
   const time = useNaturalTime(location, seasonal);
@@ -15,6 +15,9 @@ export default function Watch() {
 
   useEffect(() => {
     document.title = 'Ghurubi Watch';
+    // Always refresh the real location when the watch opens (saved city may be stale)
+    retryLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!time) return <div className="min-h-screen bg-black" />;
