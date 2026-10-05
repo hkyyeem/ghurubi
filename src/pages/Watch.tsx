@@ -28,6 +28,24 @@ export default function Watch() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Keep the screen awake while the watch page is visible
+  useEffect(() => {
+    let lock: { release: () => Promise<void> } | null = null;
+    const nav = navigator as Navigator & { wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> } };
+    const request = async () => {
+      try {
+        if (nav.wakeLock && document.visibilityState === 'visible') lock = await nav.wakeLock.request('screen');
+      } catch { /* unsupported or denied */ }
+    };
+    const onVis = () => { if (document.visibilityState === 'visible') request(); };
+    request();
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      document.removeEventListener('visibilitychange', onVis);
+      lock?.release().catch(() => {});
+    };
+  }, []);
+
   const submitCity = async (e: React.FormEvent) => {
     e.preventDefault();
     setCityBusy(true); setCityErr('');
