@@ -147,11 +147,29 @@ export default function Watch() {
         )}
       </div>
 
+      {cityOpen ? (
+        <form onSubmit={submitCity} className="flex flex-col items-center gap-2 w-full max-w-xs">
+          <input autoFocus value={cityQuery} onChange={e => setCityQuery(e.target.value)}
+            placeholder="Riyadh / الرياض" dir="auto"
+            className="w-full rounded-full px-4 py-2 text-center outline-none"
+            style={{ background: '#111', color: '#fff', border: `1px solid ${accent}` }} />
+          {cityErr && <div style={{ color: '#f87171', fontSize: 12 }}>{cityErr}</div>}
+          <div className="flex gap-2">
+            <button type="submit" disabled={cityBusy} className="px-4 py-1.5 rounded-full" style={{ background: accent, color: '#000' }}>{cityBusy ? '...' : 'تثبيت'}</button>
+            <button type="button" onClick={() => setCityOpen(false)} className="px-4 py-1.5 rounded-full" style={{ background: '#111', color: '#999' }}>إلغاء</button>
+          </div>
+        </form>
+      ) : (
+        <button onClick={() => setCityOpen(true)} className="px-4 py-1.5 rounded-full flex items-center gap-1" style={{ background: '#111', color: '#ccc', fontSize: 13 }}>
+          <Search className="w-4 h-4" /> {location.city?.nameAr || location.city?.name || 'اختر مدينة'}
+        </button>
+      )}
+
       <div className="flex items-center gap-3 flex-wrap justify-center" style={{ color: '#999' }}>
         <Link to="/" className="p-2 rounded-full" style={{ background: '#111' }} aria-label="Back"><ArrowLeft className="w-5 h-5" /></Link>
         <button className="p-2 rounded-full" style={btn(seasonal)} onClick={() => setSeasonal(!seasonal)} aria-label="Seasonal Hours" title="Seasonal Hours"><Hourglass className="w-5 h-5" /></button>
         <button className="p-2 rounded-full" style={btn(digital)} onClick={() => setDigital(!digital)} aria-label="Analog / Digital" title="Analog / Digital">{digital ? <Clock className="w-5 h-5" /> : <Hash className="w-5 h-5" />}</button>
-        <button className="p-2 rounded-full" style={btn(loading)} onClick={() => retryLocation()} aria-label="Locate" title="Update location"><LocateFixed className={`w-5 h-5 ${loading ? "animate-pulse" : ""}`} /></button>
+        <button className="p-2 rounded-full" style={btn(loading)} onClick={useGps} aria-label="Locate" title="Use GPS"><LocateFixed className={`w-5 h-5 ${loading ? "animate-pulse" : ""}`} /></button>
         <button className="p-2 rounded-full" style={btn(ambient)} onClick={() => setAmbient(a => !a)} aria-label="Ambient"><Moon className="w-5 h-5" /></button>
         <button className="p-2 rounded-full" style={{ background: '#111' }} onClick={() => document.documentElement.requestFullscreen?.()} aria-label="Fullscreen"><Maximize className="w-5 h-5" /></button>
       </div>
