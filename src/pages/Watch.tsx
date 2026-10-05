@@ -38,10 +38,14 @@ export default function Watch() {
       } catch { /* unsupported or denied */ }
     };
     const onVis = () => { if (document.visibilityState === 'visible') request(); };
+    // Installed apps may require a user gesture before granting the lock
+    const onTouch = () => { if (!lock || (lock as { released?: boolean }).released) request(); };
     request();
     document.addEventListener('visibilitychange', onVis);
+    document.addEventListener('pointerdown', onTouch);
     return () => {
       document.removeEventListener('visibilitychange', onVis);
+      document.removeEventListener('pointerdown', onTouch);
       lock?.release().catch(() => {});
     };
   }, []);
