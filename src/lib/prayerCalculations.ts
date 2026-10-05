@@ -4,6 +4,7 @@
  */
 
 import SunCalc from 'suncalc';
+import { UMM_AL_QURA_MONTH_LENGTHS, UMM_AL_QURA_START_MJD, UMM_AL_QURA_START_YEAR } from './ummAlQuraData';
 
 export interface PrayerTimeConfig {
   method: 'umm-al-qura' | 'egyptian' | 'karachi' | 'isna' | 'mwl';
@@ -219,21 +220,42 @@ function binarySearchAltitude(
 }
 
 /**
- * Convert Gregorian date to Hijri (Um Al-Qura approximation)
+ * Convert Gregorian date to Hijri using the official Umm Al-Qura table.
+ * Falls back to the tabular (Kuwaiti) algorithm outside 1356–1500 AH.
  */
 export function toHijriDate(date: Date): HijriDate {
-  // Um Al-Qura calendar calculation (simplified approximation)
-  // For production, use a proper Hijri calendar library
-  
   const jd = gregorianToJulian(date);
-  const hijri = julianToHijri(jd);
-  
+  const hijri = julianToUmmAlQura(jd) ?? julianToHijri(jd);
+
   return {
     day: hijri.day,
     month: hijri.month,
     monthName: HIJRI_MONTHS[hijri.month - 1],
     year: hijri.year,
     formatted: `${hijri.day} ${HIJRI_MONTHS[hijri.month - 1]} ${hijri.year}`,
+  };
+}
+
+// Cumulative MJD of the first day of each month in the table
+const MONTH_START_MJD: number[] = (() => {
+  const starts = [UMM_AL_QURA_START_MJD];
+  let sum = UMM_AL_QURA_START_MJD;
+  for (const len of UMM_AL_QURA_MONTH_LENGTHS) {
+    sum += len;
+    starts.push(sum);
+  }
+  return starts;
+})();
+
+function julianToUmmAlQura(jd: number): { year: number; month: number; day: number } | null {
+  const mjd = jd - 2400000;
+  if (mjd < MONTH_START_MJD[0] || mjd >= MONTH_START_MJD[MONTH_START_MJD.length - 1]) return null;
+  let i = 0;
+  while (MONTH_START_MJD[i + 1] <= mjd) i++;
+  return {
+    year: UMM_AL_QURA_START_YEAR + Math.floor(i / 12),
+    month: (i % 12) + 1,
+    day: mjd - MONTH_START_MJD[i] + 1,
   };
 }
 
