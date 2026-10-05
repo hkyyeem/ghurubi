@@ -4,22 +4,44 @@ import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash, LocateFixed } f
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
 import { STORAGE_KEYS } from '@/hooks/useLocalStorage';
+import { searchCityByName } from '@/lib/searchCity';
 
 const pad = (n: number) => String(Math.max(0, n)).padStart(2, '0');
 
+const MANUAL_KEY = 'ghurubi-manual-city';
+
 export default function Watch() {
-  const { location, retryLocation, loading } = useGeolocation();
+  const { location, retryLocation, loading, setManualLocation } = useGeolocation();
   const [seasonal, setSeasonal] = useStoredState<boolean>(STORAGE_KEYS.SEASONAL_HOURS, false);
   const [digital, setDigital] = useStoredState('ghurubi-watch-digital', false);
   const time = useNaturalTime(location, seasonal);
   const [ambient, setAmbient] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
+  const [cityQuery, setCityQuery] = useState('');
+  const [cityBusy, setCityBusy] = useState(false);
+  const [cityErr, setCityErr] = useState('');
 
   useEffect(() => {
     document.title = 'Ghurubi Watch';
-    // Always refresh the real location when the watch opens (saved city may be stale)
-    retryLocation();
+    // Use GPS on open unless the user typed a city by name
+    if (localStorage.getItem(MANUAL_KEY) !== '1') retryLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const submitCity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCityBusy(true); setCityErr('');
+    try {
+      const c = await searchCityByName(cityQuery);
+      if (!c) { setCityErr('لم يتم العثور على المدينة'); return; }
+      setManualLocation({ latitude: c.latitude, longitude: c.longitude, city: c });
+      localStorage.setItem(MANUAL_KEY, '1');
+      setCityOpen(false); setCityQuery('');
+    } catch { setCityErr('تعذر البحث، تحقق من الاتصال'); }
+    finally { setCityBusy(false); }
+  };
+
+  const useGps = () => { localStorage.removeItem(MANUAL_KEY); retryLocation(); };
 
   if (!time) return <div className="min-h-screen bg-black" />;
 
