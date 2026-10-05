@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash, LocateFixed } from 'lucide-react';
+import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash, LocateFixed, Search } from 'lucide-react';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
 import { STORAGE_KEYS } from '@/hooks/useLocalStorage';
