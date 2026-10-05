@@ -25,6 +25,9 @@ export default defineConfig(({ mode }) => ({
       manifest: false,
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ["**/*.{js,css,html,png,svg,ico,webmanifest}"],
         runtimeCaching: [
           {
