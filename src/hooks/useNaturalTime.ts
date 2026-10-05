@@ -161,7 +161,7 @@ export function useGeolocation() {
         setError(errorMessage);
         setLoading(false);
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      { enableHighAccuracy: true, timeout: 30000, maximumAge: 600000 }
     );
   }, []);
 
