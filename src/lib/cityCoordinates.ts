@@ -125,7 +125,7 @@ export const MAJOR_CITIES: CityInfo[] = [
   { name: 'Jazan', nameAr: 'جازان', country: 'Saudi Arabia', countryAr: 'السعودية', latitude: 16.8892, longitude: 42.5511 },
   { name: 'Hofuf', nameAr: 'الهفوف', country: 'Saudi Arabia', countryAr: 'السعودية', latitude: 25.3833, longitude: 49.5865 },
   { name: 'Irbid', nameAr: 'إربد', country: 'Jordan', countryAr: 'الأردن', latitude: 32.5556, longitude: 35.85 },
-  { name: 'Tripoli LB', nameAr: 'طرابلس الشام', country: 'Lebanon', countryAr: 'لبنان', latitude: 34.4367, longitude: 35.8497 },
+  { name: 'Tripoli Lebanon', nameAr: 'طرابلس الشام', country: 'Lebanon', countryAr: 'لبنان', latitude: 34.4367, longitude: 35.8497 },
   { name: 'Marrakesh', nameAr: 'مراكش', country: 'Morocco', countryAr: 'المغرب', latitude: 31.6295, longitude: -7.9811 },
   { name: 'Fez', nameAr: 'فاس', country: 'Morocco', countryAr: 'المغرب', latitude: 34.0181, longitude: -5.0078 },
   { name: 'Oran', nameAr: 'وهران', country: 'Algeria', countryAr: 'الجزائر', latitude: 35.6971, longitude: -0.6308 },
