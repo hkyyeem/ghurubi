@@ -3,6 +3,7 @@ import { Search, X, Settings, Watch } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MAJOR_CITIES, type CityInfo } from '@/lib/cityCoordinates';
 import { cn } from '@/lib/utils';
+import { useI18n, LANGS, LANG_LABEL, cityName, countryName } from '@/lib/i18n';
 
 interface NavigationBarProps {
   onCitySelect: (city: CityInfo) => void;
@@ -23,6 +24,7 @@ export function NavigationBar({
   showPrayerTimes,
   onTogglePrayerTimes,
 }: NavigationBarProps) {
+  const { lang, setLang, t } = useI18n();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -81,12 +83,20 @@ export function NavigationBar({
               Ghurubi
             </span>
             <span className="text-xs text-muted-foreground hidden sm:inline">
-              Sunset Time
+              {t.tagline}
             </span>
           </div>
 
           {/* Right side controls */}
           <div className="flex items-center gap-2">
+            <div className="flex items-center text-xs" role="group" aria-label="Language">
+              {LANGS.map(l => (
+                <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}
+                  className={cn("px-1.5 py-1 rounded transition-colors", lang === l ? "text-foreground font-semibold" : "text-muted-foreground hover:text-foreground")}>
+                  {LANG_LABEL[l]}
+                </button>
+              ))}
+            </div>
             <Link
               to="/watch"
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
@@ -110,15 +120,15 @@ export function NavigationBar({
               </button>
 
               {isSettingsOpen && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+                <div className="absolute end-0 top-full mt-2 w-64 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
                   <div className="p-4 space-y-4">
-                    <h3 className="font-medium text-sm text-foreground">Settings</h3>
+                    <h3 className="font-medium text-sm text-foreground">{t.settings}</h3>
                     
                     {/* Seasonal Hours Toggle */}
                     <label className="flex items-center justify-between cursor-pointer">
                       <div>
-                        <span className="text-sm text-foreground">Seasonal Hours</span>
-                        <p className="text-xs text-muted-foreground">12h night / 12h day</p>
+                        <span className="text-sm text-foreground">{t.seasonal}</span>
+                        <p className="text-xs text-muted-foreground">{t.seasonalSub}</p>
                       </div>
                       <button
                         onClick={() => onToggleSeasonalHours(!showSeasonalHours)}
@@ -139,8 +149,8 @@ export function NavigationBar({
                     {/* Prayer Times Toggle */}
                     <label className="flex items-center justify-between cursor-pointer">
                       <div>
-                        <span className="text-sm text-foreground">Prayer Times</span>
-                        <p className="text-xs text-muted-foreground">Show Islamic prayer times</p>
+                        <span className="text-sm text-foreground">{t.prayer}</span>
+                        <p className="text-xs text-muted-foreground">{t.prayerSub}</p>
                       </div>
                       <button
                         onClick={() => onTogglePrayerTimes(!showPrayerTimes)}
@@ -170,7 +180,7 @@ export function NavigationBar({
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Search className="w-4 h-4" />
-                  <span className="text-sm hidden sm:inline">Search location...</span>
+                  <span className="text-sm hidden sm:inline">{t.search}</span>
                 </button>
               ) : (
                 <div className="flex items-center gap-2">
@@ -181,7 +191,7 @@ export function NavigationBar({
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search city..."
+                      placeholder={t.searchCity}
                       className="search-input w-48 sm:w-64 pl-9 pr-8"
                     />
                     {searchQuery && (
@@ -207,19 +217,19 @@ export function NavigationBar({
 
               {/* Search Results Dropdown */}
               {isSearchOpen && searchQuery && filteredCities.length > 0 && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-card border border-border rounded-lg shadow-lg overflow-hidden max-h-80 overflow-y-auto">
+                <div className="absolute end-0 top-full mt-2 w-72 bg-card border border-border rounded-lg shadow-lg overflow-hidden max-h-80 overflow-y-auto">
                   {filteredCities.map((city) => (
                     <button
                       key={`${city.name}-${city.country}`}
                       onClick={() => handleCitySelect(city)}
                       className={cn(
-                        "w-full text-left px-4 py-3 hover:bg-secondary transition-colors border-b border-border last:border-b-0",
+                        "w-full text-start px-4 py-3 hover:bg-secondary transition-colors border-b border-border last:border-b-0",
                         currentCity?.name === city.name && "bg-secondary/50"
                       )}
                     >
-                      <div className="font-medium text-foreground">{city.name}</div>
+                      <div className="font-medium text-foreground">{cityName(city, lang)}</div>
                       <div className="text-sm text-muted-foreground">
-                        {city.country} • {city.nameAr}
+                        {countryName(city, lang)}{lang !== 'ar' ? ` • ${city.nameAr}` : ` • ${city.name}`}
                       </div>
                     </button>
                   ))}
@@ -227,7 +237,7 @@ export function NavigationBar({
               )}
 
               {isSearchOpen && searchQuery && filteredCities.length === 0 && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-card border border-border rounded-lg shadow-lg p-4">
+                <div className="absolute end-0 top-full mt-2 w-72 bg-card border border-border rounded-lg shadow-lg p-4">
                   <p className="text-sm text-muted-foreground text-center">
                     No cities found for "{searchQuery}"
                   </p>

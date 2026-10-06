@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SeoHead } from '@/components/SeoHead';
+import { useI18n } from '@/lib/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useLocalStorage, STORAGE_KEYS } from '@/hooks/useLocalStorage';
@@ -10,6 +11,7 @@ import { PrayerTimesDisplay } from '@/components/PrayerTimesDisplay';
 import type { CityInfo } from '@/lib/cityCoordinates';
 
 const Index = () => {
+  const { t } = useI18n();
   const { location, setManualLocation, retryLocation } = useGeolocation();
   // Always refresh real location on open (same behaviour as the watch)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +47,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Helmet><link rel="canonical" href="https://ghurubi.com/" /></Helmet>
+      <SeoHead path="/" title={t.homeTitle} desc={t.homeDesc} />
       {/* Navigation Bar */}
       <NavigationBar
         onCitySelect={handleCitySelect}
@@ -83,7 +85,7 @@ const Index = () => {
             >
               <div className="bg-card border border-border rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-foreground mb-4">
-                  Prayer Times
+                  {t.prayer}
                 </h2>
                 <PrayerTimesDisplay 
                   location={location} 
@@ -98,8 +100,8 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8 mt-8">
         <div className="container-narrow text-center text-sm text-muted-foreground">
-          <p>Ghurubi Time — Natural time based on the solar cycle</p>
-          <p className="mt-1 text-xs">Sunset = 00:00 • Night precedes Day</p>
+          <p>{t.footer1}</p>
+          <p className="mt-1 text-xs">{t.footer2}</p>
         </div>
       </footer>
     </div>
