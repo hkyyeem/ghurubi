@@ -178,3 +178,19 @@ export const DEFAULT_CITY: CityInfo = {
   latitude: 21.4225,
   longitude: 39.8262,
 };
+
+/** URL slug for a city, e.g. "Kuala Lumpur" -> "kuala-lumpur" */
+export function citySlug(city: CityInfo): string {
+  return city.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+export function getCityBySlug(slug?: string): CityInfo | undefined {
+  if (!slug) return undefined;
+  return MAJOR_CITIES.find(c => citySlug(c) === slug.toLowerCase());
+}
+
+/** Canonical compare slug: alphabetical order so each pair has one URL */
+export function compareSlug(a: CityInfo, b: CityInfo): string {
+  const [x, y] = [citySlug(a), citySlug(b)].sort();
+  return `${x}-vs-${y}`;
+}
