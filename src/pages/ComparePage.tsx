@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { SeoHead } from '@/components/SeoHead';
+import { useI18n, cityName } from '@/lib/i18n';
 import { useNaturalTime, type Location, type NaturalTime } from '@/hooks/useNaturalTime';
 import { getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
 import NotFound from './NotFound';
@@ -16,21 +17,22 @@ function useCityTime(city?: CityInfo) {
 }
 
 function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
+  const { lang, t } = useI18n();
   return (
     <div className="flex-1 text-center py-8">
       <Link to={`/city/${citySlug(city)}`} className="text-lg font-semibold hover:underline">
-        {city.name} <span className="text-muted-foreground font-normal">· {city.nameAr}</span>
+        {cityName(city, lang)}
       </Link>
       <p className="mt-4 text-5xl md:text-6xl font-bold tabular-nums tracking-tight">
         {time ? `${pad(time.hours)}:${pad(time.minutes)}:${pad(time.seconds)}` : '--:--:--'}
       </p>
-      <p className="mt-2 text-sm text-muted-foreground">{time ? (time.isNight ? 'Night' : 'Day') : ''}</p>
+      <p className="mt-2 text-sm text-muted-foreground">{time ? (time.isNight ? t.night : t.day) : ''}</p>
       {time && (
         <dl className="mt-6 grid grid-cols-2 gap-y-2 text-sm max-w-xs mx-auto">
-          <dt className="text-muted-foreground text-left">Night</dt><dd className="text-right tabular-nums">{hm(Math.round(time.nightLength * 60))}</dd>
-          <dt className="text-muted-foreground text-left">Day</dt><dd className="text-right tabular-nums">{hm(Math.round(time.dayLength * 60))}</dd>
-          <dt className="text-muted-foreground text-left">Next sunset in</dt>
-          <dd className="text-right tabular-nums">{pad(time.sunsetCountdown.hours)}:{pad(time.sunsetCountdown.minutes)}</dd>
+          <dt className="text-muted-foreground text-start">{t.nightLen}</dt><dd dir="ltr" className="text-end tabular-nums">{hm(Math.round(time.nightLength * 60))}</dd>
+          <dt className="text-muted-foreground text-start">{t.dayLen}</dt><dd dir="ltr" className="text-end tabular-nums">{hm(Math.round(time.dayLength * 60))}</dd>
+          <dt className="text-muted-foreground text-start">{t.nextSunset}</dt>
+          <dd dir="ltr" className="text-end tabular-nums">{pad(time.sunsetCountdown.hours)}:{pad(time.sunsetCountdown.minutes)}</dd>
         </dl>
       )}
     </div>
@@ -39,6 +41,7 @@ function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
 
 const ComparePage = () => {
   const { pair } = useParams();
+  const { lang, t } = useI18n();
   const [sa, sb] = (pair ?? '').split('-vs-');
   const a = getCityBySlug(sa);
   const b = getCityBySlug(sb);
@@ -50,32 +53,26 @@ const ComparePage = () => {
   if (canonical !== pair) return <Navigate to={`/compare/${canonical}`} replace />;
 
   const url = `${BASE}/compare/${canonical}`;
-  const title = `${a.name} vs ${b.name} Ghurubi Time — ${a.nameAr} و${b.nameAr} | Ghurubi`;
-  const desc = `Compare Ghurubi (sunset-based) time between ${a.name} and ${b.name}: who reached sunset first, night and day length in each city. مقارنة التوقيت الغروبي بين ${a.nameAr} و${b.nameAr}.`;
+  const na = cityName(a, lang), nb = cityName(b, lang);
+  const title = t.cmpTitle(na, nb);
+  const desc = t.cmpDesc(na, nb);
 
   let gap = '';
   if (ta && tb) {
     const diff = Math.round((ta.lastSunset.getTime() - tb.lastSunset.getTime()) / 60000);
     const d = ((diff % 1440) + 1440) % 1440;
     const m = d > 720 ? d - 1440 : d;
-    if (m !== 0) gap = `Sunset reaches ${m < 0 ? a.name : b.name} ${hm(Math.abs(m))} before ${m < 0 ? b.name : a.name}`;
+    if (m !== 0) gap = t.reachesBefore(m < 0 ? na : nb, m < 0 ? nb : na, hm(Math.abs(m)));
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={desc} />
-        <link rel="canonical" href={url} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={desc} />
-        <meta property="og:url" content={url} />
-      </Helmet>
+      <SeoHead path={`/compare/${canonical}`} title={title} desc={desc} />
       <header className="border-b border-border">
         <div className="container-narrow py-4"><Link to="/" className="font-bold">Ghurubi</Link></div>
       </header>
       <main className="container-narrow">
-        <h1 className="text-center text-xl font-semibold pt-10">{a.name} vs {b.name}</h1>
+        <h1 className="text-center text-xl font-semibold pt-10">{na} {t.vs} {nb}</h1>
         <div className="flex flex-col md:flex-row md:divide-x divide-border">
           <Column city={a} time={ta} />
           <Column city={b} time={tb} />

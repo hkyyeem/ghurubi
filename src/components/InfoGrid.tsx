@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { useI18n } from '@/lib/i18n';
 import type { NaturalTime, SeasonalTime } from '@/hooks/useNaturalTime';
 
 interface InfoGridProps {
@@ -6,6 +7,7 @@ interface InfoGridProps {
 }
 
 export function InfoGrid({ time }: InfoGridProps) {
+  const { t } = useI18n();
   if (!time) {
     return (
       <div className="container-narrow py-8">
@@ -46,28 +48,28 @@ export function InfoGrid({ time }: InfoGridProps) {
 
   const rows = [
     {
-      label: 'Sunset (Day Start)',
-      value: `${formatLocalTime(time.lastSunset)} local`,
+      label: t.sunset,
+      value: `${formatLocalTime(time.lastSunset)} ${t.local}`,
       naturalValue: sunsetNatural,
       highlight: true,
     },
     {
-      label: 'Sunrise',
-      value: `${formatLocalTime(time.sunrise)} local`,
+      label: t.sunrise,
+      value: `${formatLocalTime(time.sunrise)} ${t.local}`,
       naturalValue: sunriseNatural,
     },
     {
-      label: 'Day Length',
+      label: t.dayLen,
       value: formatDuration(time.dayLength),
       percentage: dayPercentage,
     },
     {
-      label: 'Night Length',
+      label: t.nightLen,
       value: formatDuration(time.nightLength),
       percentage: nightPercentage,
     },
     {
-      label: 'Time to Sunset',
+      label: t.toSunset,
       value: `${time.sunsetCountdown.hours}h ${time.sunsetCountdown.minutes}m ${time.sunsetCountdown.seconds}s`,
       countdown: true,
     },
@@ -78,7 +80,7 @@ export function InfoGrid({ time }: InfoGridProps) {
       <div className="divider" />
       
       <h2 className="text-lg font-semibold text-foreground mb-6">
-        Sun Data
+        {t.sunData}
       </h2>
       
       <div className="info-table">
@@ -98,7 +100,7 @@ export function InfoGrid({ time }: InfoGridProps) {
                   {row.percentage}%
                 </span>
               )}
-              <span className={`info-table-value text-sm md:text-base ${row.highlight ? 'text-accent font-semibold' : ''} ${row.countdown ? 'tabular-nums' : ''}`}>
+              <span dir="ltr" className={`info-table-value text-sm md:text-base ${row.highlight ? 'text-accent font-semibold' : ''} ${row.countdown ? 'tabular-nums' : ''}`}>
                 {row.value}
               </span>
             </div>
@@ -109,7 +111,7 @@ export function InfoGrid({ time }: InfoGridProps) {
       {/* Day/Night visual bar */}
       <div className="mt-8">
         <div className="flex items-center gap-4 mb-3">
-          <span className="text-sm text-muted-foreground">Day/Night Ratio</span>
+          <span className="text-sm text-muted-foreground">{t.ratio}</span>
         </div>
         <div className="h-3 rounded-full bg-secondary overflow-hidden flex">
           <div 
@@ -122,8 +124,8 @@ export function InfoGrid({ time }: InfoGridProps) {
           />
         </div>
         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-          <span>Day: {dayPercentage}%</span>
-          <span>Night: {nightPercentage}%</span>
+          <span>{t.day}: {dayPercentage}%</span>
+          <span>{t.night}: {nightPercentage}%</span>
         </div>
       </div>
 
@@ -131,14 +133,9 @@ export function InfoGrid({ time }: InfoGridProps) {
 
       {/* Explanation section */}
       <div className="text-sm text-muted-foreground space-y-3">
-        <h3 className="font-semibold text-foreground">About Ghurubi Time</h3>
-        <p>
-          Ghurubi time is a natural time system where <strong>sunset marks 00:00</strong> (the start of a new day). 
-          The night period runs from 00:00 to approximately 12:00 (sunrise), followed by the day period until the next sunset.
-        </p>
-        <p>
-          This system aligns with the natural solar cycle and historical traditions where the day began at sunset.
-        </p>
+        <h3 className="font-semibold text-foreground">{t.about}</h3>
+        <p>{t.about1}</p>
+        <p>{t.about2}</p>
       </div>
     </div>
   );
