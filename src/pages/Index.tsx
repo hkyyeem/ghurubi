@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useLocalStorage, STORAGE_KEYS } from '@/hooks/useLocalStorage';
@@ -44,6 +45,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      <Helmet><link rel="canonical" href="https://ghurubi.com/" /></Helmet>
       {/* Navigation Bar */}
       <NavigationBar
         onCitySelect={handleCitySelect}
