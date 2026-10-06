@@ -3,7 +3,10 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { SeoHead } from '@/components/SeoHead';
 import { useI18n, cityName } from '@/lib/i18n';
 import { useNaturalTime, type Location, type NaturalTime } from '@/hooks/useNaturalTime';
-import { getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
+import { MAJOR_CITIES, getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
+import { SimpleHeader } from '@/components/SimpleHeader';
+import { SiteFooter } from '@/components/SiteFooter';
+import { useX } from '@/lib/i18nExtra';
 import NotFound from './NotFound';
 
 const BASE = 'https://ghurubi.com';
@@ -42,6 +45,7 @@ function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
 const ComparePage = () => {
   const { pair } = useParams();
   const { lang, t } = useI18n();
+  const x = useX();
   const [sa, sb] = (pair ?? '').split('-vs-');
   const a = getCityBySlug(sa);
   const b = getCityBySlug(sb);
@@ -65,20 +69,51 @@ const ComparePage = () => {
     if (m !== 0) gap = t.reachesBefore(m < 0 ? na : nb, m < 0 ? nb : na, hm(Math.abs(m)));
   }
 
+  const row = (label: string, va: string, vb: string) => (
+    <tr className="border-b border-border">
+      <th className="py-2 text-start font-normal text-muted-foreground">{label}</th>
+      <td dir="ltr" className="py-2 text-center tabular-nums">{va}</td>
+      <td dir="ltr" className="py-2 text-center tabular-nums">{vb}</td>
+    </tr>
+  );
+  const sh = (h: number) => hm(Math.round((h * 60) / 12));
+  const moreA = MAJOR_CITIES.filter(c => c !== a && c !== b).slice(0, 12);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SeoHead path={`/compare/${canonical}`} title={title} desc={desc} />
-      <header className="border-b border-border">
-        <div className="container-narrow py-4"><Link to="/" className="font-bold">Ghurubi</Link></div>
-      </header>
+      <SimpleHeader />
       <main className="container-narrow">
         <h1 className="text-center text-xl font-semibold pt-10">{na} {t.vs} {nb}</h1>
         <div className="flex flex-col md:flex-row md:divide-x divide-border">
           <Column city={a} time={ta} />
           <Column city={b} time={tb} />
         </div>
-        {gap && <p className="text-center text-sm text-muted-foreground pb-10">{gap}</p>}
+        {gap && <p className="text-center text-muted-foreground pb-6">{gap}</p>}
+        {ta && tb && (
+          <table className="w-full max-w-xl mx-auto text-sm my-6">
+            <thead><tr className="border-b border-border">
+              <th /><th className="py-2">{na}</th><th className="py-2">{nb}</th>
+            </tr></thead>
+            <tbody>
+              {row(t.nightLen, hm(Math.round(ta.nightLength * 60)), hm(Math.round(tb.nightLength * 60)))}
+              {row(t.dayLen, hm(Math.round(ta.dayLength * 60)), hm(Math.round(tb.dayLength * 60)))}
+              {row(x.hourNight, sh(ta.nightLength), sh(tb.nightLength))}
+              {row(x.hourDay, sh(ta.dayLength), sh(tb.dayLength))}
+            </tbody>
+          </table>
+        )}
+        <section className="text-sm mt-10">
+          <h2 className="font-semibold mb-3">{x.compareWith(na)}</h2>
+          <ul className="flex flex-wrap gap-x-4 gap-y-2 text-muted-foreground">
+            {moreA.map(o => (
+              <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={`/compare/${compareSlug(a, o)}`}>{cityName(o, lang)}</Link></li>
+            ))}
+          </ul>
+          <p className="mt-6"><Link to="/compare" className="underline">{x.compare}</Link></p>
+        </section>
       </main>
+      <SiteFooter />
     </div>
   );
 };
