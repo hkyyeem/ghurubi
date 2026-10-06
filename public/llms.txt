@@ -1,0 +1,20 @@
+# Ghurubi (غروبي) — The Earth Clock
+
+> Ghurubi is a free web clock that shows natural, sunset-based time ("Ghurubi time", also known as Arabic sunset time, Ottoman Ezani/Alaturka time, and the basis of Hebrew sha'ot zmaniyot). Sunset is 00:00 and starts the new day; night comes first, then day. Available in Arabic, English, Turkish and Hebrew at https://ghurubi.com.
+
+## Key facts
+- Day starts at sunset (00:00). Sunrise falls near 12:00 in seasonal hours.
+- Two modes: equal hours (60 minutes) and seasonal hours (night and day each split into 12 parts).
+- Sunrise/sunset computed from city coordinates at sea level, matching the Umm al-Qura calendar.
+- Optional Islamic prayer times (Umm al-Qura method) shown in Ghurubi time. Hijri date from the official Umm al-Qura table.
+- Works for any city in the world; installable as an app; Wear OS watch face available.
+
+## Pages
+- [Home — your location](https://ghurubi.com/)
+- [All cities](https://ghurubi.com/cities): e.g. [Makkah](https://ghurubi.com/city/makkah), [Riyadh](https://ghurubi.com/city/riyadh), [Istanbul](https://ghurubi.com/city/istanbul), [Jerusalem](https://ghurubi.com/city/jerusalem), [Aleppo](https://ghurubi.com/city/aleppo)
+- [Compare two cities](https://ghurubi.com/compare): e.g. [Makkah vs Riyadh](https://ghurubi.com/compare/makkah-vs-riyadh)
+- [Event countdown](https://ghurubi.com/event)
+- [Watch face](https://ghurubi.com/watch)
+- [Site map](https://ghurubi.com/sitemap) · [XML sitemap](https://ghurubi.com/sitemap.xml)
+
+Language versions: add ?lang=ar, ?lang=tr or ?lang=he to any page.

@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { SeoHead } from '@/components/SeoHead';
+import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n } from '@/lib/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
@@ -97,13 +98,7 @@ const Index = () => {
         </AnimatePresence>
       </main>
       
-      {/* Footer */}
-      <footer className="border-t border-border py-8 mt-8">
-        <div className="container-narrow text-center text-sm text-muted-foreground">
-          <p>{t.footer1}</p>
-          <p className="mt-1 text-xs">{t.footer2}</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 };

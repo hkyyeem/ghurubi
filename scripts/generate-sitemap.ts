@@ -5,7 +5,7 @@ import { MAJOR_CITIES, citySlug, compareSlug } from "../src/lib/cityCoordinates"
 
 const LANGS = ["en", "ar", "tr", "he"];
 const BASE_URL = "https://ghurubi.com";
-const paths: string[] = ["/", "/watch", "/cities"];
+const paths: string[] = ["/", "/watch", "/cities", "/compare", "/event", "/sitemap"];
 for (const c of MAJOR_CITIES) paths.push(`/city/${citySlug(c)}`);
 for (let i = 0; i < MAJOR_CITIES.length; i++)
   for (let j = i + 1; j < MAJOR_CITIES.length; j++)
