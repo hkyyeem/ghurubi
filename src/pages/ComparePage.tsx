@@ -27,8 +27,8 @@ function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
       <p className="mt-2 text-sm text-muted-foreground">{time ? (time.isNight ? 'Night' : 'Day') : ''}</p>
       {time && (
         <dl className="mt-6 grid grid-cols-2 gap-y-2 text-sm max-w-xs mx-auto">
-          <dt className="text-muted-foreground text-left">Night</dt><dd className="text-right tabular-nums">{hm(time.nightLength)}</dd>
-          <dt className="text-muted-foreground text-left">Day</dt><dd className="text-right tabular-nums">{hm(time.dayLength)}</dd>
+          <dt className="text-muted-foreground text-left">Night</dt><dd className="text-right tabular-nums">{hm(Math.round(time.nightLength * 60))}</dd>
+          <dt className="text-muted-foreground text-left">Day</dt><dd className="text-right tabular-nums">{hm(Math.round(time.dayLength * 60))}</dd>
           <dt className="text-muted-foreground text-left">Next sunset in</dt>
           <dd className="text-right tabular-nums">{pad(time.sunsetCountdown.hours)}:{pad(time.sunsetCountdown.minutes)}</dd>
         </dl>
