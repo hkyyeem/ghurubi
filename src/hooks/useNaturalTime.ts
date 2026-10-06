@@ -197,7 +197,8 @@ export function useGeolocation() {
 }
 
 function getSunTimes(date: Date, location: Location) {
-  return SunCalc.getTimes(date, location.latitude, location.longitude, location.altitude || 0);
+  // Sea-level horizon (altitude 0) to match official calendars (Umm Al-Qura)
+  return SunCalc.getTimes(date, location.latitude, location.longitude, 0);
 }
 
 function getPreviousSunset(now: Date, location: Location): Date {
