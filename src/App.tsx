@@ -12,6 +12,7 @@ import CitiesPage from "./pages/CitiesPage";
 import CompareIndex from "./pages/CompareIndex";
 import EventPage from "./pages/EventPage";
 import SitemapPage from "./pages/SitemapPage";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/watch" element={<Watch />} />
