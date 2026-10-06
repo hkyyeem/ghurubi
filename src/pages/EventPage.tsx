@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { toast } from 'sonner';
+import { Share2 } from 'lucide-react';
 import { useX } from '@/lib/i18nExtra';
 
 const EventPage = () => {
@@ -34,25 +36,32 @@ const EventPage = () => {
       <main className="container-narrow py-10">
         {valid ? (
           <section className="text-center py-10">
-            <h1 className="text-3xl md:text-4xl font-bold">{name}</h1>
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{name}</h1>
             {diff > 0 ? (
               <>
-                <div className="mt-8 flex justify-center gap-6 md:gap-10">
+                <div className="mt-10 grid grid-cols-4 gap-2 md:gap-4 max-w-2xl mx-auto">
                   {parts.map(([v, l]) => (
-                    <div key={l}><p className="text-5xl md:text-7xl font-bold tabular-nums">{String(v).padStart(2, '0')}</p>
-                      <p className="text-sm text-muted-foreground mt-1">{l}</p></div>
+                    <div key={l} className="border border-border rounded-xl py-4 md:py-6"><p className="text-4xl md:text-7xl font-bold tabular-nums tracking-tight">{String(v).padStart(2, '0')}</p>
+                      <p className="text-xs md:text-sm uppercase tracking-wider text-muted-foreground mt-2">{l}</p></div>
                   ))}
                 </div>
                 <p className="mt-6 text-muted-foreground">{x.sunsetsLeft(Math.ceil(diff / 86400))}</p>
               </>
             ) : <p className="mt-8 text-xl text-muted-foreground">{x.passed}</p>}
-            <button className="mt-8 border border-border rounded-md px-4 py-2 text-sm"
-              onClick={() => { navigator.clipboard?.writeText(window.location.href); setCopied(true); }}>
-              {copied ? x.copied : x.share}
+            <button className="mt-10 inline-flex items-center gap-2 bg-foreground text-background rounded-full px-6 py-3 text-sm font-medium hover:opacity-90 transition-opacity"
+              onClick={async () => {
+                const url = window.location.href;
+                try {
+                  if (navigator.share) await navigator.share({ title: name, url });
+                  else { await navigator.clipboard.writeText(url); toast.success(x.copied); }
+                  setCopied(true);
+                } catch { /* cancelled */ }
+              }}>
+              <Share2 className="w-4 h-4" />{copied ? x.copied : x.share}
             </button>
           </section>
         ) : <h1 className="text-2xl font-semibold mb-6">{x.event}</h1>}
-        <form className="max-w-md mx-auto grid gap-3 mt-6" onSubmit={e => {
+        <form className="max-w-md mx-auto grid gap-4 mt-10 p-6 border border-border rounded-xl" onSubmit={e => {
           e.preventDefault();
           if (form.name && form.date) { setParams({ name: form.name, date: form.date }); setCopied(false); }
         }}>
@@ -62,7 +71,7 @@ const EventPage = () => {
           <label className="text-sm">{x.eventDate}
             <input type="datetime-local" className={inp} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
           </label>
-          <button className="bg-foreground text-background rounded-md px-6 py-2 font-medium">{x.create}</button>
+          <button className="bg-foreground text-background rounded-md px-6 py-3 font-medium hover:opacity-90 transition-opacity">{x.create}</button>
         </form>
       </main>
       <SiteFooter />
