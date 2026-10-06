@@ -4,7 +4,7 @@ import type { CityInfo } from '@/lib/cityCoordinates';
 
 export type Lang = 'ar' | 'en' | 'tr' | 'he';
 export const LANGS: Lang[] = ['ar', 'en', 'tr', 'he'];
-export const LANG_LABEL: Record<Lang, string> = { ar: 'ع', en: 'EN', tr: 'TR', he: 'עב' };
+export const LANG_LABEL: Record<Lang, string> = { ar: 'عربي', en: 'English', tr: 'Türkçe', he: 'עברית' };
 export const isRtl = (l: Lang) => l === 'ar' || l === 'he';
 export const DATE_LOCALES = { ar, en: enUS, tr: trLocale, he: heLocale };
 const KEY = 'ghurubi-lang';
