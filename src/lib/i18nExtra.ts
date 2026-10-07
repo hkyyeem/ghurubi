@@ -15,6 +15,16 @@ const x = {
     hourNight: 'Seasonal night hour', hourDay: 'Seasonal day hour', sunsetGap: 'Sunset gap',
     compareWith: (c: string) => `Compare ${c} with`, loading: 'Locating city…', notFound: 'City not found',
     blurb: 'Ghurubi shows natural time: the day begins at sunset (00:00), night comes first, then day.',
+    privacy: 'Privacy policy', privacyTitle: 'Privacy Policy | Ghurubi', privacyDesc: 'How Ghurubi handles your data: location is used only on your device to compute sun times.',
+    privacyH1: 'Privacy Policy',
+    privacyP: [
+      'Ghurubi is a sunset-based natural clock. We do not collect, store, or share any personal data on our servers.',
+      'Location (GPS): your coordinates are used only inside your browser to calculate sunrise, sunset, and prayer times for your exact position. They are never sent to or stored on our servers.',
+      'Local storage: your preferences (language, seasonal hours, prayer settings, and chosen location) are saved only on your own device via browser local storage, and you can clear them at any time.',
+      'City search: when you search for a city not in our built-in list, the name you type is sent to the OpenStreetMap Nominatim service to find its coordinates. No other data is shared.',
+      'We use no tracking cookies, no analytics profiles, and no advertising networks.',
+      'Contact: reach us on X at @ghurubi for any privacy question.',
+    ],
   },
   ar: {
     compare: 'مقارنة المدن', compareTitle: 'مقارنة التوقيت الغروبي بين المدن | غروبي',
@@ -30,6 +40,16 @@ const x = {
     hourNight: 'الساعة الزمانية لليل', hourDay: 'الساعة الزمانية للنهار', sunsetGap: 'فارق الغروب',
     compareWith: (c: string) => `قارن ${c} مع`, loading: 'جارٍ تحديد المدينة…', notFound: 'لم نجد المدينة',
     blurb: 'غروبي يعرض الوقت الطبيعي: اليوم يبدأ من الغروب (00:00)، الليل أولاً ثم النهار.',
+    privacy: 'سياسة الخصوصية', privacyTitle: 'سياسة الخصوصية | غروبي', privacyDesc: 'كيف يتعامل غروبي مع بياناتك: موقعك يُستخدم على جهازك فقط لحساب أوقات الشمس.',
+    privacyH1: 'سياسة الخصوصية',
+    privacyP: [
+      'غروبي ساعة طبيعية مبنية على الغروب. نحن لا نجمع ولا نخزّن ولا نشارك أي بيانات شخصية على خوادمنا.',
+      'الموقع الجغرافي (GPS): تُستخدم إحداثياتك داخل متصفحك فقط لحساب الشروق والغروب ومواقيت الصلاة لموقعك الدقيق، ولا تُرسل أبداً إلى خوادمنا ولا تُخزَّن فيها.',
+      'التخزين المحلي: تُحفظ تفضيلاتك (اللغة، الساعات الزمانية، إعدادات الصلاة، والموقع المختار) على جهازك فقط عبر التخزين المحلي للمتصفح، ويمكنك مسحها في أي وقت.',
+      'البحث عن المدن: عند البحث عن مدينة غير موجودة في قائمتنا، يُرسل اسم المدينة الذي تكتبه إلى خدمة Nominatim التابعة لـ OpenStreetMap لمعرفة إحداثياتها، ولا تُشارك أي بيانات أخرى.',
+      'لا نستخدم ملفات تعريف تتبع، ولا تحليلات شخصية، ولا شبكات إعلانية.',
+      'للتواصل: راسلنا على منصة X عبر ‏@ghurubi لأي سؤال يخص الخصوصية.',
+    ],
   },
   tr: {
     compare: 'Şehir karşılaştır', compareTitle: 'Şehirler Arası Ezanî Saat Karşılaştırması | Ghurubi',
@@ -45,6 +65,16 @@ const x = {
     hourNight: 'Zamanî gece saati', hourDay: 'Zamanî gündüz saati', sunsetGap: 'Gün batımı farkı',
     compareWith: (c: string) => `${c} ile karşılaştır`, loading: 'Şehir bulunuyor…', notFound: 'Şehir bulunamadı',
     blurb: 'Ghurubi doğal saati gösterir: gün, gün batımında (00:00) başlar; önce gece, sonra gündüz.',
+    privacy: 'Gizlilik politikası', privacyTitle: 'Gizlilik Politikası | Ghurubi', privacyDesc: 'Ghurubi verilerinizi nasıl işler: konumunuz yalnızca cihazınızda güneş saatlerini hesaplamak için kullanılır.',
+    privacyH1: 'Gizlilik Politikası',
+    privacyP: [
+      'Ghurubi, gün batımına dayalı doğal bir saattir. Sunucularımızda hiçbir kişisel veri toplamaz, saklamaz veya paylaşmayız.',
+      'Konum (GPS): koordinatlarınız yalnızca tarayıcınızda, bulunduğunuz nokta için gün doğumu, gün batımı ve namaz vakitlerini hesaplamak amacıyla kullanılır. Asla sunucularımıza gönderilmez veya saklanmaz.',
+      'Yerel depolama: tercihleriniz (dil, zamanî saatler, namaz ayarları ve seçilen konum) yalnızca kendi cihazınızda tarayıcı yerel depolamasında tutulur; istediğiniz zaman silebilirsiniz.',
+      'Şehir arama: yerleşik listemizde olmayan bir şehir aradığınızda, yazdığınız şehir adı koordinatlarını bulmak için OpenStreetMap Nominatim hizmetine gönderilir. Başka hiçbir veri paylaşılmaz.',
+      'İzleme çerezi, kişisel analiz profili veya reklam ağı kullanmıyoruz.',
+      'İletişim: gizlilikle ilgili her soru için X üzerinden @ghurubi hesabına ulaşabilirsiniz.',
+    ],
   },
   he: {
     compare: 'השוואת ערים', compareTitle: 'השוואת זמן שקיעה בין ערים | Ghurubi',
@@ -60,6 +90,16 @@ const x = {
     hourNight: 'שעה זמנית בלילה', hourDay: 'שעה זמנית ביום', sunsetGap: 'הפרש השקיעה',
     compareWith: (c: string) => `השווה את ${c} עם`, loading: 'מאתר את העיר…', notFound: 'העיר לא נמצאה',
     blurb: 'Ghurubi מציג זמן טבעי: היום מתחיל בשקיעה (00:00), הלילה קודם ואחריו היום.',
+    privacy: 'מדיניות פרטיות', privacyTitle: 'מדיניות פרטיות | Ghurubi', privacyDesc: 'כיצד Ghurubi מטפל בנתוניך: המיקום משמש רק במכשירך לחישוב זמני השמש.',
+    privacyH1: 'מדיניות פרטיות',
+    privacyP: [
+      'Ghurubi הוא שעון טבעי המבוסס על השקיעה. איננו אוספים, שומרים או משתפים נתונים אישיים בשרתים שלנו.',
+      'מיקום (GPS): הקואורדינטות שלך משמשות רק בדפדפן שלך לחישוב זריחה, שקיעה וזמני תפילה עבור מיקומך המדויק. הן לעולם אינן נשלחות לשרתים שלנו או נשמרות בהם.',
+      'אחסון מקומי: ההעדפות שלך (שפה, שעות זמניות, הגדרות תפילה והמיקום הנבחר) נשמרות רק במכשירך באחסון המקומי של הדפדפן, וניתן למחוק אותן בכל עת.',
+      'חיפוש ערים: כשאתה מחפש עיר שאינה ברשימה המובנית, שם העיר שהקלדת נשלח לשירות Nominatim של OpenStreetMap כדי למצוא את הקואורדינטות שלה. שום נתון אחר אינו משותף.',
+      'איננו משתמשים בעוגיות מעקב, פרופילי ניתוח אישיים או רשתות פרסום.',
+      'יצירת קשר: ניתן לפנות אלינו ב־X דרך ‏@ghurubi בכל שאלה על פרטיות.',
+    ],
   },
 } satisfies Record<Lang, unknown>;
 
