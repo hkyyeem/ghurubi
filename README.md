@@ -1,5 +1,5 @@
 # Ghurubi — The Earth Clock
-### الغروبي — ساعة الأرض الطبيعية
+### غروبي — ساعة الأرض الطبيعية
 
 > A minimalist Swiss-style timepiece returning humanity to pure natural time, where sunset marks 00:00 and the day begins with the night.
 
