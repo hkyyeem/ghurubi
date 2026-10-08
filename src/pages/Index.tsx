@@ -62,6 +62,7 @@ const Index = () => {
       
       {/* Main content */}
       <main>
+        <h1 className="sr-only">{t.homeTitle}</h1>
         {/* Hero Time Display */}
         <section className="container-narrow">
           <HeroTimeDisplay 
