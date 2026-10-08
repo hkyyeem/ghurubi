@@ -1,73 +1,46 @@
-# Welcome to your Lovable project
+# Ghurubi — The Earth Clock
+### الغروبي — ساعة الأرض الطبيعية
 
-## Project info
+> A minimalist Swiss-style timepiece returning humanity to pure natural time, where sunset marks 00:00 and the day begins with the night.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+[اقرأ بالعربية](README_ar.md) • [Live site: ghurubi.com](https://ghurubi.com)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Philosophy
 
-**Use Lovable**
+Modern civil clocks follow standardized timezones. **Ghurubi** reconnects timekeeping with the sun:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+1. **Sunset is zero (12:00 / 00:00)** — every day begins the moment the sun sets.
+2. **Night precedes day** — following ancient and Islamic tradition, night belongs to the coming day (Thursday evening is the Eve of Friday).
+3. **No civil time** — clock faces run purely on natural, astronomical time.
+4. **Two time modes:**
+   - **Equal hours** — standard 60-minute hours counted from sunset.
+   - **Seasonal hours** — the night split into 12 hours and the day into 12 hours, breathing with the seasons.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Features
 
-**Use your preferred IDE**
+- Precise solar engine: sunrise, sunset and solar noon from your location.
+- Prayer times (Umm Al-Qura method) shown in Ghurubi time — Maghrib is always 00:00.
+- Swiss minimalist design with sky-inspired light and dark themes.
+- Full-screen clock page (`/watch`) with analog and digital dials, ambient mode and screen wake lock.
+- Wear OS watch face (Android smartwatches).
+- Installable web app (PWA) for phone and desktop.
+- City pages, time comparison and event countdowns.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Tech stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+React 18 · TypeScript · Vite · Tailwind CSS · shadcn/ui · Kotlin (Wear OS)
 
-Follow these steps:
+## Getting started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+git clone https://github.com/YOUR_USERNAME/ghurubi.git
+cd ghurubi
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## License
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Released under the [MIT License](LICENSE).
