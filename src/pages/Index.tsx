@@ -72,9 +72,6 @@ const Index = () => {
           />
         </section>
         
-        {/* Info Grid */}
-        <InfoGrid time={time} />
-        
         {/* Prayer times section - optional */}
         <AnimatePresence>
           {showPrayerTimes && (
@@ -96,6 +93,9 @@ const Index = () => {
             </motion.section>
           )}
         </AnimatePresence>
+        {/* Info Grid */}
+        <InfoGrid time={time} />
+        
       </main>
       
       <SiteFooter />
