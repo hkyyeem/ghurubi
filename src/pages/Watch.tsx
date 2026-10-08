@@ -5,7 +5,6 @@ import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
 import { STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { searchCityByName } from '@/lib/searchCity';
-import { toHijriDate } from '@/lib/prayerCalculations';
 
 const pad = (n: number) => String(Math.max(0, n)).padStart(2, '0');
 
@@ -78,8 +77,7 @@ export default function Watch() {
   const accent = night ? 'hsl(210 90% 70%)' : 'hsl(38 95% 60%)';
   const dim = ambient ? 0.45 : 1;
   const wBase = time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date();
-  const wHijri = toHijriDate(wBase);
-  const cycleLabel = `${time.isNight ? 'ليلة' : 'نهار'} ${wBase.toLocaleDateString('ar', { weekday: 'long' })} · ${wHijri.day} ${wHijri.monthName}`;
+  const cycleLabel = `${time.isNight ? 'ليلة' : 'نهار'} ${wBase.toLocaleDateString('ar', { weekday: 'long' })}`;
   const modeLabel = seasonal ? 'Seasonal Hours' : 'Natural Time';
 
   const hand = (frac: number, len: number, w: number, color: string) => (
@@ -97,7 +95,6 @@ export default function Watch() {
       <div
         className="relative rounded-full overflow-hidden"
         style={{ width: 'min(90vw, 90vh, 420px)', aspectRatio: '1', background: '#000', boxShadow: '0 0 0 6px #1a1a1a' }}
-        onClick={() => setAmbient(a => !a)}
       >
         <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" style={{ opacity: dim }}>
           <circle cx="100" cy="100" r="97" fill="none" stroke="#222" strokeWidth="2" />
@@ -153,22 +150,9 @@ export default function Watch() {
             </div>
           </div>
         ) : (
-          <>
-            <div className="absolute inset-x-0 top-[30%] flex justify-center items-center gap-1 pointer-events-none" style={{ opacity: dim, color: accent, fontSize: 'min(2.8vw, 11px)' }}>
-              {night ? <Moon className="w-3 h-3" /> : <Sun className="w-3 h-3" />} {cycleLabel}
-            </div>
-            <div className="absolute inset-x-0 top-[60%] flex flex-col items-center pointer-events-none" style={{ opacity: dim }}>
-              <div className="font-semibold tabular-nums" dir="ltr" style={{ color: '#fff', fontSize: 'min(5.5vw, 22px)' }}>
-                {pad(time.hours)}:{pad(time.minutes)}{!ambient && <span style={{ color: '#888' }}>:{pad(time.seconds)}</span>}
-              </div>
-              <div className="tabular-nums" dir="ltr" style={{ color: accent, fontSize: 'min(3vw, 12px)' }}>
-                ↓ {pad(cd.hours)}:{pad(cd.minutes)}{!ambient && `:${pad(cd.seconds)}`}
-              </div>
-              <div style={{ color: '#777', fontSize: 'min(2.4vw, 9px)' }}>
-                {location.city?.nameAr || location.city?.name || ''} · {modeLabel}
-              </div>
-            </div>
-          </>
+          <div className="absolute inset-x-0 top-[30%] flex justify-center items-center gap-1 pointer-events-none" style={{ opacity: dim, color: accent, fontSize: 'min(2.8vw, 11px)' }}>
+            {night ? <Moon className="w-3 h-3" /> : <Sun className="w-3 h-3" />} {cycleLabel}
+          </div>
         )}
       </div>
 
