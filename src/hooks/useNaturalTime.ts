@@ -161,7 +161,8 @@ export function useGeolocation() {
         setError(errorMessage);
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 30000, maximumAge: 600000 }
+      // City-level precision is enough; network location is fast and works indoors/on desktop
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }
     );
   }, []);
 
