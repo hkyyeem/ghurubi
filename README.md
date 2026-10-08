@@ -38,8 +38,8 @@ Today the obstacle is gone. GPS and precise astronomical algorithms compute the 
 
 - **Arabic** — the historical home of this timekeeping, and the language of its living vocabulary: seasonal hours, *zawal* (solar noon), the night and day of a date.
 - **English** — the language of global reach, opening the idea to developers, researchers of circadian rhythms, horology enthusiasts and anyone curious about time.
-
-The interface also supports additional languages so the idea can travel to every culture that once read time by the sun.
+- **Turkish** — the language of the Ottoman *Ezani* (Alaturka) time, the last great state to run officially on sunset hours until the 20th century.
+- **Hebrew** — the language of a living tradition that still counts the day from evening and divides daylight into seasonal hours (*Sha'ot Zmaniyot*).
 
 ## Vision: From a Personal to a Societal Revolution
 
