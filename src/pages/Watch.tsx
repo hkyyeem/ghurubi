@@ -74,11 +74,14 @@ export default function Watch() {
   const secFrac = time.seconds / 60;
   const cd = time.sunsetCountdown;
   const night = seasonal ? time.hours < 12 : time.isNight;
-  const accent = night ? 'hsl(210 90% 70%)' : 'hsl(38 95% 60%)';
+  // Mode palettes: equal hours = sky blue / gold; seasonal hours = turquoise / amber orange
+  const accent = seasonal
+    ? (night ? 'hsl(165 75% 50%)' : 'hsl(24 95% 58%)')
+    : (night ? 'hsl(210 90% 70%)' : 'hsl(45 95% 58%)');
   const dim = ambient ? 0.45 : 1;
   const wBase = time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date();
   const cycleLabel = `${time.isNight ? 'ليلة' : 'نهار'} ${wBase.toLocaleDateString('ar', { weekday: 'long' })}`;
-  const modeLabel = seasonal ? 'Seasonal Hours' : 'Natural Time';
+  const modeLabel = seasonal ? 'ساعات زمانية' : 'ساعات مستوية';
 
   const hand = (frac: number, len: number, w: number, color: string) => (
     <line
@@ -150,8 +153,9 @@ export default function Watch() {
             </div>
           </div>
         ) : (
-          <div className="absolute inset-x-0 top-[30%] flex justify-center items-center gap-1 pointer-events-none" style={{ opacity: dim, color: accent, fontSize: 'min(2.8vw, 11px)' }}>
-            {night ? <Moon className="w-3 h-3" /> : <Sun className="w-3 h-3" />} {cycleLabel}
+          <div className="absolute inset-x-0 top-[28%] flex flex-col items-center gap-0.5 pointer-events-none" style={{ opacity: dim, color: accent, fontSize: 'min(2.8vw, 11px)' }}>
+            <div className="flex items-center gap-1">{night ? <Moon className="w-3 h-3" /> : <Sun className="w-3 h-3" />} {cycleLabel}</div>
+            <div style={{ fontSize: 'min(2.3vw, 9px)', opacity: 0.8 }}>{modeLabel}</div>
           </div>
         )}
       </div>
