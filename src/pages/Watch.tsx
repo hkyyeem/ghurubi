@@ -5,6 +5,7 @@ import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
 import { STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { searchCityByName } from '@/lib/searchCity';
+import { toHijriDate } from '@/lib/prayerCalculations';
 
 const pad = (n: number) => String(Math.max(0, n)).padStart(2, '0');
 
@@ -76,7 +77,9 @@ export default function Watch() {
   const night = seasonal ? time.hours < 12 : time.isNight;
   const accent = night ? 'hsl(210 90% 70%)' : 'hsl(38 95% 60%)';
   const dim = ambient ? 0.45 : 1;
-  const cycleLabel = night ? 'ليل' : 'نهار';
+  const wBase = time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date();
+  const wHijri = toHijriDate(wBase);
+  const cycleLabel = `${time.isNight ? 'ليلة' : 'نهار'} ${wBase.toLocaleDateString('ar', { weekday: 'long' })} · ${wHijri.day} ${wHijri.monthName}`;
   const modeLabel = seasonal ? 'Seasonal Hours' : 'Natural Time';
 
   const hand = (frac: number, len: number, w: number, color: string) => (
