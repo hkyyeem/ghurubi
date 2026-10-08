@@ -15,6 +15,29 @@ import { useX } from '@/lib/i18nExtra';
 const BASE = 'https://ghurubi.com';
 const NEAR_PICKS = ['makkah', 'riyadh', 'cairo', 'istanbul', 'jerusalem', 'dubai', 'london', 'new-york'];
 
+const pad = (n: number) => String(n).padStart(2, '0');
+const fmt = (h: number, m: number) => `${pad(h)}:${pad(m)}`;
+/** Converts a duration in hours (or ms if large) into [hours, minutes]. */
+const hm = (v: number): [number, number] => {
+  const hours = v > 1000 ? v / 3600000 : v;
+  const total = Math.round(hours * 60);
+  return [Math.floor(total / 60) % 24, total % 60];
+};
+
+const ANSWER_H: Record<string, (c: string) => string> = {
+  ar: c => `كم الساعة الآن بالتوقيت الغروبي في ${c}؟`,
+  en: c => `What time is it now in ${c} in Ghurubi time?`,
+  tr: c => `${c} için ezanî saat şimdi kaç?`,
+  he: c => `מה השעה עכשיו ב${c} לפי זמן השקיעה?`,
+};
+type AnswerFn = (c: string, now: string, sunrise: string, night: string, day: string) => string;
+const ANSWER_P: Record<string, AnswerFn> = {
+  ar: (c, now, sr, n, d) => `الساعة الآن ${now} بالتوقيت الغروبي في ${c}. في هذا النظام يبدأ اليوم عند غروب الشمس (00:00 مع أذان المغرب)، فيأتي الليل أولاً ثم النهار. تشرق الشمس اليوم في ${c} عند الساعة ${sr} غروبي، ويستمر الليل ${n} والنهار ${d}. تُحسب الأوقات فلكياً من إحداثيات ${c} وفق معايير أم القرى، وتتغير يومياً مع حركة الشمس.`,
+  en: (c, now, sr, n, d) => `It is ${now} Ghurubi time in ${c} now. In this system the day begins at sunset (00:00, at Maghrib), so night comes first, then day. Today in ${c} the sun rises at ${sr} Ghurubi time; the night lasts ${n} and the day ${d}. Times are computed astronomically from ${c}'s coordinates and shift daily with the sun.`,
+  tr: (c, now, sr, n, d) => `${c} için ezanî saat şu anda ${now}. Bu sistemde gün, gün batımında (00:00, akşam ezanı) başlar; önce gece, sonra gündüz gelir. Bugün ${c} için güneş ezanî ${sr}'da doğar; gece ${n}, gündüz ${d} sürer. Saatler ${c} koordinatlarından astronomik olarak hesaplanır.`,
+  he: (c, now, sr, n, d) => `השעה עכשיו ב${c} היא ${now} לפי זמן השקיעה. בשיטה זו היום מתחיל בשקיעה (00:00), הלילה קודם ואחריו היום. היום ב${c} הזריחה בשעה ${sr}; הלילה נמשך ${n} והיום ${d}. הזמנים מחושבים אסטרונומית לפי קואורדינטות ${c}.`,
+};
+
 /** City page: fixed coordinates, no GPS request → instant render. Unknown cities are looked up worldwide. */
 const CityPage = () => {
   const { slug } = useParams();
@@ -90,6 +113,12 @@ const CityPage = () => {
           <HeroTimeDisplay time={time} location={location} showSeasonalTime={showSeasonalHours} />
         </section>
         <InfoGrid time={time} />
+        {time && (
+          <section className="container-narrow mt-10 text-sm leading-relaxed text-muted-foreground max-w-2xl">
+            <h2 className="font-semibold mb-2 text-foreground">{ANSWER_H[lang]?.(cn) ?? ANSWER_H.en(cn)}</h2>
+            <p>{(ANSWER_P[lang] ?? ANSWER_P.en)(cn, fmt(time.hours, time.minutes), fmt(...hm((time.sunrise.getTime() - time.lastSunset.getTime()) / 3600000)), fmt(...hm(time.nightLength)), fmt(...hm(time.dayLength)))}</p>
+          </section>
+        )}
         {inList && (
           <section className="container-narrow mt-10 text-sm">
             <h2 className="font-semibold mb-3">{x.compareWith(cn)}</h2>
