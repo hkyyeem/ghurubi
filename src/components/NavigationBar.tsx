@@ -127,6 +127,7 @@ export function NavigationBar({
                       </div>
                       <button
                         onClick={() => onToggleSeasonalHours(!showSeasonalHours)}
+                        role="switch" aria-checked={showSeasonalHours} aria-label={t.seasonal}
                         className={cn(
                           "w-11 h-6 rounded-full transition-colors relative",
                           showSeasonalHours ? "bg-accent" : "bg-secondary"
@@ -149,6 +150,7 @@ export function NavigationBar({
                       </div>
                       <button
                         onClick={() => onTogglePrayerTimes(!showPrayerTimes)}
+                        role="switch" aria-checked={showPrayerTimes} aria-label={t.prayer}
                         className={cn(
                           "w-11 h-6 rounded-full transition-colors relative",
                           showPrayerTimes ? "bg-accent" : "bg-secondary"
