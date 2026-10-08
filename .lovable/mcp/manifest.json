@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.5",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "ghurubi",
+      "version": "0.1.0",
+      "title": "Ghurubi"
+    },
+    "tools": [
+      {
+        "name": "get_ghurubi_time",
+        "title": "Get Ghurubi time",
+        "description": "Current sunset-based (Ghurubi) time for a city or coordinates: sunset is 00:00 and the night comes first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "city": {
+              "description": "City name or slug from list_cities, e.g. 'Riyadh' or 'makkah'.",
+              "type": "string"
+            },
+            "latitude": {
+              "description": "Latitude, used when no city is given.",
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "longitude": {
+              "description": "Longitude, used when no city is given.",
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_prayer_times",
+        "title": "Get prayer times",
+        "description": "Today's prayer times (Umm al-Qura method) expressed in Ghurubi time, where Maghrib is 00:00.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "city": {
+              "description": "City name or slug from list_cities, e.g. 'Riyadh' or 'makkah'.",
+              "type": "string"
+            },
+            "latitude": {
+              "description": "Latitude, used when no city is given.",
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "longitude": {
+              "description": "Longitude, used when no city is given.",
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_cities",
+        "title": "List cities",
+        "description": "List the cities Ghurubi knows by name, with their slug, country and coordinates.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
