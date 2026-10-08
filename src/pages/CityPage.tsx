@@ -20,7 +20,7 @@ const fmt = (h: number, m: number) => `${pad(h)}:${pad(m)}`;
 /** Converts a duration in hours (or ms if large) into [hours, minutes]. */
 const hm = (v: number): [number, number] => {
   const hours = v > 1000 ? v / 3600000 : v;
-  const total = Math.round(hours * 60);
+  const total = ((Math.round(hours * 60) % 1440) + 1440) % 1440;
   return [Math.floor(total / 60) % 24, total % 60];
 };
 
