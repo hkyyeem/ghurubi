@@ -3,6 +3,7 @@ import { useI18n, DATE_LOCALES, cityName as cn, countryName as ctn } from '@/lib
 import { toHijriDate } from '@/lib/prayerCalculations';
 import type { NaturalTime, SeasonalTime } from '@/hooks/useNaturalTime';
 import type { Location } from '@/hooks/useNaturalTime';
+import { ShareTimeCard } from '@/components/ShareTimeCard';
 
 interface HeroTimeDisplayProps {
   time: NaturalTime | SeasonalTime | null;
@@ -72,6 +73,16 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false }: He
       <div className="text-muted-foreground text-sm md:text-base mt-2 text-center">
         {secondary} — {cityName}{countryName ? `، ${countryName}`.replace('،', lang === 'ar' ? '،' : ',') : ''}
       </div>
+
+      <ShareTimeCard
+        time={`${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
+        period={period}
+        dateLine={lang === 'ar' ? hijri : greg}
+        city={location?.city}
+        cityLabel={cityName}
+        countryLabel={countryName}
+        isNight={time.isNight}
+      />
     </div>
   );
 }

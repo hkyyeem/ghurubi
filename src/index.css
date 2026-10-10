@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -51,7 +51,7 @@
     --status-day: 45 90% 55%;
     
     /* Typography */
-    --font-display: 'Inter', system-ui, sans-serif;
+    --font-display: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
   }
 
