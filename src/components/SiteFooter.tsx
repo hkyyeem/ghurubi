@@ -4,6 +4,7 @@ import { getDiscoveredCities } from '@/lib/searchCity';
 import { useI18n, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 import { ABOUT_LABEL } from '@/pages/AboutPage';
+import { WEAR_LABEL } from '@/pages/WearPage';
 
 export function SiteFooter() {
   const { lang, t } = useI18n();
@@ -43,6 +44,7 @@ export function SiteFooter() {
           <Link to="/compare" className={link}>{x.compare}</Link>
           <Link to="/event" className={link}>{x.event}</Link>
           <Link to="/watch" className={link}>{x.watch}</Link>
+          <Link to="/wear" className={link}>{WEAR_LABEL[lang]}</Link>
           <Link to="/sitemap" className={link}>{x.sitemap}</Link>
           <Link to="/privacy" className={link}>{x.privacy}</Link>
           <a href="https://x.com/ghurubi" target="_blank" rel="noopener noreferrer" className={link} aria-label="X (Twitter)">
