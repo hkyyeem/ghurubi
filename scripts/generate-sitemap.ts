@@ -1,15 +1,13 @@
 // Runs before `vite dev` and `vite build`; writes public/sitemap.xml.
 import { writeFileSync } from "fs";
 import { resolve } from "path";
-import { MAJOR_CITIES, citySlug, compareSlug } from "../src/lib/cityCoordinates";
+import { MAJOR_CITIES, citySlug } from "../src/lib/cityCoordinates";
 
+// Only core pages + individual cities; city-pair compare pages are left out to keep crawl budget focused.
 const LANGS = ["en", "ar", "tr", "he"];
 const BASE_URL = "https://ghurubi.com";
-const paths: string[] = ["/", "/watch", "/cities", "/compare", "/event", "/sitemap"];
+const paths: string[] = ["/", "/watch", "/about", "/wear", "/cities", "/compare", "/event", "/sitemap", "/privacy"];
 for (const c of MAJOR_CITIES) paths.push(`/city/${citySlug(c)}`);
-for (let i = 0; i < MAJOR_CITIES.length; i++)
-  for (let j = i + 1; j < MAJOR_CITIES.length; j++)
-    paths.push(`/compare/${compareSlug(MAJOR_CITIES[i], MAJOR_CITIES[j])}`);
 
 const xml = [
   `<?xml version="1.0" encoding="UTF-8"?>`,
