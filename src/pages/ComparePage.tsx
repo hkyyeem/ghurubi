@@ -9,6 +9,8 @@ import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useX } from '@/lib/i18nExtra';
 import NotFound from './NotFound';
+import { ShareCompareCard } from '@/components/ShareCompareCard';
+import { civilOffset } from '@/lib/compareShare';
 
 const BASE = 'https://ghurubi.com';
 const pad = (n: number) => String(Math.floor(n)).padStart(2, '0');
@@ -91,11 +93,17 @@ const ComparePage = () => {
   const desc = t.cmpDesc(na, nb);
 
   let gap = '';
+  let sunsetGap: number | null = null;
+  let civilGap: number | null = null;
   if (ta && tb) {
     const diff = Math.round((ta.lastSunset.getTime() - tb.lastSunset.getTime()) / 60000);
     const d = ((diff % 1440) + 1440) % 1440;
     const m = d > 720 ? d - 1440 : d;
+    sunsetGap = m;
     if (m !== 0) gap = t.reachesBefore(m < 0 ? na : nb, m < 0 ? nb : na, hm(Math.abs(m)));
+    const now = new Date();
+    const oa = civilOffset(a, now), ob = civilOffset(b, now);
+    civilGap = oa == null || ob == null ? null : Math.abs(oa - ob);
   }
 
   const row = (label: string, va: string, vb: string) => (
@@ -119,6 +127,7 @@ const ComparePage = () => {
           <Column city={b} time={tb} />
         </div>
         {gap && <p className="text-center text-muted-foreground pb-6">{gap}</p>}
+        {sunsetGap != null && <ShareCompareCard url={url} nameA={na} nameB={nb} sunsetGap={sunsetGap} civilGap={civilGap} />}
         {ta && tb && (
           <table className="w-full max-w-xl mx-auto text-sm my-6">
             <thead><tr className="border-b border-border">
