@@ -79,7 +79,8 @@ export function NavigationBar({
       <div className="container-narrow">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2" aria-label="Ghurubi">
             <span className={`w-3 h-3 rounded-full ${isNight ? 'bg-blue-400' : 'bg-amber-400'}`} />
             <span className="font-semibold text-lg tracking-tight">
               Ghurubi
@@ -87,7 +88,7 @@ export function NavigationBar({
             <span className="text-xs text-muted-foreground hidden sm:inline">
               {t.tagline}
             </span>
-          </div>
+          </Link>
 
           {/* Right side controls */}
           <div className="flex items-center gap-1 sm:gap-2">
