@@ -21,8 +21,7 @@ const CompareIndex = () => {
   const [a, setA] = useState('riyadh');
   const [b, setB] = useState('makkah');
   const go = () => {
-    const ca = getCityBySlug(a), cb = getCityBySlug(b);
-    if (ca && cb && ca !== cb) nav(`/compare/${compareSlug(ca, cb)}`);
+    if (a && b && a !== b) nav(`/compare/${[a, b].sort().join('-vs-')}`);
   };
   return (
     <div className="min-h-screen bg-background text-foreground">

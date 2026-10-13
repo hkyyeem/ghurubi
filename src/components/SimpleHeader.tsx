@@ -9,7 +9,7 @@ export function SimpleHeader() {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container-narrow h-14 md:h-16 flex items-center justify-between gap-2">
-        <Link to="/" className="font-semibold text-lg tracking-tight">Ghurubi</Link>
+        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-semibold text-lg tracking-tight">Ghurubi</Link>
         <div className="flex items-center gap-1 sm:gap-2">
           <LangMenu />
           <Link to="/watch" aria-label="Watch mode"

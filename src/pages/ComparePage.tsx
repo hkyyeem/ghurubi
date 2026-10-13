@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { resolveCitySlug } from '@/lib/searchCity';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { SeoHead } from '@/components/SeoHead';
 import { useI18n, cityName } from '@/lib/i18n';
@@ -42,17 +43,45 @@ function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
   );
 }
 
+function useResolvedCity(slug?: string) {
+  const local = getCityBySlug(slug);
+  const [city, setCity] = useState<CityInfo | undefined>(local);
+  const [state, setState] = useState<'ok' | 'loading' | 'missing'>(local ? 'ok' : 'loading');
+  useEffect(() => {
+    const l = getCityBySlug(slug);
+    if (l) { setCity(l); setState('ok'); return; }
+    if (!slug) { setState('missing'); return; }
+    let alive = true;
+    setCity(undefined); setState('loading');
+    resolveCitySlug(slug).then(c => {
+      if (!alive) return;
+      if (c) { setCity(c); setState('ok'); } else setState('missing');
+    }).catch(() => alive && setState('missing'));
+    return () => { alive = false; };
+  }, [slug]);
+  return { city, state };
+}
+
 const ComparePage = () => {
   const { pair } = useParams();
   const { lang, t } = useI18n();
   const x = useX();
   const [sa, sb] = (pair ?? '').split('-vs-');
-  const a = getCityBySlug(sa);
-  const b = getCityBySlug(sb);
+  const ra = useResolvedCity(sa);
+  const rb = useResolvedCity(sb);
+  const a = ra.city, b = rb.city;
   const ta = useCityTime(a);
   const tb = useCityTime(b);
 
-  if (!a || !b || a === b) return <NotFound />;
+  if (ra.state === 'loading' || rb.state === 'loading') {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <SimpleHeader />
+        <p className="text-center text-muted-foreground py-20">…</p>
+      </div>
+    );
+  }
+  if (!a || !b || citySlug(a) === citySlug(b)) return <NotFound />;
   const canonical = compareSlug(a, b);
   if (canonical !== pair) return <Navigate to={`/compare/${canonical}`} replace />;
 
