@@ -45,23 +45,24 @@ function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
   );
 }
 
-function useResolvedCity(slug?: string) {
+type Resolved = { slug?: string; city?: CityInfo; state: 'ok' | 'loading' | 'missing' };
+
+function useResolvedCity(slug?: string): Resolved {
   const local = getCityBySlug(slug);
-  const [city, setCity] = useState<CityInfo | undefined>(local);
-  const [state, setState] = useState<'ok' | 'loading' | 'missing'>(local ? 'ok' : 'loading');
+  const [remote, setRemote] = useState<Resolved>({ state: 'loading' });
   useEffect(() => {
-    const l = getCityBySlug(slug);
-    if (l) { setCity(l); setState('ok'); return; }
-    if (!slug) { setState('missing'); return; }
+    if (!slug || getCityBySlug(slug)) return;
     let alive = true;
-    setCity(undefined); setState('loading');
-    resolveCitySlug(slug).then(c => {
-      if (!alive) return;
-      if (c) { setCity(c); setState('ok'); } else setState('missing');
-    }).catch(() => alive && setState('missing'));
+    resolveCitySlug(slug)
+      .then(c => alive && setRemote({ slug, city: c ?? undefined, state: c ? 'ok' : 'missing' }))
+      .catch(() => alive && setRemote({ slug, state: 'missing' }));
     return () => { alive = false; };
   }, [slug]);
-  return { city, state };
+  // Derive from the current slug every render so stale cities never trigger a redirect.
+  if (local) return { slug, city: local, state: 'ok' };
+  if (!slug) return { slug, state: 'missing' };
+  if (remote.slug !== slug) return { slug, state: 'loading' };
+  return remote;
 }
 
 const ComparePage = () => {
