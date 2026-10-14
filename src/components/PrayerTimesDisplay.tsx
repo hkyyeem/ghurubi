@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePrayerTimes } from '@/hooks/usePrayerTimes';
 import type { Location } from '@/hooks/useNaturalTime';
+import { useI18n } from '@/lib/i18n';
 import { ChevronDown, ChevronUp, Settings2 } from 'lucide-react';
 
 interface PrayerTimesDisplayProps {
@@ -18,6 +19,7 @@ export function PrayerTimesDisplay({
   className = '' 
 }: PrayerTimesDisplayProps) {
   const prayerData = usePrayerTimes(location, useSeasonalHours);
+  const { t } = useI18n();
   const [showSettings, setShowSettings] = useState(false);
 
   if (!prayerData) {
@@ -33,7 +35,7 @@ export function PrayerTimesDisplay({
   const formatNaturalTime = (time: { hours: number; minutes: number }) => {
     if (hour12) {
       const h12 = time.hours % 12 === 0 ? 12 : time.hours % 12;
-      return `${h12}:${time.minutes.toString().padStart(2, '0')} ${time.hours < 12 ? 'ل' : 'ن'}`;
+      return `${h12}:${time.minutes.toString().padStart(2, '0')} ${time.hours < 12 ? t.night : t.day}`;
     }
     return `${time.hours.toString().padStart(2, '0')}:${time.minutes.toString().padStart(2, '0')}`;
   };
