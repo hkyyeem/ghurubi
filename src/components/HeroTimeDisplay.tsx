@@ -55,8 +55,15 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
   return (
     <div className="flex flex-col items-center justify-center py-8 md:py-16">
       <div dir="ltr" className="time-hero text-7xl sm:text-8xl md:text-[10rem] lg:text-[12rem] tabular-nums">
-        {formatNumber(time.hours)}:{formatNumber(time.minutes)}
+        {hour12
+          ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
+          : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
         <span className="text-muted-foreground">:{formatNumber(time.seconds)}</span>
+        {hour12 && (
+          <span className="text-2xl sm:text-3xl md:text-5xl ms-2 text-muted-foreground align-baseline">
+            {time.hours < 12 ? t.night : t.day}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-2 mt-4 md:mt-6">
@@ -76,7 +83,9 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
       </div>
 
       <ShareTimeCard
-        time={`${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
+        time={hour12
+          ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
+          : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
         period={period}
         dateLine={lang === 'ar' ? hijri : greg}
         city={location?.city}
