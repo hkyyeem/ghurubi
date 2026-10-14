@@ -56,6 +56,7 @@ const CityPage = () => {
 
   const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(STORAGE_KEYS.SEASONAL_HOURS, false);
   const [showPrayerTimes, setShowPrayerTimes] = useLocalStorage(STORAGE_KEYS.SHOW_PRAYER_TIMES, false);
+  const [hour12, setHour12] = useLocalStorage(STORAGE_KEYS.HOUR12, false);
   const location: Location | null = useMemo(
     () => (city ? { latitude: city.latitude, longitude: city.longitude, city } : null), [city]);
   const time = useNaturalTime(location, showSeasonalHours);
@@ -106,11 +107,13 @@ const CityPage = () => {
         onToggleSeasonalHours={setShowSeasonalHours}
         showPrayerTimes={showPrayerTimes}
         onTogglePrayerTimes={setShowPrayerTimes}
+        hour12={hour12}
+        onToggleHour12={setHour12}
       />
       <main>
         <h1 className="sr-only">{title}</h1>
         <section className="container-narrow">
-          <HeroTimeDisplay time={time} location={location} showSeasonalTime={showSeasonalHours} />
+          <HeroTimeDisplay time={time} location={location} showSeasonalTime={showSeasonalHours} hour12={hour12} />
         </section>
         <InfoGrid time={time} />
         {time && (
