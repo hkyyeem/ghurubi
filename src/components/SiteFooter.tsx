@@ -5,6 +5,7 @@ import { useI18n, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 import { ABOUT_LABEL } from '@/pages/AboutPage';
 import { WEAR_LABEL } from '@/pages/WearPage';
+import { ARTICLES_LABEL } from '@/lib/articles';
 
 export function SiteFooter() {
   const { lang, t } = useI18n();
@@ -40,6 +41,7 @@ export function SiteFooter() {
         <nav aria-label={x.tools} className="flex flex-wrap gap-x-6 gap-y-2">
           <Link to="/" className={link}>{x.home}</Link>
           <Link to="/about" className={link}>{ABOUT_LABEL[lang]}</Link>
+          <Link to="/articles" className={link}>{ARTICLES_LABEL[lang]}</Link>
           <Link to="/cities" className={link}>{t.allCities}</Link>
           <Link to="/compare" className={link}>{x.compare}</Link>
           <Link to="/event" className={link}>{x.event}</Link>
