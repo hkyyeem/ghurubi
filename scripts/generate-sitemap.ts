@@ -6,7 +6,7 @@ import { MAJOR_CITIES, citySlug } from "../src/lib/cityCoordinates";
 // Only core pages + individual cities; city-pair compare pages are left out to keep crawl budget focused.
 const LANGS = ["en", "ar", "tr", "he"];
 const BASE_URL = "https://ghurubi.com";
-const paths: string[] = ["/", "/watch", "/about", "/wear", "/cities", "/compare", "/event", "/sitemap", "/privacy"];
+const paths: string[] = ["/", "/watch", "/about", "/wear", "/cities", "/compare", "/event", "/sitemap", "/privacy", "/articles", "/articles/sunset-workday"];
 for (const c of MAJOR_CITIES) paths.push(`/city/${citySlug(c)}`);
 
 const xml = [
