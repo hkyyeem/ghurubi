@@ -15,6 +15,8 @@ interface NavigationBarProps {
   onToggleSeasonalHours: (value: boolean) => void;
   showPrayerTimes: boolean;
   onTogglePrayerTimes: (value: boolean) => void;
+  hour12: boolean;
+  onToggleHour12: (value: boolean) => void;
 }
 
 export function NavigationBar({
@@ -25,6 +27,8 @@ export function NavigationBar({
   onToggleSeasonalHours,
   showPrayerTimes,
   onTogglePrayerTimes,
+  hour12,
+  onToggleHour12,
 }: NavigationBarProps) {
   const { lang, setLang, t } = useI18n();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -161,6 +165,28 @@ export function NavigationBar({
                           className={cn(
                             "absolute top-1 w-4 h-4 rounded-full bg-white transition-transform",
                             showPrayerTimes ? "translate-x-6" : "translate-x-1"
+                          )}
+                        />
+                      </button>
+                    </label>
+                    {/* 12/24-Hour Toggle */}
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <div>
+                        <span className="text-sm text-foreground">{t.hour12}</span>
+                        <p className="text-xs text-muted-foreground">{t.hour12Sub}</p>
+                      </div>
+                      <button
+                        onClick={() => onToggleHour12(!hour12)}
+                        role="switch" aria-checked={hour12} aria-label={t.hour12}
+                        className={cn(
+                          "w-11 h-6 rounded-full transition-colors relative",
+                          hour12 ? "bg-accent" : "bg-secondary"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "absolute top-1 w-4 h-4 rounded-full bg-white transition-transform",
+                            hour12 ? "translate-x-6" : "translate-x-1"
                           )}
                         />
                       </button>

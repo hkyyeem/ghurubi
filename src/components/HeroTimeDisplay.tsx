@@ -10,6 +10,7 @@ interface HeroTimeDisplayProps {
   location: Location | null;
   showSeasonalTime?: boolean;
   language?: string;
+  hour12?: boolean;
 }
 
 const HIJRI_EN = ['Muharram', 'Safar', 'Rabi I', 'Rabi II', 'Jumada I', 'Jumada II', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal', "Dhu al-Qa'dah", 'Dhu al-Hijjah'];
@@ -22,7 +23,7 @@ const PERIOD: Record<string, (night: boolean, wd: string) => string> = {
   he: (n, wd) => n ? `ליל ${wd.replace(/^יום\s*/, '')}` : wd,
 };
 
-export function HeroTimeDisplay({ time, location, showSeasonalTime = false }: HeroTimeDisplayProps) {
+export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour12 = false }: HeroTimeDisplayProps) {
   const { lang, t } = useI18n();
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
 
@@ -54,8 +55,15 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false }: He
   return (
     <div className="flex flex-col items-center justify-center py-8 md:py-16">
       <div dir="ltr" className="time-hero text-7xl sm:text-8xl md:text-[10rem] lg:text-[12rem] tabular-nums">
-        {formatNumber(time.hours)}:{formatNumber(time.minutes)}
+        {hour12
+          ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
+          : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
         <span className="text-muted-foreground">:{formatNumber(time.seconds)}</span>
+        {hour12 && (
+          <span className="text-2xl sm:text-3xl md:text-5xl ms-2 text-muted-foreground align-baseline">
+            {time.hours < 12 ? t.night : t.day}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-2 mt-4 md:mt-6">
@@ -75,7 +83,9 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false }: He
       </div>
 
       <ShareTimeCard
-        time={`${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
+        time={hour12
+          ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
+          : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
         period={period}
         dateLine={lang === 'ar' ? hijri : greg}
         city={location?.city}

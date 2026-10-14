@@ -13,6 +13,7 @@ const dict = {
   en: {
     tagline: 'Sunset Time', night: 'Night', day: 'Day', seasonalHour: 'Seasonal hour',
     settings: 'Settings', seasonal: 'Seasonal Hours', seasonalSub: '12h night / 12h day',
+    hour12: '12-Hour Clock', hour12Sub: 'Show 12 hours instead of 24',
     prayer: 'Prayer Times', prayerSub: 'Show Islamic prayer times', search: 'Search location...',
     searchCity: 'Search city...', noResults: 'No cities found', sunData: 'Sun Data',
     sunset: 'Sunset (Day Start)', sunrise: 'Sunrise', dayLen: 'Day Length', nightLen: 'Night Length',
@@ -35,6 +36,7 @@ const dict = {
   ar: {
     tagline: 'التوقيت الغروبي', night: 'ليل', day: 'نهار', seasonalHour: 'الساعة الزمانية',
     settings: 'الإعدادات', seasonal: 'الساعات الزمانية', seasonalSub: '12 ساعة لليل / 12 للنهار',
+    hour12: 'نظام 12 ساعة', hour12Sub: 'إظهار الوقت بنظام 12 ساعة بدل 24',
     prayer: 'مواقيت الصلاة', prayerSub: 'إظهار مواقيت الصلاة', search: 'ابحث عن مدينة...',
     searchCity: 'ابحث عن مدينة...', noResults: 'لا توجد نتائج', sunData: 'بيانات الشمس',
     sunset: 'الغروب (بداية اليوم)', sunrise: 'الشروق', dayLen: 'طول النهار', nightLen: 'طول الليل',
@@ -57,6 +59,7 @@ const dict = {
   tr: {
     tagline: 'Ezanî Saat', night: 'Gece', day: 'Gündüz', seasonalHour: 'Zamanî saat',
     settings: 'Ayarlar', seasonal: 'Zamanî Saatler', seasonalSub: '12 saat gece / 12 saat gündüz',
+    hour12: '12 Saat Formatı', hour12Sub: '24 saat yerine 12 saat göster',
     prayer: 'Namaz Vakitleri', prayerSub: 'Namaz vakitlerini göster', search: 'Şehir ara...',
     searchCity: 'Şehir ara...', noResults: 'Şehir bulunamadı', sunData: 'Güneş Verileri',
     sunset: 'Gün batımı (Günün başı)', sunrise: 'Gün doğumu', dayLen: 'Gündüz süresi', nightLen: 'Gece süresi',
@@ -79,6 +82,7 @@ const dict = {
   he: {
     tagline: 'זמן שקיעה', night: 'לילה', day: 'יום', seasonalHour: 'שעה זמנית',
     settings: 'הגדרות', seasonal: 'שעות זמניות', seasonalSub: '12 שעות לילה / 12 שעות יום',
+    hour12: 'שעון 12 שעות', hour12Sub: 'הצג 12 שעות במקום 24',
     prayer: 'זמני תפילה', prayerSub: 'הצג זמני תפילה (אסלאם)', search: 'חפש עיר...',
     searchCity: 'חפש עיר...', noResults: 'לא נמצאו ערים', sunData: 'נתוני שמש',
     sunset: 'שקיעה (תחילת היום)', sunrise: 'זריחה', dayLen: 'אורך היום', nightLen: 'אורך הלילה',
