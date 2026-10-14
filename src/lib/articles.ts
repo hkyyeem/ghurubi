@@ -8,7 +8,6 @@ export type ArticleBody = {
 export type Article = {
   slug: string;
   date: string; // ISO
-  widget?: 'workday';
   content: Partial<Record<Lang, ArticleBody>> & { ar: ArticleBody; en: ArticleBody };
 };
 
@@ -16,7 +15,6 @@ export const ARTICLES: Article[] = [
   {
     slug: 'sunset-workday',
     date: '2026-10-14',
-    widget: 'workday',
     content: {
       ar: {
         title: 'يوم العمل بتوقيت غروبي — كيف تعيد الشمس تعريف الدوام؟ | غروبي',
