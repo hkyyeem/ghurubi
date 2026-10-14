@@ -27,6 +27,10 @@ const Index = () => {
     STORAGE_KEYS.SHOW_PRAYER_TIMES,
     false
   );
+  const [hour12, setHour12] = useLocalStorage(
+    STORAGE_KEYS.HOUR12,
+    false
+  );
   
   const time = useNaturalTime(location, showSeasonalHours);
   
