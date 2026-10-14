@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
-import { WorkdayWidget } from '@/components/WorkdayWidget';
 import { useI18n } from '@/lib/i18n';
 import { ARTICLES, ARTICLES_LABEL, articleBody, getArticle, dbToArticle, type Article, type DbArticle } from '@/lib/articles';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,7 +110,6 @@ export const ArticlePage = () => {
                     {s.p.map((p, j) => <p key={j}>{p}</p>)}
                   </div>
                   {quotes.map((q, j) => <TweetQuote key={j} text={q} url={url} ar={ar} />)}
-                  {a.widget === 'workday' && i === 4 && <div className="mt-6"><WorkdayWidget /></div>}
                 </section>
               </li>
             );
