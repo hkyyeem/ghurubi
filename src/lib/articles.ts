@@ -1,6 +1,6 @@
 import type { Lang } from '@/lib/i18n';
 
-export type ArticleSection = { h: string; p: string[]; quote?: string };
+export type ArticleSection = { h: string; p: string[]; quote?: string | string[] };
 export type ArticleBody = {
   title: string; desc: string; kicker: string; h1: string; lead: string;
   sections: ArticleSection[]; tweet: string;
@@ -30,16 +30,16 @@ export const ARTICLES: Article[] = [
             'نظام الدوام الذي نعرفه اليوم، من التاسعة إلى الخامسة، ليس من صنع الطبيعة ولا من إيقاع الجسد. إنه ابن الثورة الصناعية، حين احتاجت المصانع إلى أوقات موحدة تدور مع الآلات لا مع الشمس.',
             'ثم جاءت السكك الحديدية والمناطق الزمنية في القرن التاسع عشر، فصار الوقت رقماً متفقاً عليه بين المدن، منفصلاً عن السماء فوق كل مدينة.',
             'والنتيجة مفارقة يعيشها الملايين: يستيقظ الموظف في الشتاء في الظلام ليلحق رقماً على الشاشة، ويخرج من عمله في الصيف والشمس ما تزال عالية، كأن النهار لا يعنيه.',
-          ]},
+          ], quote: 'دوام التاسعة إلى الخامسة ابن المصنع، لا ابن الشمس.' },
           { h: 'البركة في البكور', p: [
             'دعا النبي ﷺ: «اللهم بارك لأمتي في بكورها»، وكان إذا بعث سرية أو جيشاً بعثهم أول النهار. ويروي راوي الحديث صخر الغامدي أنه كان تاجراً يبعث تجارته أول النهار فأثرى وكثر ماله (رواه أبو داود والترمذي).',
             'قامت على هذا المعنى أسواق المدن الإسلامية قروناً: يبدأ السعي بعد الفجر مع أول الضوء، ويهدأ عند القيلولة في الظهيرة، ثم يُختم النهار قبل المغرب.',
             'والقرآن يرسم هذا الإيقاع صراحة: «وجعلنا الليل لباساً، وجعلنا النهار معاشاً». النهار للسعي والليل للسكن، والحد بينهما هو الغروب.',
-          ], quote: '«وجعلنا الليل لباساً، وجعلنا النهار معاشاً»' },
+          ], quote: ['«اللهم بارك لأمتي في بكورها» — حديث نبوي', '«وجعلنا الليل لباساً، وجعلنا النهار معاشاً»'] },
           { h: 'الليل أولاً: يوم يبدأ بالراحة', p: [
             'في التوقيت الغروبي يبدأ اليوم عند الغروب (00:00). معنى ذلك عميق: يومك يفتتح بالعائلة والعشاء والنوم، ثم تدخل نهارك وقد أخذت حقك من الراحة.',
             'أما في التوقيت الزوالي فيبدأ اليوم في منتصف الليل، ويُختصر المساء إلى بقية منهكة بعد العمل. الفرق ليس في الأرقام، بل في ترتيب الأولويات.',
-          ]},
+          ], quote: 'في التوقيت الغروبي يبدأ يومك بالراحة، لا بالعمل.' },
           { h: 'السيناريو الأول: الساعات الزمانية', p: [
             'هنا يُقسم النهار دائماً إلى 12 ساعة زمانية، أياً كان الفصل. في الصيف تطول الساعة لأن النهار طويل، وفي الشتاء تقصر.',
             'لو كان الدوام ثماني ساعات زمانية من الساعة 4 نهاراً إلى الغروب، فإنه يمتد في صيف الرياض إلى نحو تسع ساعات فعلية، وينكمش في الشتاء إلى نحو سبع ساعات ونصف. وفي المدن الشمالية يكون الفرق أكبر بكثير.',
@@ -51,7 +51,7 @@ export const ARTICLES: Article[] = [
             'يبدأ العمل الساعة 4:00 نهاراً بتوقيت غروبي، أي قبل الغروب بثماني ساعات كاملة، وينتهي الساعة 12:00، لحظة الغروب. ثماني ساعات بالضبط في كل فصل.',
             'الذي يتغير هو بدايتها بالنسبة للشروق: في الصيف تبدأ بعد الشروق بوقت طويل، فيتسع البكور للعبادة والرياضة والعائلة. وفي الشتاء تبدأ قريباً من الشروق، فيكون البكور نفسه عملاً.',
             'والشعور مختلف تماماً: يخرج الناس من أعمالهم مع احمرار الأفق. لا عمل إضافي يسرق المساء، لأن الغروب حد وضعته الطبيعة، يعلن يوماً جديداً وصلاة المغرب ومائدة البيت.',
-          ]},
+          ], quote: 'يخرج الناس من أعمالهم مع احمرار الأفق؛ لا عمل إضافي يسرق المساء.' },
           { h: 'ماذا نكسب؟', p: [
             'انسجام الجسد مع الضوء: أبحاث الإيقاع اليومي تربط التعرض لضوء الصباح بنوم أفضل ومزاج أهدأ، وتربط العمل في الظلام بإرهاق مزمن.',
             'حدود واضحة للعمل: حين يكون الغروب نهاية الدوام، يصعب أن يتمدد العمل إلى الليل.',
@@ -75,16 +75,16 @@ export const ARTICLES: Article[] = [
             'The nine-to-five we know is not a product of nature or of the body’s rhythm. It is a child of the Industrial Revolution, when factories needed shared hours that turned with machines, not with the sun.',
             'Railways and time zones in the 19th century then turned time into a number agreed between cities, detached from the sky above each one.',
             'The result: millions wake in winter darkness to chase a number on a screen, and leave work in summer with the sun still high.',
-          ]},
+          ], quote: 'The nine-to-five is a child of the factory, not of the sun.' },
           { h: 'Blessing in the early hours', p: [
             'The Prophet ﷺ prayed: “O Allah, bless my nation in its early mornings.” The narrator, Sakhr al-Ghamidi, was a merchant who sent out his trade early in the day and prospered (Abu Dawud, Tirmidhi).',
             'For centuries markets in Islamic cities followed this rhythm: work began after dawn, paused for the midday rest, and closed before sunset.',
             'The Qur’an draws the same rhythm: “We made the night a covering, and made the day for livelihood.” Day is for striving, night for rest, and sunset is the line between them.',
-          ], quote: '“We made the night a covering, and made the day for livelihood.”' },
+          ], quote: ['“O Allah, bless my nation in its early mornings.” — Prophetic hadith', '“We made the night a covering, and made the day for livelihood.”'] },
           { h: 'Night first: a day that begins with rest', p: [
             'In Ghurubi time the day begins at sunset (00:00). Your day opens with family, dinner and sleep, and you enter daylight already rested.',
             'In civil time the day begins at midnight, and the evening shrinks to a tired remainder after work. The difference is not in numbers but in priorities.',
-          ]},
+          ], quote: 'In Ghurubi time, your day begins with rest, not work.' },
           { h: 'Scenario one: seasonal hours', p: [
             'The day is always divided into 12 seasonal hours. In summer each hour is longer, in winter shorter.',
             'An eight-seasonal-hour shift from day hour 4 to sunset stretches to about nine real hours in a Riyadh summer and shrinks to about seven and a half in winter. In northern cities the swing is far larger.',
@@ -96,7 +96,7 @@ export const ARTICLES: Article[] = [
             'Work starts at 4:00 day in Ghurubi time — eight full hours before sunset — and ends at 12:00, the moment of sunset. Exactly eight hours, every season.',
             'What moves is its start relative to sunrise: in summer it starts long after dawn, leaving a wide morning for prayer, exercise and family; in winter it starts near sunrise.',
             'And the feeling changes: people leave work as the horizon turns red. No overtime steals the evening, because sunset is a boundary set by nature.',
-          ]},
+          ], quote: 'People leave work as the horizon turns red; no overtime steals the evening.' },
           { h: 'What we gain', p: [
             'A body in tune with light: circadian research links morning light to better sleep and mood, and work in darkness to chronic fatigue.',
             'Clear limits: when sunset ends the shift, work struggles to spill into the night.',
@@ -117,4 +117,46 @@ export const ARTICLES_LABEL: Record<Lang, string> = { ar: 'مقالات', en: 'A
 export function getArticle(slug: string) { return ARTICLES.find(a => a.slug === slug); }
 export function articleBody(a: Article, lang: Lang): ArticleBody {
   return a.content[lang] ?? (lang === 'ar' ? a.content.ar : a.content.en);
+}
+
+export type DbArticle = {
+  slug: string; published_at: string | null; created_at: string;
+  title_ar: string; title_en: string; kicker_ar: string; kicker_en: string;
+  desc_ar: string; desc_en: string; lead_ar: string; lead_en: string;
+  tweet_ar: string; tweet_en: string; body_ar: string; body_en: string;
+};
+
+/** Body format: "## Heading" starts a section, "> text" is a tweetable quote, blank line = new paragraph. */
+export function parseBody(body: string): ArticleSection[] {
+  const out: ArticleSection[] = [];
+  let cur: ArticleSection | null = null;
+  const ensure = () => { if (!cur) { cur = { h: '', p: [] }; out.push(cur); } return cur; };
+  for (const block of body.replace(/\r/g, '').split(/\n\s*\n/)) {
+    const lines = block.split('\n');
+    let para: string[] = [];
+    const flush = () => { if (para.length) { ensure().p.push(para.join(' ').trim()); para = []; } };
+    for (const raw of lines) {
+      const l = raw.trim();
+      if (!l) continue;
+      if (l.startsWith('## ')) { flush(); cur = { h: l.slice(3).trim(), p: [] }; out.push(cur); }
+      else if (l.startsWith('>')) {
+        flush(); const s = ensure(); const q = l.replace(/^>\s*/, '');
+        s.quote = s.quote ? [...(Array.isArray(s.quote) ? s.quote : [s.quote]), q] : q;
+      } else para.push(l);
+    }
+    flush();
+  }
+  return out;
+}
+
+export function dbToArticle(r: DbArticle): Article {
+  const mk = (l: 'ar' | 'en'): ArticleBody => {
+    const h1 = r[`title_${l}`] || r.title_en || r.title_ar;
+    return {
+      title: `${h1} | ${l === 'ar' ? 'غروبي' : 'Ghurubi'}`, h1,
+      desc: r[`desc_${l}`] || r[`lead_${l}`], kicker: r[`kicker_${l}`], lead: r[`lead_${l}`],
+      tweet: r[`tweet_${l}`] || h1, sections: parseBody(r[`body_${l}`] || r.body_en || r.body_ar),
+    };
+  };
+  return { slug: r.slug, date: (r.published_at || r.created_at).slice(0, 10), content: { ar: mk('ar'), en: mk('en') } };
 }
