@@ -14,3 +14,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://ghurubi.com/sitemap.xml
+
+Disallow: /admin
+Disallow: /login
