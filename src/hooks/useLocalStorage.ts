@@ -56,6 +56,7 @@ export function useLocalStorage<T>(
 export const STORAGE_KEYS = {
   SEASONAL_HOURS: 'earthclock_seasonal_hours',
   SHOW_PRAYER_TIMES: 'earthclock_show_prayer_times',
+  HOUR12: 'earthclock_hour12',
   SAVED_LOCATION: 'earthclock_saved_location',
   PRAYER_OFFSETS: 'earthclock_prayer_offsets',
   MADHAB: 'earthclock_madhab',
