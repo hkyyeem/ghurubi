@@ -10,6 +10,7 @@ interface HeroTimeDisplayProps {
   location: Location | null;
   showSeasonalTime?: boolean;
   language?: string;
+  hour12?: boolean;
 }
 
 const HIJRI_EN = ['Muharram', 'Safar', 'Rabi I', 'Rabi II', 'Jumada I', 'Jumada II', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal', "Dhu al-Qa'dah", 'Dhu al-Hijjah'];
@@ -22,7 +23,7 @@ const PERIOD: Record<string, (night: boolean, wd: string) => string> = {
   he: (n, wd) => n ? `ליל ${wd.replace(/^יום\s*/, '')}` : wd,
 };
 
-export function HeroTimeDisplay({ time, location, showSeasonalTime = false }: HeroTimeDisplayProps) {
+export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour12 = false }: HeroTimeDisplayProps) {
   const { lang, t } = useI18n();
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
 
