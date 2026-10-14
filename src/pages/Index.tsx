@@ -62,6 +62,8 @@ const Index = () => {
         onToggleSeasonalHours={setShowSeasonalHours}
         showPrayerTimes={showPrayerTimes}
         onTogglePrayerTimes={setShowPrayerTimes}
+        hour12={hour12}
+        onToggleHour12={setHour12}
       />
       
       {/* Main content */}
@@ -73,6 +75,7 @@ const Index = () => {
             time={time} 
             location={location}
             showSeasonalTime={showSeasonalHours}
+            hour12={hour12}
             language="en"
           />
         </section>
@@ -93,6 +96,7 @@ const Index = () => {
                 <PrayerTimesDisplay 
                   location={location} 
                   useSeasonalHours={showSeasonalHours}
+                  hour12={hour12}
                 />
               </div>
             </motion.section>
