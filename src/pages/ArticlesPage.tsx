@@ -107,7 +107,7 @@ export const ArticlePage = () => {
                 <section>
                   {s.h && <h2 className="text-2xl md:text-3xl font-semibold mb-4">{s.h}</h2>}
                   <div className="space-y-3 text-muted-foreground leading-relaxed">
-                    {s.p.map((p, j) => <p key={j}>{p}</p>)}
+                    {s.p.map((p, j) => <p key={j}>{linkify(p)}</p>)}
                   </div>
                   {quotes.map((q, j) => <TweetQuote key={j} text={q} url={url} ar={ar} />)}
                 </section>
@@ -126,3 +126,18 @@ export const ArticlePage = () => {
     </div>
   );
 };
+
+const LINK_RE = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s]+)/g;
+function linkify(text: string) {
+  const out: (string | JSX.Element)[] = [];
+  let last = 0; let m: RegExpExecArray | null; let k = 0;
+  LINK_RE.lastIndex = 0;
+  while ((m = LINK_RE.exec(text))) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    const href = m[2] || m[3];
+    out.push(<a key={k++} href={href} target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-4 hover:opacity-70 break-words">{m[1] || href}</a>);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
