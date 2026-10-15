@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { downloadArticleCard } from '@/lib/articleCard';
 
 type Row = Record<string, any>;
 const FIELDS: { key: string; label: string; long?: boolean; area?: boolean }[] = [
@@ -93,6 +94,8 @@ const AdminPage = () => {
                   </div>
                   <div className="flex gap-2 shrink-0">
                     {r.published && <Button variant="ghost" size="sm" asChild><a href={`/articles/${r.slug}`} target="_blank" rel="noreferrer">عرض</a></Button>}
+                    {r.title_ar && <Button variant="ghost" size="sm" onClick={() => downloadArticleCard({ title: r.title_ar, kicker: r.kicker_ar, slug: r.slug, lang: 'ar' })}>بطاقة عربي</Button>}
+                    {r.title_en && <Button variant="ghost" size="sm" onClick={() => downloadArticleCard({ title: r.title_en, kicker: r.kicker_en, slug: r.slug, lang: 'en' })}>EN card</Button>}
                     <Button variant="outline" size="sm" onClick={() => setEdit(r)}>تعديل</Button>
                     <Button variant="ghost" size="sm" onClick={() => remove(r.id)}>حذف</Button>
                   </div>
