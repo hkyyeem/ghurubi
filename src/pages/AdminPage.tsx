@@ -103,7 +103,7 @@ const AdminPage = () => {
         ) : (
           <div className="space-y-6">
             <div className="rounded-md border border-border p-4 text-sm text-muted-foreground leading-relaxed">
-              طريقة كتابة المحتوى: سطر يبدأ بـ <code dir="ltr">## </code> = عنوان قسم جديد. سطر يبدأ بـ <code dir="ltr">&gt; </code> = اقتباس قابل للتغريد (يمكن وضع أكثر من اقتباس). سطر فارغ = فقرة جديدة.
+              طريقة كتابة المحتوى: سطر يبدأ بـ <code dir="ltr">## </code> = عنوان قسم جديد. سطر يبدأ بـ <code dir="ltr">&gt; </code> = اقتباس قابل للتغريد (يمكن وضع أكثر من اقتباس). سطر فارغ = فقرة جديدة. رابط: <code dir="ltr">[النص](https://...)</code> أو الصق الرابط مباشرة.
             </div>
             <label className="block space-y-1.5">
               <span className="text-xs text-muted-foreground">الرابط (بالإنجليزية، مثلاً night-first)</span>

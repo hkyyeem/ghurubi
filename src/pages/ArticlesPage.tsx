@@ -107,7 +107,7 @@ export const ArticlePage = () => {
                 <section>
                   {s.h && <h2 className="text-2xl md:text-3xl font-semibold mb-4">{s.h}</h2>}
                   <div className="space-y-3 text-muted-foreground leading-relaxed">
-                    {s.p.map((p, j) => <p key={j}>{p}</p>)}
+                    {s.p.map((p, j) => <p key={j}>{linkify(p)}</p>)}
                   </div>
                   {quotes.map((q, j) => <TweetQuote key={j} text={q} url={url} ar={ar} />)}
                 </section>
