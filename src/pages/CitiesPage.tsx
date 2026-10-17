@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { CitySearchHint } from '@/components/CitySearchHint';
 import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
@@ -17,7 +18,8 @@ const CitiesPage = () => {
       <SeoHead path="/cities" title={t.citiesTitle} desc={t.citiesDesc} />
       <SimpleHeader />
       <main className="container-narrow py-10">
-        <h1 className="text-2xl font-semibold mb-6">{t.cities}</h1>
+        <h1 className="text-2xl font-semibold mb-4">{t.cities}</h1>
+        <div className="mb-8"><CitySearchHint /></div>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {[...groups].map(([country, list]) => (
             <section key={country}>
