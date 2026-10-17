@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { CitySearchHint } from '@/components/CitySearchHint';
 import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
@@ -40,6 +41,7 @@ const SitemapPage = () => {
               </li>
             ))}
           </ul>
+          <div className="mt-6"><CitySearchHint /></div>
         </section>
       </main>
       <SiteFooter />
