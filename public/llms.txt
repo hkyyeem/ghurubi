@@ -18,3 +18,8 @@
 - [Site map](https://ghurubi.com/sitemap) · [XML sitemap](https://ghurubi.com/sitemap.xml)
 
 Language versions: add ?lang=ar, ?lang=tr or ?lang=he to any page.
+
+## Live time (plain text, no JavaScript)
+For the current Ghurubi time of any city, fetch:
+https://jwrwhfhockvpsbkxauae.supabase.co/functions/v1/time?city=riyadh
+Options: city=<name in Arabic or English>, or lat=..&lon=..; lang=en for English; format=json for JSON.
