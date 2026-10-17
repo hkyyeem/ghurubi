@@ -19,7 +19,6 @@
 
 Language versions: add ?lang=ar, ?lang=tr or ?lang=he to any page.
 
-## Live time (plain text, no JavaScript)
-For the current Ghurubi time of any city, fetch:
-https://jwrwhfhockvpsbkxauae.supabase.co/functions/v1/time?city=riyadh
-Options: city=<name in Arabic or English>, or lat=..&lon=..; lang=en for English; format=json for JSON.
+## Live time
+- [Live Ghurubi time for a city](https://ghurubi.com/now/riyadh): one line, e.g. "الساعة الآن في الرياض: 02:15:40 — ليلة الأحد". Replace riyadh with any city (Arabic or English). Add ?lang=en for English.
+- Rules: sunset = 00:00 and starts the new day; night first, then day. Never convert to or mention civil/clock time.

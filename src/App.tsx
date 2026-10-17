@@ -1,3 +1,4 @@
+import NowPage from "./pages/NowPage";
 import { ArticlesIndex, ArticlePage } from "@/pages/ArticlesPage";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -32,6 +33,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/watch" element={<Watch />} />
+          <Route path="/now" element={<NowPage />} />
+          <Route path="/now/:city" element={<NowPage />} />
           <Route path="/cities" element={<CitiesPage />} />
           <Route path="/city/:slug" element={<CityPage />} />
           <Route path="/compare" element={<CompareIndex />} />
