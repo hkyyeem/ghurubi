@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
-import { MAJOR_CITIES, citySlug, compareSlug } from '@/lib/cityCoordinates';
+import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
+import { ARTICLES_LABEL } from '@/lib/articles';
+import { WEAR_LABEL } from '@/pages/WearPage';
 
 const SitemapPage = () => {
   const { lang, t } = useI18n();
@@ -23,18 +25,22 @@ const SitemapPage = () => {
             <li><Link className="hover:underline" to="/compare">{x.compare}</Link></li>
             <li><Link className="hover:underline" to="/event">{x.event}</Link></li>
             <li><Link className="hover:underline" to="/watch">{x.watch}</Link></li>
+            <li><Link className="hover:underline" to="/about">{t.about}</Link></li>
+            <li><Link className="hover:underline" to="/wear">{WEAR_LABEL[lang]}</Link></li>
+            <li><Link className="hover:underline" to="/articles">{ARTICLES_LABEL[lang]}</Link></li>
+            <li><Link className="hover:underline" to="/privacy">{x.privacy}</Link></li>
           </ul>
         </section>
-        {MAJOR_CITIES.map(c => (
-          <section key={citySlug(c)}>
-            <h2 className="font-semibold mb-2"><Link className="hover:underline" to={`/city/${citySlug(c)}`}>{cityName(c, lang)}</Link></h2>
-            <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-              {MAJOR_CITIES.filter(o => o !== c).map(o => (
-                <li key={citySlug(o)}><Link className="hover:underline" to={`/compare/${compareSlug(c, o)}`}>{cityName(o, lang)}</Link></li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <section>
+          <h2 className="font-semibold mb-3">{t.allCities}</h2>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+            {MAJOR_CITIES.map(c => (
+              <li key={citySlug(c)}>
+                <Link className="hover:underline" to={`/city/${citySlug(c)}`}>{cityName(c, lang)}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       </main>
       <SiteFooter />
     </div>
