@@ -73,7 +73,7 @@ export const ArticlePage = () => {
   if (!a) return all ? <Navigate to="/articles" replace /> : <div className="min-h-screen bg-background" />;
   const b = articleBody(a, lang);
   const ar = lang === 'ar';
-  const url = `${SITE}/articles/${a.slug}`;
+  const url = `${SITE}/articles/${a.slug}${lang === 'en' ? '' : `?lang=${lang}`}`;
   const xHref = xIntent(b.tweet, url);
   const share = async () => {
     if (navigator.share) {
