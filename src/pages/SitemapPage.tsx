@@ -5,6 +5,8 @@ import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
+import { ARTICLES_LABEL } from '@/lib/articles';
+import { WEAR_LABEL } from '@/pages/WearPage';
 
 const SitemapPage = () => {
   const { lang, t } = useI18n();
@@ -23,9 +25,9 @@ const SitemapPage = () => {
             <li><Link className="hover:underline" to="/compare">{x.compare}</Link></li>
             <li><Link className="hover:underline" to="/event">{x.event}</Link></li>
             <li><Link className="hover:underline" to="/watch">{x.watch}</Link></li>
-            <li><Link className="hover:underline" to="/about">{x.about}</Link></li>
-            <li><Link className="hover:underline" to="/wear">{x.wear}</Link></li>
-            <li><Link className="hover:underline" to="/articles">{x.articles}</Link></li>
+            <li><Link className="hover:underline" to="/about">{t.about}</Link></li>
+            <li><Link className="hover:underline" to="/wear">{WEAR_LABEL[lang]}</Link></li>
+            <li><Link className="hover:underline" to="/articles">{ARTICLES_LABEL[lang]}</Link></li>
             <li><Link className="hover:underline" to="/privacy">{x.privacy}</Link></li>
           </ul>
         </section>
