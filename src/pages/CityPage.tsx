@@ -9,7 +9,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { MAJOR_CITIES, getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
 import { resolveCitySlug } from '@/lib/searchCity';
 import { SeoHead } from '@/components/SeoHead';
-import { useI18n, useLangPath, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, langPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 
 const BASE = 'https://ghurubi.com';
@@ -75,7 +75,7 @@ const CityPage = () => {
   }
 
   const s = citySlug(city);
-  const url = `${BASE}/city/${s}`;
+  const url = `${BASE}${langPath(`/city/${s}`, lang)}`;
   const cn = cityName(city, lang);
   const title = t.cityTitle(cn);
   const desc = t.cityDesc(cn);
