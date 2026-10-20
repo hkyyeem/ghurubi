@@ -88,7 +88,7 @@ const ComparePage = () => {
   }
   if (!a || !b || citySlug(a) === citySlug(b)) return <NotFound />;
   const canonical = compareSlug(a, b);
-  if (canonical !== pair) return <Navigate to={`/compare/${canonical}`} replace />;
+  if (canonical !== pair) return <Navigate to={lp(`/compare/${canonical}`)} replace />;
 
   const url = `${BASE}/compare/${canonical}`;
   const na = cityName(a, lang), nb = cityName(b, lang);
@@ -148,10 +148,10 @@ const ComparePage = () => {
           <h2 className="font-semibold mb-3">{x.compareWith(na)}</h2>
           <ul className="flex flex-wrap gap-x-4 gap-y-2 text-muted-foreground">
             {moreA.map(o => (
-              <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={`/compare/${compareSlug(a, o)}`}>{cityName(o, lang)}</Link></li>
+              <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={lp(`/compare/${compareSlug(a, o)}`)}>{cityName(o, lang)}</Link></li>
             ))}
           </ul>
-          <p className="mt-6"><Link to="/compare" className="underline">{x.compare}</Link></p>
+          <p className="mt-6"><Link to={lp('/compare')} className="underline">{x.compare}</Link></p>
         </section>
       </main>
       <SiteFooter />
