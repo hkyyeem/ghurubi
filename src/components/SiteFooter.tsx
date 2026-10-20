@@ -21,7 +21,7 @@ export function SiteFooter() {
           <ul className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-3 leading-tight">
             {MAJOR_CITIES.map((c, i) => (
               <li key={citySlug(c)}>
-                <Link to={`/city/${citySlug(c)}`}
+                <Link to={lp(`/city/${citySlug(c)}`)}
                   className={`transition-colors hover:text-foreground ${i < 8 ? 'text-xl md:text-2xl font-semibold text-foreground/85' : i < 30 ? 'text-base md:text-lg text-foreground/70' : 'text-sm text-muted-foreground'}`}>
                   {cityName(c, lang)}
                 </Link>
@@ -34,22 +34,22 @@ export function SiteFooter() {
             <h2 className="text-foreground font-semibold mb-3">{x.recent}</h2>
             <ul className="flex flex-wrap gap-x-4 gap-y-2">
               {recent.map(c => (
-                <li key={citySlug(c)}><Link to={`/city/${citySlug(c)}`} className={link}>{cityName(c, lang)}</Link></li>
+                <li key={citySlug(c)}><Link to={lp(`/city/${citySlug(c)}`)} className={link}>{cityName(c, lang)}</Link></li>
               ))}
             </ul>
           </section>
         )}
         <nav aria-label={x.tools} className="flex flex-wrap gap-x-6 gap-y-2">
-          <Link to="/" className={link}>{x.home}</Link>
-          <Link to="/about" className={link}>{ABOUT_LABEL[lang]}</Link>
-          <Link to="/articles" className={link}>{ARTICLES_LABEL[lang]}</Link>
-          <Link to="/cities" className={link}>{t.allCities}</Link>
-          <Link to="/compare" className={link}>{x.compare}</Link>
-          <Link to="/event" className={link}>{x.event}</Link>
-          <Link to="/watch" className={link}>{x.watch}</Link>
-          <Link to="/wear" className={link}>{WEAR_LABEL[lang]}</Link>
-          <Link to="/sitemap" className={link}>{x.sitemap}</Link>
-          <Link to="/privacy" className={link}>{x.privacy}</Link>
+          <Link to={lp('/')} className={link}>{x.home}</Link>
+          <Link to={lp('/about')} className={link}>{ABOUT_LABEL[lang]}</Link>
+          <Link to={lp('/articles')} className={link}>{ARTICLES_LABEL[lang]}</Link>
+          <Link to={lp('/cities')} className={link}>{t.allCities}</Link>
+          <Link to={lp('/compare')} className={link}>{x.compare}</Link>
+          <Link to={lp('/event')} className={link}>{x.event}</Link>
+          <Link to={lp('/watch')} className={link}>{x.watch}</Link>
+          <Link to={lp('/wear')} className={link}>{WEAR_LABEL[lang]}</Link>
+          <Link to={lp('/sitemap')} className={link}>{x.sitemap}</Link>
+          <Link to={lp('/privacy')} className={link}>{x.privacy}</Link>
           <a href="https://x.com/ghurubi" target="_blank" rel="noopener noreferrer" className={link} aria-label="X (Twitter)">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 inline-block align-[-2px]" aria-hidden="true">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
