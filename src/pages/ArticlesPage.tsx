@@ -92,7 +92,7 @@ export const ArticlePage = () => {
       <SeoHead path={`/articles/${a.slug}`} title={b.title} desc={b.desc} />
       <SimpleHeader />
       <main className="container-narrow py-12 md:py-20 max-w-3xl">
-        <Link to="/articles" className="text-sm text-muted-foreground hover:text-foreground">← {ARTICLES_LABEL[lang]}</Link>
+        <Link to={lp('/articles')} className="text-sm text-muted-foreground hover:text-foreground">← {ARTICLES_LABEL[lang]}</Link>
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mt-8 mb-4">{b.kicker}</p>
         <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight mb-6">{b.h1}</h1>
         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8">{b.lead}</p>
@@ -118,8 +118,8 @@ export const ArticlePage = () => {
           })}
         </ol>
         <section className="border-t border-border mt-16 pt-8 flex flex-wrap gap-3">
-          <Link to="/" className={btn}>{ar ? 'الوقت الآن في موقعك' : 'Time at your location'}</Link>
-          <Link to="/about" className={btn}>{ar ? 'فلسفة غروبي' : 'Ghurubi philosophy'}</Link>
+          <Link to={lp('/')} className={btn}>{ar ? 'الوقت الآن في موقعك' : 'Time at your location'}</Link>
+          <Link to={lp('/about')} className={btn}>{ar ? 'فلسفة غروبي' : 'Ghurubi philosophy'}</Link>
           <button onClick={share} className={btn}>{ar ? 'شارك المقال' : 'Share'}</button>
           <a href={xHref} target="_blank" rel="noopener noreferrer" className={btn}>{ar ? 'غرّد على X' : 'Post on X'}</a>
         </section>
