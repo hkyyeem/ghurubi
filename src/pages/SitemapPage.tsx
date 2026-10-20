@@ -4,13 +4,14 @@ import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
-import { useI18n, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 import { ARTICLES_LABEL } from '@/lib/articles';
 import { WEAR_LABEL } from '@/pages/WearPage';
 
 const SitemapPage = () => {
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   const x = useX();
   return (
     <div className="min-h-screen bg-background text-foreground">
