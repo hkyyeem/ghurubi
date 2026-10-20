@@ -155,6 +155,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
 export const useI18n = () => useContext(Ctx);
 
+/** Returns a function that prefixes a path with the current language (keeps users on /ar/... etc.). */
+export function useLangPath() {
+  const { lang } = useI18n();
+  return (path: string) => langPath(path, lang);
+}
+
 /** URL for a path in a given language: English at the root, others under /ar, /tr, /he. */
 export function langPath(path: string, lang: Lang): string {
   return lang === 'en' ? path : `/${lang}${path === '/' ? '' : path}`;
