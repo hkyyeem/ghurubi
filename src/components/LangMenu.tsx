@@ -34,7 +34,7 @@ export function LangMenu() {
         <ul role="listbox" className="absolute end-0 top-full mt-2 w-36 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50">
           {LANGS.map(l => (
             <li key={l}>
-              <button role="option" aria-selected={l === lang} onClick={() => { setLang(l); setOpen(false); }}
+              <button role="option" aria-selected={l === lang} onClick={() => switchLang(l)}
                 className={cn('w-full flex items-center justify-between px-3 py-2 text-sm text-start hover:bg-secondary transition-colors',
                   l === lang ? 'text-foreground font-semibold' : 'text-muted-foreground')}>
                 {LANG_LABEL[l]}
