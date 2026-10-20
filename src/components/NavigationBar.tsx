@@ -3,7 +3,7 @@ import { Search, X, Settings, Watch } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MAJOR_CITIES, type CityInfo } from '@/lib/cityCoordinates';
 import { cn } from '@/lib/utils';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, useLangPath } from '@/lib/i18n';
 import { LangMenu } from './LangMenu';
 import { CitySearch } from './CitySearch';
 
