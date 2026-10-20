@@ -11,6 +11,7 @@ import { resolveCitySlug } from '@/lib/searchCity';
 import { SeoHead } from '@/components/SeoHead';
 import { useI18n, useLangPath, langPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
+import NotFound from './NotFound';
 
 const BASE = 'https://ghurubi.com';
 const NEAR_PICKS = ['makkah', 'riyadh', 'cairo', 'istanbul', 'jerusalem', 'dubai', 'london', 'new-york'];
@@ -66,10 +67,11 @@ const CityPage = () => {
     if (time) document.documentElement.classList.toggle('day-mode', !time.isNight);
   }, [time?.isNight]);
 
+  if (!builtIn && found === null) return <NotFound />;
   if (!city) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <p className="text-muted-foreground">{found === null ? x.notFound : x.loading}</p>
+        <p className="text-muted-foreground">{x.loading}</p>
       </div>
     );
   }

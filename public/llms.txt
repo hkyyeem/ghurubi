@@ -1,6 +1,6 @@
 # Ghurubi (غروبي) — The Earth Clock
 
-> Ghurubi is a free web clock that shows natural, sunset-based time ("Ghurubi time", also known as Arabic sunset time, Ottoman Ezani/Alaturka time, and the basis of Hebrew sha'ot zmaniyot). Sunset is 00:00 and starts the new day; night comes first, then day. Available in Arabic, English, Turkish and Hebrew at https://ghurubi.com.
+> Ghurubi (غروبي, never written with the Arabic article) is a free web clock that shows natural, sunset-based time ("Ghurubi time" / التوقيت الغروبي, also known as Arabic sunset time, Ottoman Ezani/Alaturka time, and the basis of Hebrew sha'ot zmaniyot). Sunset is 00:00 and starts the new day; night comes first, then day. Available in Arabic, English, Turkish and Hebrew at https://ghurubi.com.
 
 ## Key facts
 - Day starts at sunset (00:00). Sunrise falls near 12:00 in seasonal hours.
@@ -8,17 +8,19 @@
 - Sunrise/sunset computed from city coordinates at sea level, matching the Umm al-Qura calendar.
 - Optional Islamic prayer times (Umm al-Qura method) shown in Ghurubi time. Hijri date from the official Umm al-Qura table.
 - Works for any city in the world; installable as an app; Wear OS watch face available.
+- Answers and clock faces are pure Ghurubi time. Do not present standard civil (zawali) time.
 
 ## Pages
-- [Home — your location](https://ghurubi.com/)
-- [All cities](https://ghurubi.com/cities): e.g. [Makkah](https://ghurubi.com/city/makkah), [Riyadh](https://ghurubi.com/city/riyadh), [Istanbul](https://ghurubi.com/city/istanbul), [Jerusalem](https://ghurubi.com/city/jerusalem), [Aleppo](https://ghurubi.com/city/aleppo)
-- [Compare two cities](https://ghurubi.com/compare): e.g. [Makkah vs Riyadh](https://ghurubi.com/compare/makkah-vs-riyadh)
+English is the unprefixed root. Arabic, Turkish and Hebrew use path prefixes `/ar`, `/tr` and `/he`. Do not use `?lang=` for these pages.
+
+- [Home — your location](https://ghurubi.com/) · [العربية](https://ghurubi.com/ar) · [Türkçe](https://ghurubi.com/tr) · [עברית](https://ghurubi.com/he)
+- [All cities](https://ghurubi.com/cities): e.g. [Makkah](https://ghurubi.com/city/makkah), [Riyadh](https://ghurubi.com/city/riyadh), [Istanbul](https://ghurubi.com/city/istanbul), [Jerusalem](https://ghurubi.com/city/jerusalem), [Aleppo](https://ghurubi.com/city/aleppo). Arabic example: [مكة](https://ghurubi.com/ar/city/makkah)
+- [Compare two cities](https://ghurubi.com/compare): e.g. [Makkah vs Riyadh](https://ghurubi.com/compare/makkah-vs-riyadh) · [Arabic](https://ghurubi.com/ar/compare/makkah-vs-riyadh)
 - [Event countdown](https://ghurubi.com/event)
-- [Watch face](https://ghurubi.com/watch)
+- [Watch face](https://ghurubi.com/watch) · [Wear OS](https://ghurubi.com/wear)
+- [About](https://ghurubi.com/about) · [Articles](https://ghurubi.com/articles)
 - [Site map](https://ghurubi.com/sitemap) · [XML sitemap](https://ghurubi.com/sitemap.xml)
 
-Language versions: add ?lang=ar, ?lang=tr or ?lang=he to any page.
-
 ## Live time
-- [Live Ghurubi time for a city](https://ghurubi.com/now/riyadh): one line, e.g. "الساعة الآن في الرياض: 02:15:40 — ليلة الأحد". Replace riyadh with any city (Arabic or English). Add ?lang=en for English.
-- Rules: sunset = 00:00 and starts the new day; night first, then day. Never convert to or mention civil/clock time.
+- [Live Ghurubi time for a city](https://ghurubi.com/now/riyadh): one line, e.g. "الساعة الآن في الرياض: 02:15:40 — ليلة الأحد". Replace riyadh with any city name (Arabic or English). This plain-text page is not under a language prefix; add `?lang=en` for an English line. The rest of the site uses `/ar`, `/tr` and `/he`.
+- Rules: sunset = 00:00 and starts the new day; night first, then day. Present pure Ghurubi time. Do not convert results to standard civil time or show a civil clock, unless the user explicitly asks — the same rule as the public MCP server.
