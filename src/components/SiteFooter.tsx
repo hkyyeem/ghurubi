@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { getDiscoveredCities } from '@/lib/searchCity';
-import { useI18n, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 import { ABOUT_LABEL } from '@/pages/AboutPage';
 import { WEAR_LABEL } from '@/pages/WearPage';
@@ -9,6 +9,7 @@ import { ARTICLES_LABEL } from '@/lib/articles';
 
 export function SiteFooter() {
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   const x = useX();
   const recent = getDiscoveredCities().filter(d => !MAJOR_CITIES.some(m => citySlug(m) === citySlug(d)));
   const link = 'hover:text-foreground hover:underline';
