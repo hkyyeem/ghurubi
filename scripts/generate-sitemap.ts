@@ -13,7 +13,7 @@ const xml = [
   `<?xml version="1.0" encoding="UTF-8"?>`,
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">`,
   ...paths.flatMap((p) => {
-    const href = (l: string) => (l === "en" ? `${BASE_URL}${p}` : `${BASE_URL}${p}?lang=${l}`);
+    const href = (l: string) => (l === "en" ? `${BASE_URL}${p}` : `${BASE_URL}/${l}${p === "/" ? "" : p}`);
     const alts = LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${href(l)}"/>`).join("") +
       `<xhtml:link rel="alternate" hreflang="x-default" href="${href("en")}"/>`;
     return LANGS.map((l) => `  <url><loc>${href(l).replace(/&/g, "&amp;")}</loc>${alts}</url>`);

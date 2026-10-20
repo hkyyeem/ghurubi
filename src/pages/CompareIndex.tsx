@@ -5,7 +5,7 @@ import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { CityPicker } from '@/components/CityPicker';
 import { SiteFooter } from '@/components/SiteFooter';
-import { useI18n, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 
 const POPULAR: [string, string][] = [
@@ -16,12 +16,13 @@ const POPULAR: [string, string][] = [
 
 const CompareIndex = () => {
   const { lang } = useI18n();
+  const lp = useLangPath();
   const x = useX();
   const nav = useNavigate();
   const [a, setA] = useState('riyadh');
   const [b, setB] = useState('makkah');
   const go = () => {
-    if (a && b && a !== b) nav(`/compare/${[a, b].sort().join('-vs-')}`);
+    if (a && b && a !== b) nav(lp(`/compare/${[a, b].sort().join('-vs-')}`));
   };
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -42,7 +43,7 @@ const CompareIndex = () => {
           {POPULAR.map(([p, q]) => {
             const ca = getCityBySlug(p), cb = getCityBySlug(q);
             if (!ca || !cb) return null;
-            return <li key={p + q} className="bg-background"><Link className="block px-4 py-3 hover:bg-secondary transition-colors" to={`/compare/${compareSlug(ca, cb)}`}>{cityName(ca, lang)} — {cityName(cb, lang)}</Link></li>;
+            return <li key={p + q} className="bg-background"><Link className="block px-4 py-3 hover:bg-secondary transition-colors" to={lp(`/compare/${compareSlug(ca, cb)}`)}>{cityName(ca, lang)} — {cityName(cb, lang)}</Link></li>;
           })}
         </ul>
       </main>

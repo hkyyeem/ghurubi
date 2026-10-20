@@ -9,7 +9,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { MAJOR_CITIES, getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
 import { resolveCitySlug } from '@/lib/searchCity';
 import { SeoHead } from '@/components/SeoHead';
-import { useI18n, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, langPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 
 const BASE = 'https://ghurubi.com';
@@ -43,6 +43,7 @@ const CityPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   const x = useX();
   const builtIn = getCityBySlug(slug);
   const [found, setFound] = useState<CityInfo | null | undefined>(undefined);
@@ -74,7 +75,7 @@ const CityPage = () => {
   }
 
   const s = citySlug(city);
-  const url = `${BASE}/city/${s}`;
+  const url = `${BASE}${langPath(`/city/${s}`, lang)}`;
   const cn = cityName(city, lang);
   const title = t.cityTitle(cn);
   const desc = t.cityDesc(cn);
@@ -100,7 +101,7 @@ const CityPage = () => {
         })}</script>
       </SeoHead>
       <NavigationBar
-        onCitySelect={(c: CityInfo) => navigate(`/city/${citySlug(c)}`)}
+        onCitySelect={(c: CityInfo) => navigate(lp(`/city/${citySlug(c)}`))}
         currentCity={city}
         isNight={time?.isNight ?? true}
         showSeasonalHours={showSeasonalHours}
@@ -127,7 +128,7 @@ const CityPage = () => {
             <h2 className="font-semibold mb-3">{x.compareWith(cn)}</h2>
             <ul className="flex flex-wrap gap-x-4 gap-y-2 text-muted-foreground">
               {others.map(o => (
-                <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={`/compare/${compareSlug(city, o)}`}>{cityName(o, lang)}</Link></li>
+                <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={lp(`/compare/${compareSlug(city, o)}`)}>{cityName(o, lang)}</Link></li>
               ))}
             </ul>
           </section>

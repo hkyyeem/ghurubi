@@ -120,6 +120,9 @@ export const countryName = (c: CityInfo | undefined, lang: Lang) =>
 
 function detect(): Lang {
   try {
+    // Language path prefix (/ar/..., /tr/..., /he/...) wins — used for crawlable per-language URLs.
+    const seg = window.location.pathname.split('/')[1] as Lang;
+    if (seg !== 'en' && LANGS.includes(seg)) return seg;
     const q = new URLSearchParams(window.location.search).get('lang') as Lang | null;
     if (q && LANGS.includes(q)) return q;
     const s = localStorage.getItem(KEY) as Lang | null;
@@ -152,14 +155,35 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
 export const useI18n = () => useContext(Ctx);
 
-/** hreflang alternates + self canonical for a path (language via ?lang=). */
+/** Returns a function that prefixes a path with the current language (keeps users on /ar/... etc.). */
+export function useLangPath() {
+  const { lang } = useI18n();
+  return (path: string) => langPath(path, lang);
+}
+
+/** URL for a path in a given language: English at the root, others under /ar, /tr, /he. */
+export function langPath(path: string, lang: Lang): string {
+  return lang === 'en' ? path : `/${lang}${path === '/' ? '' : path}`;
+}
+
+/** Remove a leading language prefix from a pathname, returning the clean path. */
+export function stripLangPrefix(pathname: string): string {
+  const seg = pathname.split('/')[1] as Lang;
+  if (seg !== 'en' && LANGS.includes(seg)) {
+    const rest = pathname.slice(seg.length + 1);
+    return rest === '' ? '/' : rest;
+  }
+  return pathname;
+}
+
+/** hreflang alternates + self canonical for a path (language via path prefix). */
 export function langLinks(path: string, lang: Lang) {
-  const base = `https://ghurubi.com${path}`;
+  const href = (l: Lang) => `https://ghurubi.com${langPath(path, l)}`;
   return {
-    canonical: lang === 'en' ? base : `${base}?lang=${lang}`,
+    canonical: href(lang),
     alternates: [
-      ...LANGS.map(l => ({ hreflang: l, href: l === 'en' ? base : `${base}?lang=${l}` })),
-      { hreflang: 'x-default', href: base },
+      ...LANGS.map(l => ({ hreflang: l, href: href(l) })),
+      { hreflang: 'x-default', href: href('en') },
     ],
   };
 }

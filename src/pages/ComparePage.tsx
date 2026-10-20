@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { resolveCitySlug } from '@/lib/searchCity';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { SeoHead } from '@/components/SeoHead';
-import { useI18n, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useNaturalTime, type Location, type NaturalTime } from '@/hooks/useNaturalTime';
 import { MAJOR_CITIES, getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
 import { SimpleHeader } from '@/components/SimpleHeader';
@@ -24,9 +24,10 @@ function useCityTime(city?: CityInfo) {
 
 function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   return (
     <div className="flex-1 text-center py-8">
-      <Link to={`/city/${citySlug(city)}`} className="text-lg font-semibold hover:underline">
+      <Link to={lp(`/city/${citySlug(city)}`)} className="text-lg font-semibold hover:underline">
         {cityName(city, lang)}
       </Link>
       <p className="mt-4 text-5xl md:text-6xl font-bold tabular-nums tracking-tight">
@@ -68,6 +69,7 @@ function useResolvedCity(slug?: string): Resolved {
 const ComparePage = () => {
   const { pair } = useParams();
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   const x = useX();
   const [sa, sb] = (pair ?? '').split('-vs-');
   const ra = useResolvedCity(sa);
@@ -86,7 +88,7 @@ const ComparePage = () => {
   }
   if (!a || !b || citySlug(a) === citySlug(b)) return <NotFound />;
   const canonical = compareSlug(a, b);
-  if (canonical !== pair) return <Navigate to={`/compare/${canonical}`} replace />;
+  if (canonical !== pair) return <Navigate to={lp(`/compare/${canonical}`)} replace />;
 
   const url = `${BASE}/compare/${canonical}`;
   const na = cityName(a, lang), nb = cityName(b, lang);
@@ -146,10 +148,10 @@ const ComparePage = () => {
           <h2 className="font-semibold mb-3">{x.compareWith(na)}</h2>
           <ul className="flex flex-wrap gap-x-4 gap-y-2 text-muted-foreground">
             {moreA.map(o => (
-              <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={`/compare/${compareSlug(a, o)}`}>{cityName(o, lang)}</Link></li>
+              <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={lp(`/compare/${compareSlug(a, o)}`)}>{cityName(o, lang)}</Link></li>
             ))}
           </ul>
-          <p className="mt-6"><Link to="/compare" className="underline">{x.compare}</Link></p>
+          <p className="mt-6"><Link to={lp('/compare')} className="underline">{x.compare}</Link></p>
         </section>
       </main>
       <SiteFooter />

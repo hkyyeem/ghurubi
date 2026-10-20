@@ -4,10 +4,11 @@ import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
-import { useI18n, cityName, countryName } from '@/lib/i18n';
+import { useI18n, useLangPath, cityName, countryName } from '@/lib/i18n';
 
 const CitiesPage = () => {
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   const groups = new Map<string, typeof MAJOR_CITIES>();
   for (const c of MAJOR_CITIES) {
     const k = countryName(c, lang);
@@ -25,7 +26,7 @@ const CitiesPage = () => {
             <section key={country}>
               <h2 className="text-sm text-muted-foreground mb-1">{country}</h2>
               <ul>{list.map(c => (
-                <li key={citySlug(c)}><Link to={`/city/${citySlug(c)}`} className="block py-1 hover:underline">{cityName(c, lang)}</Link></li>
+                <li key={citySlug(c)}><Link to={lp(`/city/${citySlug(c)}`)} className="block py-1 hover:underline">{cityName(c, lang)}</Link></li>
               ))}</ul>
             </section>
           ))}

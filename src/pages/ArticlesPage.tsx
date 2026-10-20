@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { SeoHead } from '@/components/SeoHead';
 import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, useLangPath, langPath } from '@/lib/i18n';
 import { ARTICLES, ARTICLES_LABEL, articleBody, getArticle, dbToArticle, type Article, type DbArticle } from '@/lib/articles';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -28,6 +28,7 @@ function useAllArticles() {
 
 export const ArticlesIndex = () => {
   const { lang } = useI18n();
+  const lp = useLangPath();
   const ar = lang === 'ar';
   const list = useAllArticles() ?? ARTICLES;
   return (
@@ -43,7 +44,7 @@ export const ArticlesIndex = () => {
             return (
               <li key={a.slug} className="border-t border-border pt-6">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">{b.kicker}</p>
-                <Link to={`/articles/${a.slug}`} className="text-2xl md:text-3xl font-semibold hover:underline">{b.h1}</Link>
+                <Link to={lp(`/articles/${a.slug}`)} className="text-2xl md:text-3xl font-semibold hover:underline">{b.h1}</Link>
                 <p className="text-muted-foreground mt-3 leading-relaxed">{b.lead}</p>
               </li>
             );
@@ -68,12 +69,13 @@ const TweetQuote = ({ text, url, ar }: { text: string; url: string; ar: boolean 
 export const ArticlePage = () => {
   const { slug = '' } = useParams();
   const { lang } = useI18n();
+  const lp = useLangPath();
   const all = useAllArticles();
   const a = all ? all.find(x => x.slug === slug) : getArticle(slug);
-  if (!a) return all ? <Navigate to="/articles" replace /> : <div className="min-h-screen bg-background" />;
+  if (!a) return all ? <Navigate to={lp('/articles')} replace /> : <div className="min-h-screen bg-background" />;
   const b = articleBody(a, lang);
   const ar = lang === 'ar';
-  const url = `${SITE}/articles/${a.slug}${lang === 'en' ? '' : `?lang=${lang}`}`;
+  const url = `${SITE}${langPath(`/articles/${a.slug}`, lang)}`;
   const xHref = xIntent(b.tweet, url);
   const share = async () => {
     if (navigator.share) {
@@ -90,7 +92,7 @@ export const ArticlePage = () => {
       <SeoHead path={`/articles/${a.slug}`} title={b.title} desc={b.desc} />
       <SimpleHeader />
       <main className="container-narrow py-12 md:py-20 max-w-3xl">
-        <Link to="/articles" className="text-sm text-muted-foreground hover:text-foreground">← {ARTICLES_LABEL[lang]}</Link>
+        <Link to={lp('/articles')} className="text-sm text-muted-foreground hover:text-foreground">← {ARTICLES_LABEL[lang]}</Link>
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mt-8 mb-4">{b.kicker}</p>
         <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight mb-6">{b.h1}</h1>
         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8">{b.lead}</p>
@@ -116,8 +118,8 @@ export const ArticlePage = () => {
           })}
         </ol>
         <section className="border-t border-border mt-16 pt-8 flex flex-wrap gap-3">
-          <Link to="/" className={btn}>{ar ? 'الوقت الآن في موقعك' : 'Time at your location'}</Link>
-          <Link to="/about" className={btn}>{ar ? 'فلسفة غروبي' : 'Ghurubi philosophy'}</Link>
+          <Link to={lp('/')} className={btn}>{ar ? 'الوقت الآن في موقعك' : 'Time at your location'}</Link>
+          <Link to={lp('/about')} className={btn}>{ar ? 'فلسفة غروبي' : 'Ghurubi philosophy'}</Link>
           <button onClick={share} className={btn}>{ar ? 'شارك المقال' : 'Share'}</button>
           <a href={xHref} target="_blank" rel="noopener noreferrer" className={btn}>{ar ? 'غرّد على X' : 'Post on X'}</a>
         </section>
