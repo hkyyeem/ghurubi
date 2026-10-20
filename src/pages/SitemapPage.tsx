@@ -22,15 +22,15 @@ const SitemapPage = () => {
         <section>
           <h2 className="font-semibold mb-3">{x.tools}</h2>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            <li><Link className="hover:underline" to="/">{x.home}</Link></li>
-            <li><Link className="hover:underline" to="/cities">{t.allCities}</Link></li>
-            <li><Link className="hover:underline" to="/compare">{x.compare}</Link></li>
-            <li><Link className="hover:underline" to="/event">{x.event}</Link></li>
-            <li><Link className="hover:underline" to="/watch">{x.watch}</Link></li>
-            <li><Link className="hover:underline" to="/about">{t.about}</Link></li>
-            <li><Link className="hover:underline" to="/wear">{WEAR_LABEL[lang]}</Link></li>
-            <li><Link className="hover:underline" to="/articles">{ARTICLES_LABEL[lang]}</Link></li>
-            <li><Link className="hover:underline" to="/privacy">{x.privacy}</Link></li>
+            <li><Link className="hover:underline" to={lp('/')}>{x.home}</Link></li>
+            <li><Link className="hover:underline" to={lp('/cities')}>{t.allCities}</Link></li>
+            <li><Link className="hover:underline" to={lp('/compare')}>{x.compare}</Link></li>
+            <li><Link className="hover:underline" to={lp('/event')}>{x.event}</Link></li>
+            <li><Link className="hover:underline" to={lp('/watch')}>{x.watch}</Link></li>
+            <li><Link className="hover:underline" to={lp('/about')}>{t.about}</Link></li>
+            <li><Link className="hover:underline" to={lp('/wear')}>{WEAR_LABEL[lang]}</Link></li>
+            <li><Link className="hover:underline" to={lp('/articles')}>{ARTICLES_LABEL[lang]}</Link></li>
+            <li><Link className="hover:underline" to={lp('/privacy')}>{x.privacy}</Link></li>
           </ul>
         </section>
         <section>
@@ -38,7 +38,7 @@ const SitemapPage = () => {
           <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
             {MAJOR_CITIES.map(c => (
               <li key={citySlug(c)}>
-                <Link className="hover:underline" to={`/city/${citySlug(c)}`}>{cityName(c, lang)}</Link>
+                <Link className="hover:underline" to={lp(`/city/${citySlug(c)}`)}>{cityName(c, lang)}</Link>
               </li>
             ))}
           </ul>
