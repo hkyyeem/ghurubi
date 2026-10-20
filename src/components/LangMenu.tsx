@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { Globe, Check } from 'lucide-react';
-import { useI18n, LANGS, LANG_LABEL } from '@/lib/i18n';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useI18n, LANGS, LANG_LABEL, langPath, stripLangPrefix } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 export function LangMenu() {
   const { lang, setLang } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const switchLang = (l: (typeof LANGS)[number]) => {
+    setLang(l);
+    setOpen(false);
+    // Navigate to the language-prefixed URL so each language has its own crawlable address.
+    const clean = stripLangPrefix(location.pathname);
+    if (clean === '/login' || clean === '/admin' || clean.startsWith('/now')) return;
+    navigate(langPath(clean, l) + location.search);
+  };
   useEffect(() => {
     const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener('mousedown', h);

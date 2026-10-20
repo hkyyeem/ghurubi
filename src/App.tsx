@@ -48,6 +48,24 @@ const App = () => (
           <Route path="/articles/:slug" element={<ArticlePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          {/* Localized public routes: /ar/..., /tr/..., /he/... (crawlable per-language URLs) */}
+          {(['ar', 'tr', 'he'] as const).map((l) => (
+            <Route key={l} path={`/${l}`}>
+              <Route index element={<Index />} />
+              <Route path="watch" element={<Watch />} />
+              <Route path="cities" element={<CitiesPage />} />
+              <Route path="city/:slug" element={<CityPage />} />
+              <Route path="compare" element={<CompareIndex />} />
+              <Route path="compare/:pair" element={<ComparePage />} />
+              <Route path="event" element={<EventPage />} />
+              <Route path="sitemap" element={<SitemapPage />} />
+              <Route path="privacy" element={<PrivacyPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="wear" element={<WearPage />} />
+              <Route path="articles" element={<ArticlesIndex />} />
+              <Route path="articles/:slug" element={<ArticlePage />} />
+            </Route>
+          ))}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
