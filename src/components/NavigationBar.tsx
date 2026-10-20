@@ -31,6 +31,7 @@ export function NavigationBar({
   onToggleHour12,
 }: NavigationBarProps) {
   const { lang, setLang, t } = useI18n();
+  const lp = useLangPath();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,7 +84,7 @@ export function NavigationBar({
       <div className="container-narrow">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          <Link to={lp('/')} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2" aria-label="Ghurubi">
             <span className={`w-3 h-3 rounded-full ${isNight ? 'bg-blue-400' : 'bg-amber-400'}`} />
             <span className="font-semibold text-lg tracking-tight">
@@ -98,7 +99,7 @@ export function NavigationBar({
           <div className="flex items-center gap-1 sm:gap-2">
             <LangMenu />
             <Link
-              to="/watch"
+              to={lp('/watch')}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
               aria-label="Watch mode"
             >
