@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { resolveCitySlug } from '@/lib/searchCity';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { SeoHead } from '@/components/SeoHead';
-import { useI18n, cityName } from '@/lib/i18n';
+import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useNaturalTime, type Location, type NaturalTime } from '@/hooks/useNaturalTime';
 import { MAJOR_CITIES, getCityBySlug, citySlug, compareSlug, type CityInfo } from '@/lib/cityCoordinates';
 import { SimpleHeader } from '@/components/SimpleHeader';
@@ -24,9 +24,10 @@ function useCityTime(city?: CityInfo) {
 
 function Column({ city, time }: { city: CityInfo; time: NaturalTime | null }) {
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   return (
     <div className="flex-1 text-center py-8">
-      <Link to={`/city/${citySlug(city)}`} className="text-lg font-semibold hover:underline">
+      <Link to={lp(`/city/${citySlug(city)}`)} className="text-lg font-semibold hover:underline">
         {cityName(city, lang)}
       </Link>
       <p className="mt-4 text-5xl md:text-6xl font-bold tabular-nums tracking-tight">
@@ -68,6 +69,7 @@ function useResolvedCity(slug?: string): Resolved {
 const ComparePage = () => {
   const { pair } = useParams();
   const { lang, t } = useI18n();
+  const lp = useLangPath();
   const x = useX();
   const [sa, sb] = (pair ?? '').split('-vs-');
   const ra = useResolvedCity(sa);
