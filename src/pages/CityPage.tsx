@@ -101,7 +101,7 @@ const CityPage = () => {
         })}</script>
       </SeoHead>
       <NavigationBar
-        onCitySelect={(c: CityInfo) => navigate(`/city/${citySlug(c)}`)}
+        onCitySelect={(c: CityInfo) => navigate(lp(`/city/${citySlug(c)}`))}
         currentCity={city}
         isNight={time?.isNight ?? true}
         showSeasonalHours={showSeasonalHours}
@@ -128,7 +128,7 @@ const CityPage = () => {
             <h2 className="font-semibold mb-3">{x.compareWith(cn)}</h2>
             <ul className="flex flex-wrap gap-x-4 gap-y-2 text-muted-foreground">
               {others.map(o => (
-                <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={`/compare/${compareSlug(city, o)}`}>{cityName(o, lang)}</Link></li>
+                <li key={citySlug(o)}><Link className="hover:text-foreground hover:underline" to={lp(`/compare/${compareSlug(city, o)}`)}>{cityName(o, lang)}</Link></li>
               ))}
             </ul>
           </section>
