@@ -1,19 +1,35 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
+# Disallow rules belong inside a User-agent group. The Sitemap line is not
+# a group, so anything after it on its own is ignored.
+# /llms.txt stays crawlable: it is not under /admin or /login.
 
 User-agent: *
 Allow: /
-
-Sitemap: https://ghurubi.com/sitemap.xml
-
+Allow: /llms.txt
 Disallow: /admin
 Disallow: /login
+
+User-agent: Googlebot
+Allow: /
+Allow: /llms.txt
+Disallow: /admin
+Disallow: /login
+
+User-agent: Bingbot
+Allow: /
+Allow: /llms.txt
+Disallow: /admin
+Disallow: /login
+
+User-agent: Twitterbot
+Allow: /
+Allow: /llms.txt
+Disallow: /admin
+Disallow: /login
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /llms.txt
+Disallow: /admin
+Disallow: /login
+
+Sitemap: https://ghurubi.com/sitemap.xml
