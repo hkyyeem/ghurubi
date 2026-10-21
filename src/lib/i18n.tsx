@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { ar, enUS, tr as trLocale, he as heLocale } from 'date-fns/locale';
 import type { CityInfo } from '@/lib/cityCoordinates';
 
@@ -140,12 +140,10 @@ const Ctx = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: Dict }>({
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(detect);
-  const setLang = (l: Lang) => {
+  const setLang = useCallback((l: Lang) => {
     setLangState(l);
     try { localStorage.setItem(KEY, l); } catch { /* ignore */ }
-    const url = new URL(window.location.href);
-    if (url.searchParams.has('lang')) { url.searchParams.set('lang', l); window.history.replaceState(null, '', url); }
-  };
+  }, []);
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = isRtl(lang) ? 'rtl' : 'ltr';
@@ -164,6 +162,26 @@ export function useLangPath() {
 /** URL for a path in a given language: English at the root, others under /ar, /tr, /he. */
 export function langPath(path: string, lang: Lang): string {
   return lang === 'en' ? path : `/${lang}${path === '/' ? '' : path}`;
+}
+
+/**
+ * Old `?lang=ar|tr|he|en` URLs now live on a path prefix (`/ar`, `/tr`, `/he`; English has none).
+ * Returns the replacement path, or null when this URL should stay.
+ * `/now` keeps `?lang=` because that plain-text page is not under a language prefix.
+ */
+export function legacyLangRedirect(pathname: string, search: string): string | null {
+  const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
+  const raw = params.get('lang');
+  if (!raw) return null;
+  const lang = raw.toLowerCase() as Lang;
+  if (!LANGS.includes(lang)) return null;
+  const clean = stripLangPrefix(pathname);
+  if (clean === '/login' || clean === '/admin' || clean === '/now' || clean.startsWith('/now/')) return null;
+  params.delete('lang');
+  const qs = params.toString();
+  const next = langPath(clean, lang) + (qs ? `?${qs}` : '');
+  const current = pathname + (search ? (search.startsWith('?') ? search : `?${search}`) : '');
+  return next === current ? null : next;
 }
 
 /** Remove a leading language prefix from a pathname, returning the clean path. */

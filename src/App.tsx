@@ -20,6 +20,7 @@ import WearPage from "./pages/WearPage";
 import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { LegacyLangRedirect } from "./components/LegacyLangRedirect";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <LegacyLangRedirect />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/watch" element={<Watch />} />
