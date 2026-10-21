@@ -18,7 +18,10 @@ for (let i = 0; i < MAJOR_CITIES.length; i++) {
   }
 }
 
-const href = (p: string, l: string) => (l === "en" ? `${BASE_URL}${p === "/" ? "/" : p}` : `${BASE_URL}/${l}${p === "/" ? "" : p}`);
+const href = (p: string, l: string) => {
+  const raw = l === "en" ? `${BASE_URL}${p === "/" ? "/" : p}` : `${BASE_URL}/${l}${p === "/" ? "" : p}`;
+  return raw.replace(/&/g, "&amp;");
+};
 
 function localized(p: string) {
   const alts = LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${href(p, l)}"/>`).join("")

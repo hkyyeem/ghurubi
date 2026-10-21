@@ -6,10 +6,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n, useLangPath, isRtl, type Lang } from "@/lib/i18n";
 
 /**
- * Unknown routes. The build also writes dist/404.html from this page.
- * Lovable's SPA fallback still answers extensionless misses with index.html
- * and HTTP 200 unless the host is configured to serve 404.html as the error
- * document. noindex keeps those URLs out of the index either way.
+ * Unknown routes, in the visitor's language, with noindex.
+ * A static host that falls back to index.html still answers these URLs with
+ * HTTP 200. A real 404 status needs the host to serve an error document.
  */
 const COPY: Record<Lang, { title: string; desc: string; h1: string; p: string; home: string }> = {
   ar: {
