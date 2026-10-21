@@ -16,7 +16,10 @@ export function LangMenu() {
     // Navigate to the language-prefixed URL so each language has its own crawlable address.
     const clean = stripLangPrefix(location.pathname);
     if (clean === '/login' || clean === '/admin' || clean.startsWith('/now')) return;
-    navigate(langPath(clean, l) + location.search);
+    const params = new URLSearchParams(location.search);
+    params.delete('lang');
+    const qs = params.toString();
+    navigate(langPath(clean, l) + (qs ? `?${qs}` : '') + location.hash);
   };
   useEffect(() => {
     const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
