@@ -1,11 +1,12 @@
 import { Helmet } from 'react-helmet-async';
-import { useI18n, langLinks } from '@/lib/i18n';
+import { useI18n, langLinks, isRtl } from '@/lib/i18n';
 
 export function SeoHead({ path, title, desc, children }: { path: string; title: string; desc: string; children?: React.ReactNode }) {
   const { lang } = useI18n();
   const { canonical, alternates } = langLinks(path, lang);
   return (
     <Helmet>
+      <html lang={lang} dir={isRtl(lang) ? 'rtl' : 'ltr'} />
       <title>{title}</title>
       <meta name="description" content={desc} />
       <link rel="canonical" href={canonical} />

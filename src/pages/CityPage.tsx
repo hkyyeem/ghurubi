@@ -31,6 +31,13 @@ const ANSWER_H: Record<string, (c: string) => string> = {
   tr: c => `${c} için ezanî saat şimdi kaç?`,
   he: c => `מה השעה עכשיו ב${c} לפי זמן השקיעה?`,
 };
+const EVERGREEN: Record<string, (c: string, lat: string, lon: string) => string> = {
+  ar: (c, lat, lon) => `في ${c} يبدأ اليوم عند غروب الشمس (00:00) فيأتي الليل أولاً ثم النهار. تُحسب الأوقات فلكياً من إحداثيات المدينة (${lat}، ${lon}) وفق معايير أم القرى، وتتغير مع حركة الشمس.`,
+  en: (c, lat, lon) => `In ${c} the day begins at sunset (00:00), so night comes first, then day. Times are computed astronomically from the city coordinates (${lat}, ${lon}) and shift with the sun.`,
+  tr: (c, lat, lon) => `${c} için gün, gün batımında (00:00) başlar; önce gece, sonra gündüz gelir. Saatler şehir koordinatlarından (${lat}, ${lon}) astronomik olarak hesaplanır ve güneşle birlikte değişir.`,
+  he: (c, lat, lon) => `ב${c} היום מתחיל בשקיעה (00:00), הלילה קודם ואחריו היום. הזמנים מחושבים אסטרונומית מקואורדינטות העיר (${lat}, ${lon}) ומשתנים עם השמש.`,
+};
+
 type AnswerFn = (c: string, now: string, sunrise: string, night: string, day: string) => string;
 const ANSWER_P: Record<string, AnswerFn> = {
   ar: (c, now, sr, n, d) => `الساعة الآن ${now} بالتوقيت الغروبي في ${c}. في هذا النظام يبدأ اليوم عند غروب الشمس (00:00 مع أذان المغرب)، فيأتي الليل أولاً ثم النهار. تشرق الشمس اليوم في ${c} عند الساعة ${sr} غروبي، ويستمر الليل ${n} والنهار ${d}. تُحسب الأوقات فلكياً من إحداثيات ${c} وفق معايير أم القرى، وتتغير يومياً مع حركة الشمس.`,
@@ -119,12 +126,15 @@ const CityPage = () => {
           <HeroTimeDisplay time={time} location={location} showSeasonalTime={showSeasonalHours} hour12={hour12} />
         </section>
         <InfoGrid time={time} />
-        {time && (
-          <section className="container-narrow mt-10 text-sm leading-relaxed text-muted-foreground max-w-2xl">
-            <h2 className="font-semibold mb-2 text-foreground">{ANSWER_H[lang]?.(cn) ?? ANSWER_H.en(cn)}</h2>
-            <p>{(ANSWER_P[lang] ?? ANSWER_P.en)(cn, fmt(time.hours, time.minutes), fmt(...hm((time.sunrise.getTime() - time.lastSunset.getTime()) / 3600000)), fmt(...hm(time.nightLength)), fmt(...hm(time.dayLength)))}</p>
-          </section>
-        )}
+        <section className="container-narrow mt-10 text-sm leading-relaxed text-muted-foreground max-w-2xl">
+          <h2 className="font-semibold mb-2 text-foreground">{ANSWER_H[lang]?.(cn) ?? ANSWER_H.en(cn)}</h2>
+          <p>{(EVERGREEN[lang] ?? EVERGREEN.en)(cn, city.latitude.toFixed(4), city.longitude.toFixed(4))}</p>
+          {time ? (
+            <p className="mt-3">{(ANSWER_P[lang] ?? ANSWER_P.en)(cn, fmt(time.hours, time.minutes), fmt(...hm((time.sunrise.getTime() - time.lastSunset.getTime()) / 3600000)), fmt(...hm(time.nightLength)), fmt(...hm(time.dayLength)))}</p>
+          ) : (
+            <p className="mt-3 tabular-nums" data-live="pending">—</p>
+          )}
+        </section>
         {inList && (
           <section className="container-narrow mt-10 text-sm">
             <h2 className="font-semibold mb-3">{x.compareWith(cn)}</h2>

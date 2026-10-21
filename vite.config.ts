@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode, isSsrBuild }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -16,9 +16,9 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mcpPlugin(),
-    mode === "development" && componentTagger(),
-    VitePWA({
+    !isSsrBuild && mcpPlugin(),
+    mode === "development" && !isSsrBuild && componentTagger(),
+    !isSsrBuild && VitePWA({
       registerType: "autoUpdate",
       injectRegister: null,
       strategies: "generateSW",
@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => ({
         clientsClaim: true,
         cleanupOutdatedCaches: true,
         globPatterns: ["**/*.{js,css,html,png,svg,ico,webmanifest}"],
+        // Per-route HTML is served by the CDN. Keep it out of the precache so
+        // scaling the prerender does not bloat the service worker install.
+        globIgnores: ["**/city/**/*.html", "**/articles/**/*.html", "**/404.html"],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.mode === "navigate",

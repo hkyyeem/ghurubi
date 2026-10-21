@@ -3,14 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { SimpleHeader } from "@/components/SimpleHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useI18n, useLangPath, type Lang } from "@/lib/i18n";
+import { useI18n, useLangPath, isRtl, type Lang } from "@/lib/i18n";
 
 /**
- * Client-side 404. Lovable's static host rewrites every path that is not a
- * real file to index.html with HTTP 200 (SPA fallback), so this route cannot
- * set the status code. The noindex meta keeps the URL out of search indexes.
- * A real HTTP 404 needs prerender/SSG (known HTML files + a 404 document) or
- * a host rule that knows the route table.
+ * Unknown routes. The build also writes dist/404.html from this page.
+ * Lovable's SPA fallback still answers extensionless misses with index.html
+ * and HTTP 200 unless the host is configured to serve 404.html as the error
+ * document. noindex keeps those URLs out of the index either way.
  */
 const COPY: Record<Lang, { title: string; desc: string; h1: string; p: string; home: string }> = {
   ar: {
@@ -56,6 +55,7 @@ const NotFound = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Helmet>
+        <html lang={lang} dir={isRtl(lang) ? "rtl" : "ltr"} />
         <title>{c.title}</title>
         <meta name="description" content={c.desc} />
         <meta name="robots" content="noindex, follow" />

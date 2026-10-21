@@ -8,7 +8,7 @@
 - Sunrise/sunset computed from city coordinates at sea level, matching the Umm al-Qura calendar.
 - Optional Islamic prayer times (Umm al-Qura method) shown in Ghurubi time. Hijri date from the official Umm al-Qura table.
 - Works for any city in the world; installable as an app; Wear OS watch face available.
-- Answers and clock faces are pure Ghurubi time. Do not present standard civil (zawali) time.
+- The website and the public MCP server answer in pure Ghurubi time. Do not present standard civil (zawali) time.
 
 ## Pages
 English is the unprefixed root. Arabic, Turkish and Hebrew use path prefixes `/ar`, `/tr` and `/he`. Do not use `?lang=` for these pages.

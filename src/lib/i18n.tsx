@@ -118,11 +118,22 @@ export function cityName(c: CityInfo | undefined, lang: Lang): string {
 export const countryName = (c: CityInfo | undefined, lang: Lang) =>
   !c ? '' : lang === 'ar' ? c.countryAr || c.country : c.country;
 
+/** Language implied by a path prefix. English (no prefix) returns null. */
+export function langFromPathname(pathname: string): Lang | null {
+  const seg = pathname.split('/')[1] as Lang;
+  if (seg && seg !== 'en' && LANGS.includes(seg)) return seg;
+  return null;
+}
+
 function detect(): Lang {
   try {
     // Language path prefix (/ar/..., /tr/..., /he/...) wins — used for crawlable per-language URLs.
-    const seg = window.location.pathname.split('/')[1] as Lang;
-    if (seg !== 'en' && LANGS.includes(seg)) return seg;
+    const fromPath = langFromPathname(window.location.pathname);
+    if (fromPath) return fromPath;
+    // Prerendered HTML is stamped with its URL language so the first client
+    // render matches the server markup (localStorage must not override it).
+    const stamped = document.documentElement.getAttribute('data-prerender-lang') as Lang | null;
+    if (stamped && LANGS.includes(stamped)) return stamped;
     const q = new URLSearchParams(window.location.search).get('lang') as Lang | null;
     if (q && LANGS.includes(q)) return q;
     const s = localStorage.getItem(KEY) as Lang | null;
@@ -138,8 +149,8 @@ const Ctx = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: Dict }>({
   lang: 'en', setLang: () => {}, t: dict.en,
 });
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(detect);
+export function LanguageProvider({ children, initialLang }: { children: ReactNode; initialLang?: Lang }) {
+  const [lang, setLangState] = useState<Lang>(initialLang ?? detect);
   const setLang = (l: Lang) => {
     setLangState(l);
     try { localStorage.setItem(KEY, l); } catch { /* ignore */ }

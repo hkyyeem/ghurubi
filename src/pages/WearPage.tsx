@@ -23,6 +23,7 @@ const C: Record<Lang, Content> = {
       { h: 'قرص الغروب', p: 'الرقم 12 في الأعلى هو لحظة الغروب؛ العقارب تقيس الليل ثم النهار منه.' },
       { h: 'ساعتان في وجه واحد', p: 'انقر الشاشة للتبديل بين الساعات المستوية (60 دقيقة ثابتة) والساعات الزمانية (12 ليلاً و12 نهاراً)، مع لون مميز لكل وضع.' },
       { h: 'الصلاة القادمة', p: 'انقر أسفل الشاشة للتنقل بين ثلاث حالات: وقت الصلاة القادمة بالتوقيت الغروبي، العد التنازلي لها، أو إخفاؤها تماماً.' },
+      { h: 'التوقيت الزوالي الخافت', p: 'يظهر بخط صغير خافت في الأسفل كمرجع فقط، دون أن ينافس التوقيت الغروبي.' },
       { h: 'يعمل بلا اتصال', p: 'كل الحسابات الفلكية تتم على الساعة نفسها من موقعك؛ لا إنترنت ولا حساب.' },
     ],
     installH: 'التثبيت',
@@ -46,6 +47,7 @@ const C: Record<Lang, Content> = {
       { h: 'The sunset dial', p: '12 at the top marks sunset; the hands measure night then day from it.' },
       { h: 'Two clocks in one face', p: 'Tap the screen to switch between equal hours (fixed 60 minutes) and seasonal hours (12 for night, 12 for day), each with its own accent color.' },
       { h: 'Next prayer', p: 'Tap the lower part of the screen to cycle three states: next prayer in Ghurubi time, a countdown to it, or hidden.' },
+      { h: 'Ghost civil time', p: 'Shown small and dim at the bottom as a reference only, never competing with Ghurubi time.' },
       { h: 'Works offline', p: 'All solar calculations run on the watch from your location; no internet, no account.' },
     ],
     installH: 'Install',
@@ -69,6 +71,7 @@ const C: Record<Lang, Content> = {
       { h: 'Gün batımı kadranı', p: 'Üstteki 12 gün batımını işaretler; akrep ve yelkovan geceyi ve gündüzü ondan ölçer.' },
       { h: 'Tek kadranda iki saat', p: 'Eşit saatler (sabit 60 dakika) ile zamanî saatler (gece 12, gündüz 12) arasında geçiş için ekrana dokunun; her modun kendi rengi var.' },
       { h: 'Bir sonraki namaz', p: 'Ekranın alt kısmına dokunarak üç durum arasında geçiş yapın: Ghurubi saatiyle bir sonraki namaz, geri sayım veya gizli.' },
+      { h: 'Silik sivil saat', p: 'Altta küçük ve soluk bir referans olarak görünür; Ghurubi saatiyle asla yarışmaz.' },
       { h: 'Çevrimdışı çalışır', p: 'Tüm güneş hesapları konumunuzdan saat üzerinde yapılır; internet yok, hesap yok.' },
     ],
     installH: 'Kurulum',
@@ -92,6 +95,7 @@ const C: Record<Lang, Content> = {
       { h: 'חוגת השקיעה', p: 'ה‑12 למעלה מסמן את השקיעה; המחוגים מודדים את הלילה ואז את היום ממנה.' },
       { h: 'שני שעונים בפני אחד', p: 'הקישו על המסך למעבר בין שעות שוות (60 דקות קבועות) לשעות זמניות (12 ללילה ו־12 ליום), לכל מצב צבע משלו.' },
       { h: 'התפילה הבאה', p: 'הקישו בחלק התחתון של המסך כדי לעבור בין שלושה מצבים: התפילה הבאה בזמן Ghurubi, ספירה לאחור, או הסתרה.' },
+      { h: 'זמן אזרחי עמום', p: 'מופיע קטן ועמום בתחתית כייחוס בלבד, מבלי להתחרות בזמן Ghurubi.' },
       { h: 'עובד ללא חיבור', p: 'כל החישובים האסטרונומיים מתבצעים על השעון מהמיקום שלך; בלי אינטרנט ובלי חשבון.' },
     ],
     installH: 'התקנה',
@@ -108,7 +112,7 @@ const C: Record<Lang, Content> = {
 
 export const WEAR_LABEL: Record<Lang, string> = { ar: 'ساعة Wear OS', en: 'Wear OS', tr: 'Wear OS', he: 'Wear OS' };
 
-/** Static mock of the Wear OS dial: sunset 12 at top, hands, day label, prayer line. Ghurubi time only. */
+/** Static mock of the Wear OS dial: sunset 12 at top, hands, day label, prayer line, ghost civil time. */
 function DialMock() {
   const accent = 'hsl(210 90% 70%)';
   const hand = (frac: number, len: number, w: number, color: string) => (
@@ -148,7 +152,8 @@ function DialMock() {
         {hand(0.65, 64, 2.5, '#ddd')}
         {hand(0.4, 70, 1, accent)}
         <circle cx="100" cy="100" r="3" fill={accent} />
-        <text x="100" y="148" textAnchor="middle" fontSize="9" fill="#fff" fontFamily="sans-serif">الفجر 09:30</text>
+        <text x="100" y="140" textAnchor="middle" fontSize="9" fill="#fff" fontFamily="sans-serif">الفجر 09:30</text>
+        <text x="100" y="156" textAnchor="middle" fontSize="8" fill="#A0A0A0" fontFamily="sans-serif">22:15</text>
       </svg>
     </div>
   );

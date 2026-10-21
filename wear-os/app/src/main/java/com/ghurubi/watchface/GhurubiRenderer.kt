@@ -25,6 +25,7 @@ class GhurubiRenderer(
     private val EQUAL_DAY = Color.parseColor("#F5B942")
     private val SEASONAL_NIGHT = Color.parseColor("#2DD4BF")
     private val SEASONAL_DAY = Color.parseColor("#FB923C")
+    private val GHOST = Color.parseColor("#A0A0A0")
 
     private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeCap = Paint.Cap.ROUND }
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -92,7 +93,11 @@ class GhurubiRenderer(
             canvas.drawText(line, cx, cy + r * 0.40f, text)
         }
 
-        // Hands on the 12-hour dial, drawn from Ghurubi time.
+        // Bottom third, line 2: civil time as a readable reference
+        text.color = GHOST; text.textSize = r * 0.11f; text.alpha = 255
+        canvas.drawText("%02d:%02d".format(zonedDateTime.hour, zonedDateTime.minute), cx, cy + r * 0.60f, text)
+
+        // Hands (12-hour dial)
         val hourDeg = (t.hours % 12) * 30.0 + t.minutes * 0.5
         val minDeg = t.minutes * 6.0 + t.seconds * 0.1
         hand(canvas, cx, cy, hourDeg, r * 0.45f, r * 0.045f, dim, Color.WHITE)

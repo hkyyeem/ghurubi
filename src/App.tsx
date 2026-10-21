@@ -23,14 +23,23 @@ import { ScrollToTop } from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
+export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        {children}
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export function AppRoutes() {
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/watch" element={<Watch />} />
           <Route path="/now" element={<NowPage />} />
@@ -69,9 +78,16 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </>
+  );
+}
+
+const App = () => (
+  <AppShell>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  </AppShell>
 );
 
 export default App;
