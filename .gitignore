@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Lovable installs from bun.lock. A second lockfile drifts.
+package-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
