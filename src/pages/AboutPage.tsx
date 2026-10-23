@@ -165,8 +165,6 @@ const C: Record<Lang, Content> = {
   },
 };
 
-export const ABOUT_LABEL: Record<Lang, string> = { ar: 'عن غروبي', en: 'About', tr: 'Hakkında', he: 'אודות' };
-
 const AboutPage = () => {
   const { lang } = useI18n();
   const c = C[lang];

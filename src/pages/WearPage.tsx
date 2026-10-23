@@ -110,8 +110,6 @@ const C: Record<Lang, Content> = {
   },
 };
 
-export const WEAR_LABEL: Record<Lang, string> = { ar: 'ساعة Wear OS', en: 'Wear OS', tr: 'Wear OS', he: 'Wear OS' };
-
 /** Static mock of the Wear OS dial: sunset 12 at top, hands, day label, prayer line, ghost civil time. */
 function DialMock() {
   const accent = 'hsl(210 90% 70%)';

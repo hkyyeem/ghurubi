@@ -1,16 +1,16 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, lazy, Suspense } from 'react';
 import { LocateFixed } from 'lucide-react';
 import { SeoHead } from '@/components/SeoHead';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n } from '@/lib/i18n';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useLocalStorage, STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { NavigationBar } from '@/components/NavigationBar';
 import { HeroTimeDisplay } from '@/components/HeroTimeDisplay';
 import { InfoGrid } from '@/components/InfoGrid';
-import { PrayerTimesDisplay } from '@/components/PrayerTimesDisplay';
 import type { CityInfo } from '@/lib/cityCoordinates';
+
+const PrayerTimesDisplay = lazy(() => import('@/components/PrayerTimesDisplay').then(m => ({ default: m.PrayerTimesDisplay })));
 
 const Index = () => {
   const { t } = useI18n();
@@ -91,28 +91,22 @@ const Index = () => {
           {error && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
         </div>
         
-        {/* Prayer times section - optional */}
-        <AnimatePresence>
-          {showPrayerTimes && (
-            <motion.section
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="container-narrow pb-12"
-            >
-              <div className="bg-card border border-border rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-foreground mb-4">
-                  {t.prayer}
-                </h2>
-                <PrayerTimesDisplay 
-                  location={location} 
+        {showPrayerTimes && (
+          <section className="container-narrow pb-12">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                {t.prayer}
+              </h2>
+              <Suspense fallback={<p className="text-sm text-muted-foreground">{t.locating}</p>}>
+                <PrayerTimesDisplay
+                  location={location}
                   useSeasonalHours={showSeasonalHours}
                   hour12={hour12}
                 />
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
+              </Suspense>
+            </div>
+          </section>
+        )}
         {/* Info Grid */}
         <InfoGrid time={time} />
         

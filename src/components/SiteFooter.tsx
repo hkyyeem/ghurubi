@@ -3,8 +3,7 @@ import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
 import { getDiscoveredCities } from '@/lib/searchCity';
 import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
-import { ABOUT_LABEL } from '@/pages/AboutPage';
-import { WEAR_LABEL } from '@/pages/WearPage';
+import { ABOUT_LABEL, WEAR_LABEL } from '@/lib/pageLabels';
 import { ARTICLES_LABEL } from '@/lib/articles';
 
 export function SiteFooter() {

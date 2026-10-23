@@ -7,7 +7,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
 import { ARTICLES_LABEL } from '@/lib/articles';
-import { WEAR_LABEL } from '@/pages/WearPage';
+import { WEAR_LABEL } from '@/lib/pageLabels';
 
 const SitemapPage = () => {
   const { lang, t } = useI18n();
