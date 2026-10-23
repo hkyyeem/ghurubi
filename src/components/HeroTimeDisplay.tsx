@@ -27,72 +27,72 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
   const { lang, t } = useI18n();
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
 
-  if (!time) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="time-hero text-8xl md:text-[10rem] lg:text-[12rem] animate-pulse">--:--:--</div>
-      </div>
-    );
-  }
-
   // Natural day begins at sunset: during the night we are already in the next day.
-  const base = time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date();
   const dateLocale = DATE_LOCALES[lang];
-  const weekday = format(base, 'EEEE', { locale: dateLocale });
-  const period = (PERIOD[lang] ?? PERIOD.en)(time.isNight, weekday);
-  const h = toHijriDate(base);
-  const hijri = lang === 'ar'
-    ? `${h.day} ${h.monthName} ${h.year} هـ`
-    : `${h.day} ${(lang === 'tr' ? HIJRI_TR : HIJRI_EN)[h.month - 1]} ${h.year} ${lang === 'tr' ? 'H' : 'AH'}`;
-  const greg = format(base, 'd MMMM yyyy', { locale: dateLocale });
+  const base = time ? (time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date()) : null;
+  const weekday = base ? format(base, 'EEEE', { locale: dateLocale }) : '';
+  const period = time ? (PERIOD[lang] ?? PERIOD.en)(time.isNight, weekday) : '';
+  const h = base ? toHijriDate(base) : null;
+  const hijri = h
+    ? (lang === 'ar'
+      ? `${h.day} ${h.monthName} ${h.year} هـ`
+      : `${h.day} ${(lang === 'tr' ? HIJRI_TR : HIJRI_EN)[h.month - 1]} ${h.year} ${lang === 'tr' ? 'H' : 'AH'}`)
+    : '';
+  const greg = base ? format(base, 'd MMMM yyyy', { locale: dateLocale }) : '';
   const primary = lang === 'ar' ? `${period}، ${hijri}` : `${period}, ${greg}`;
   const secondary = lang === 'ar' ? greg : hijri;
 
   const cityName = cn(location?.city, lang) || '—';
   const countryName = ctn(location?.city, lang);
-  const isSeasonalTime = 'seasonalHours' in time;
+  const isSeasonalTime = !!time && 'seasonalHours' in time;
+  const clock = time
+    ? (hour12
+      ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
+      : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`)
+    : '--:--';
+  const shareTime = time ? clock : '--:--';
 
   return (
-    <div className="flex flex-col items-center justify-center py-8 md:py-16">
-      <div dir="ltr" className="time-hero text-7xl sm:text-8xl md:text-[10rem] lg:text-[12rem] tabular-nums">
-        {hour12
-          ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
-          : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
-        <span className="text-muted-foreground">:{formatNumber(time.seconds)}</span>
-        {hour12 && (
+    <div className="flex flex-col items-center justify-center py-8 md:py-16 min-h-[22rem] sm:min-h-[26rem] md:min-h-[34rem]">
+      <div dir="ltr" className={`time-hero text-7xl sm:text-8xl md:text-[10rem] lg:text-[12rem] tabular-nums ${time ? '' : 'animate-pulse'}`}>
+        {clock}
+        <span className="text-muted-foreground">:{time ? formatNumber(time.seconds) : '--'}</span>
+        {hour12 && time && (
           <span className="text-2xl sm:text-3xl md:text-5xl ms-2 text-muted-foreground align-baseline">
             {time.hours < 12 ? t.night : t.day}
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-2 mt-4 md:mt-6">
-        <span className={`status-dot ${time.isNight ? 'status-dot-night' : 'status-dot-day'}`} />
+      <div className="flex items-center justify-center gap-2 mt-4 md:mt-6 min-h-7 md:min-h-8">
+        {time && <span className={`status-dot ${time.isNight ? 'status-dot-night' : 'status-dot-day'}`} />}
         <span className="time-hero-secondary text-lg md:text-xl">
-          {primary}
-          {showSeasonalTime && isSeasonalTime && (
-            <span className="ms-2 text-xs opacity-70">
+          {time ? primary : ' '}
+          {time && showSeasonalTime && isSeasonalTime && (
+            <span className="ms-2 text-xs text-muted-foreground">
               ({t.seasonalHour}: {Math.round((time as SeasonalTime).hourDuration)}′)
             </span>
           )}
         </span>
       </div>
 
-      <div className="text-muted-foreground text-sm md:text-base mt-2 text-center">
-        {secondary} — {cityName}{countryName ? `، ${countryName}`.replace('،', lang === 'ar' ? '،' : ',') : ''}
+      <div className="text-muted-foreground text-sm md:text-base mt-2 text-center min-h-6">
+        {time ? `${secondary} — ${cityName}${countryName ? `، ${countryName}`.replace('،', lang === 'ar' ? '،' : ',') : ''}` : ' '}
       </div>
 
-      <ShareTimeCard
-        time={hour12
-          ? `${formatNumber(time.hours % 12 === 0 ? 12 : time.hours % 12)}:${formatNumber(time.minutes)}`
-          : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`}
-        period={period}
-        dateLine={lang === 'ar' ? hijri : greg}
-        city={location?.city}
-        cityLabel={cityName}
-        countryLabel={countryName}
-        isNight={time.isNight}
-      />
+      <div className="mt-6 min-h-10">
+        {time && (
+          <ShareTimeCard
+            time={shareTime}
+            period={period}
+            dateLine={lang === 'ar' ? hijri : greg}
+            city={location?.city}
+            cityLabel={cityName}
+            countryLabel={countryName}
+            isNight={time.isNight}
+          />
+        )}
+      </div>
     </div>
   );
 }

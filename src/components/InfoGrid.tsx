@@ -10,14 +10,28 @@ export function InfoGrid({ time }: InfoGridProps) {
   const { t } = useI18n();
   if (!time) {
     return (
-      <div className="container-narrow py-8">
-        <div className="info-table animate-pulse">
-          {[1, 2, 3, 4].map((i) => (
+      <div className="container-narrow py-8 md:py-12" aria-hidden="true">
+        <div className="divider" />
+        <h2 className="text-lg font-semibold mb-6 invisible">{t.sunData}</h2>
+        <div className="info-table">
+          {[0, 1, 2, 3, 4].map((i) => (
             <div key={i} className="info-table-row">
-              <div className="h-4 bg-secondary rounded w-24" />
-              <div className="h-4 bg-secondary rounded w-20" />
+              <div className="h-4 bg-secondary rounded w-28" />
+              <div className="h-4 bg-secondary rounded w-36" />
             </div>
           ))}
+        </div>
+        <div className="mt-8">
+          <div className="h-5 mb-3 w-32 bg-secondary rounded" />
+          <div className="h-3 rounded-full bg-secondary" />
+          <div className="h-4 mt-2" />
+        </div>
+        <div className="divider" />
+        <div className="space-y-3">
+          <div className="h-5 w-48 bg-secondary rounded" />
+          <div className="h-4 bg-secondary rounded" />
+          <div className="h-4 bg-secondary rounded w-11/12" />
+          <div className="h-4 bg-secondary rounded w-4/5" />
         </div>
       </div>
     );

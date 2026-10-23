@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,9 +48,10 @@
     --status-night: 230 50% 60%;
     --status-day: 45 90% 55%;
     
-    /* Typography */
-    --font-display: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    /* Typography. Metric-matched local faces sit under the web fonts so a swap
+       (when the font is already cached) does not resize the clock. */
+    --font-display: 'Inter', 'IBM Plex Sans Arabic', 'Ghurubi Sans', 'Ghurubi Arabic', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Ghurubi Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
 
   .day-mode {
@@ -89,6 +88,32 @@
   }
 }
 
+/* Local fallbacks with overrides close to Inter / IBM Plex Arabic / JetBrains Mono. */
+@font-face {
+  font-family: 'Ghurubi Sans';
+  src: local('Arial'), local('Helvetica Neue'), local('Nimbus Sans');
+  size-adjust: 107.4%;
+  ascent-override: 90%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Ghurubi Arabic';
+  src: local('Tahoma'), local('Noto Naskh Arabic'), local('Geeza Pro');
+  size-adjust: 105%;
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Ghurubi Mono';
+  src: local('ui-monospace'), local('Cascadia Mono'), local('Segoe UI Mono'), local('Menlo'), local('Consolas');
+  size-adjust: 100%;
+  ascent-override: 74%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -120,6 +145,7 @@
   .time-hero {
     font-family: var(--font-mono);
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
     line-height: 1;
     color: hsl(var(--time-primary));

@@ -45,7 +45,7 @@ export function ShareTimeCard({ time, period, dateLine, city, cityLabel, country
 
   return (
     <>
-      <button onClick={start} className="mt-6 inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+      <button onClick={start} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground/80 hover:text-foreground hover:border-foreground/40 transition-colors">
         <Share2 className="w-4 h-4" />{c.share}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
