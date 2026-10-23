@@ -92,11 +92,10 @@ export function useGeolocation() {
   });
   
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isUsingDefault, setIsUsingDefault] = useState(() => {
     return !getSavedLocation();
   });
-  const [retryCount, setRetryCount] = useState(0);
 
   // Manual location setter for city search
   const setManualLocation = useCallback((newLocation: Location) => {
@@ -166,23 +165,8 @@ export function useGeolocation() {
     );
   }, []);
 
-  useEffect(() => {
-    // Only request new location if no saved location exists
-    const saved = getSavedLocation();
-    if (saved) {
-      setLoading(false);
-      return;
-    }
-    
-    const timer = setTimeout(() => {
-      requestLocation();
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, [retryCount, requestLocation]);
-
+  // Geolocation is a user gesture. Page load keeps the saved city, or Makkah.
   const retryLocation = useCallback(() => {
-    setRetryCount(c => c + 1);
     requestLocation();
   }, [requestLocation]);
 
@@ -190,9 +174,14 @@ export function useGeolocation() {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(STORAGE_KEYS.SAVED_LOCATION);
     }
+    setLocation({
+      ...DEFAULT_CITY,
+      city: DEFAULT_CITY,
+    });
     setIsUsingDefault(true);
-    requestLocation();
-  }, [requestLocation]);
+    setError(null);
+    setLoading(false);
+  }, []);
 
   return { location, error, loading, isUsingDefault, retryLocation, clearSavedLocation, setManualLocation };
 }

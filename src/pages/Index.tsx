@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from 'react';
+import { LocateFixed } from 'lucide-react';
 import { SeoHead } from '@/components/SeoHead';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n } from '@/lib/i18n';
@@ -13,11 +14,8 @@ import type { CityInfo } from '@/lib/cityCoordinates';
 
 const Index = () => {
   const { t } = useI18n();
-  const { location, setManualLocation, retryLocation } = useGeolocation();
-  // Always refresh real location on open (same behaviour as the watch)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { retryLocation(); }, []);
-  
+  const { location, setManualLocation, retryLocation, loading, error } = useGeolocation();
+
   // Persistent state with localStorage (sync initialization prevents flicker)
   const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(
     STORAGE_KEYS.SEASONAL_HOURS,
@@ -79,6 +77,19 @@ const Index = () => {
             language="en"
           />
         </section>
+
+        <div className="container-narrow flex flex-col items-center pb-4">
+          <button
+            type="button"
+            onClick={() => retryLocation()}
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors disabled:opacity-70"
+          >
+            <LocateFixed className="w-4 h-4" aria-hidden />
+            {loading ? t.locating : t.useMyLocation}
+          </button>
+          {error && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
+        </div>
         
         {/* Prayer times section - optional */}
         <AnimatePresence>
