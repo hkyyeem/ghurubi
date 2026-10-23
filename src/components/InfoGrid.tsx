@@ -1,12 +1,13 @@
-import { format } from 'date-fns';
 import { useI18n } from '@/lib/i18n';
-import type { NaturalTime, SeasonalTime } from '@/hooks/useNaturalTime';
+import type { NaturalTime, SeasonalTime, Location } from '@/hooks/useNaturalTime';
+import { formatHmInZone, zoneOf } from '@/lib/zonedTime';
 
 interface InfoGridProps {
   time: NaturalTime | SeasonalTime | null;
+  location?: Location | null;
 }
 
-export function InfoGrid({ time }: InfoGridProps) {
+export function InfoGrid({ time, location }: InfoGridProps) {
   const { t } = useI18n();
   if (!time) {
     return (
@@ -43,9 +44,8 @@ export function InfoGrid({ time }: InfoGridProps) {
     return `${h}h ${m}m`;
   };
 
-  const formatLocalTime = (date: Date) => {
-    return format(date, 'HH:mm');
-  };
+  const zone = location ? zoneOf(location.latitude, location.longitude) : 'UTC';
+  const formatLocalTime = (date: Date) => formatHmInZone(date, zone);
 
   // Calculate natural time for sunrise and sunset
   const formatNaturalTime = (hours: number, minutes: number) => {

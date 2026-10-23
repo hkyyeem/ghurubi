@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { readBoot } from '@/lib/boot';
 
 /**
  * Custom hook for persistent localStorage with SSR support
@@ -10,7 +11,8 @@ export function useLocalStorage<T>(
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
   // Initialize with value from localStorage (sync read to prevent flicker)
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
+    // Prerendered HTML used the defaults. Apply saved prefs after hydration.
+    if (typeof window === 'undefined' || readBoot()) {
       return defaultValue;
     }
     
@@ -22,6 +24,16 @@ export function useLocalStorage<T>(
       return defaultValue;
     }
   });
+
+  useEffect(() => {
+    if (!readBoot()) return;
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item != null) setStoredValue(JSON.parse(item));
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error);
+    }
+  }, [key]);
 
   // Update localStorage when state changes
   const setValue = useCallback((value: T | ((prev: T) => T)) => {

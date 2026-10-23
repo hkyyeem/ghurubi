@@ -93,7 +93,19 @@ export const ArticlePage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SeoHead path={`/articles/${a.slug}`} title={b.title} desc={b.desc} />
+      <SeoHead path={`/articles/${a.slug}`} title={b.title} desc={b.desc}>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: b.h1,
+          description: b.desc,
+          datePublished: a.date,
+          inLanguage: lang,
+          mainEntityOfPage: url,
+          author: { '@type': 'Organization', name: 'غروبي', url: 'https://ghurubi.com/' },
+          publisher: { '@type': 'Organization', name: 'غروبي', url: 'https://ghurubi.com/' },
+        })}</script>
+      </SeoHead>
       <SimpleHeader />
       <main className="container-narrow py-12 md:py-20 max-w-3xl">
         <Link to={lp('/articles')} className="text-sm text-muted-foreground hover:text-foreground">← {ARTICLES_LABEL[lang]}</Link>

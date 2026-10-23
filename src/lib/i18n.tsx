@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { ar, enUS, tr as trLocale, he as heLocale } from 'date-fns/locale';
 import type { CityInfo } from '@/lib/cityCoordinates';
+import { normalizePath, readBoot } from '@/lib/boot';
 
 export type Lang = 'ar' | 'en' | 'tr' | 'he';
 export const LANGS: Lang[] = ['ar', 'en', 'tr', 'he'];
@@ -124,14 +125,25 @@ export const countryName = (c: CityInfo | undefined, lang: Lang) =>
 
 function detect(): Lang {
   try {
-    // Language path prefix (/ar/..., /tr/..., /he/...) wins — used for crawlable per-language URLs.
-    const seg = window.location.pathname.split('/')[1] as Lang;
-    if (seg !== 'en' && LANGS.includes(seg)) return seg;
-    const q = new URLSearchParams(window.location.search).get('lang') as Lang | null;
-    if (q && LANGS.includes(q)) return q;
-    const s = localStorage.getItem(KEY) as Lang | null;
-    if (s && LANGS.includes(s)) return s;
-    const n = (navigator.language || 'en').slice(0, 2).toLowerCase();
+    const boot = readBoot();
+    if (typeof window !== 'undefined') {
+      // Language path prefix (/ar/..., /tr/..., /he/...) wins — used for crawlable per-language URLs.
+      const seg = window.location.pathname.split('/')[1] as Lang;
+      if (seg !== 'en' && LANGS.includes(seg)) return seg;
+      const q = new URLSearchParams(window.location.search).get('lang') as Lang | null;
+      if (q && LANGS.includes(q)) return q;
+      // Prerendered HTML was built in this language. Match it for hydration.
+      if (boot?.asOf && LANGS.includes(boot.lang) && normalizePath(boot.path) === normalizePath(window.location.pathname)) {
+        return boot.lang;
+      }
+    } else if (boot && LANGS.includes(boot.lang)) {
+      return boot.lang;
+    }
+    if (typeof localStorage !== 'undefined') {
+      const s = localStorage.getItem(KEY) as Lang | null;
+      if (s && LANGS.includes(s)) return s;
+    }
+    const n = (typeof navigator !== 'undefined' ? navigator.language : 'en').slice(0, 2).toLowerCase();
     if (n === 'iw') return 'he';
     if (LANGS.includes(n as Lang)) return n as Lang;
   } catch { /* ignore */ }
@@ -151,6 +163,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = isRtl(lang) ? 'rtl' : 'ltr';
+    document.documentElement.removeAttribute('data-lang-mismatch');
   }, [lang]);
   return <Ctx.Provider value={{ lang, setLang, t: dict[lang] as Dict }}>{children}</Ctx.Provider>;
 }

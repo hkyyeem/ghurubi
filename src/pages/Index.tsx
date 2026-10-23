@@ -2,8 +2,9 @@ import { useEffect, useCallback, lazy, Suspense } from 'react';
 import { LocateFixed } from 'lucide-react';
 import { SeoHead } from '@/components/SeoHead';
 import { SiteFooter } from '@/components/SiteFooter';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, cityName, langPath } from '@/lib/i18n';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
+import { TimeAnswer } from '@/components/TimeAnswer';
 import { useLocalStorage, STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { NavigationBar } from '@/components/NavigationBar';
 import { HeroTimeDisplay } from '@/components/HeroTimeDisplay';
@@ -13,7 +14,7 @@ import type { CityInfo } from '@/lib/cityCoordinates';
 const PrayerTimesDisplay = lazy(() => import('@/components/PrayerTimesDisplay').then(m => ({ default: m.PrayerTimesDisplay })));
 
 const Index = () => {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { location, setManualLocation, retryLocation, loading, error } = useGeolocation();
 
   // Persistent state with localStorage (sync initialization prevents flicker)
@@ -50,7 +51,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <SeoHead path="/" title={t.homeTitle} desc={t.homeDesc} />
+      <SeoHead path="/" title={t.homeTitle} desc={t.homeDesc}>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: t.homeTitle,
+          description: t.homeDesc,
+          url: `https://ghurubi.com${langPath('/', lang)}`,
+          inLanguage: lang,
+          isPartOf: { '@id': 'https://ghurubi.com/#site' },
+        })}</script>
+      </SeoHead>
       {/* Navigation Bar */}
       <NavigationBar
         onCitySelect={handleCitySelect}
@@ -90,6 +101,8 @@ const Index = () => {
           </button>
           {error && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
         </div>
+
+        <TimeAnswer cityLabel={cityName(location?.city, lang) || t.useMyLocation} time={time} />
         
         {showPrayerTimes && (
           <section className="container-narrow pb-12">
@@ -108,7 +121,7 @@ const Index = () => {
           </section>
         )}
         {/* Info Grid */}
-        <InfoGrid time={time} />
+        <InfoGrid time={time} location={location} />
         
       </main>
       

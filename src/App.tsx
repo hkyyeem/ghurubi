@@ -30,12 +30,13 @@ function RouteFallback() {
 
 const queryClient = new QueryClient();
 
-const App = () => (
+/** Routes and providers, without a router so the server can mount a StaticRouter. */
+export function AppTree() {
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
         <ScrollToTop />
         <LegacyLangRedirect />
         <Suspense fallback={<RouteFallback />}>
@@ -79,9 +80,15 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>
-      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  );
+}
+
+const App = () => (
+  <BrowserRouter>
+    <AppTree />
+  </BrowserRouter>
 );
 
 export default App;

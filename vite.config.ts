@@ -6,7 +6,8 @@ import { VitePWA } from "vite-plugin-pwa";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode, isSsrBuild }) => ({
+  ...(isSsrBuild ? { build: { outDir: "dist-ssr", emptyOutDir: true } } : {}),
   server: {
     host: "::",
     port: 8080,
@@ -14,11 +15,14 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
+  ssr: {
+    noExternal: ["react-helmet-async"],
+  },
   plugins: [
     react(),
-    mcpPlugin(),
+    !isSsrBuild && mcpPlugin(),
     mode === "development" && componentTagger(),
-    VitePWA({
+    !isSsrBuild && VitePWA({
       registerType: "autoUpdate",
       injectRegister: null,
       strategies: "generateSW",

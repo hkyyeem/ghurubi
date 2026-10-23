@@ -4,6 +4,7 @@ import { toHijriDate } from '@/lib/prayerCalculations';
 import type { NaturalTime, SeasonalTime } from '@/hooks/useNaturalTime';
 import type { Location } from '@/hooks/useNaturalTime';
 import { ShareTimeCard } from '@/components/ShareTimeCard';
+import { zoneOf, zonedCivilDate } from '@/lib/zonedTime';
 
 interface HeroTimeDisplayProps {
   time: NaturalTime | SeasonalTime | null;
@@ -28,8 +29,11 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
 
   // Natural day begins at sunset: during the night we are already in the next day.
+  // The calendar day is the city's day, so the build machine and the browser agree.
   const dateLocale = DATE_LOCALES[lang];
-  const base = time ? (time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date()) : null;
+  const zone = location ? zoneOf(location.latitude, location.longitude) : 'UTC';
+  const instant = time ? (time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : time.now) : null;
+  const base = instant ? zonedCivilDate(instant, zone) : null;
   const weekday = base ? format(base, 'EEEE', { locale: dateLocale }) : '';
   const period = time ? (PERIOD[lang] ?? PERIOD.en)(time.isNight, weekday) : '';
   const h = base ? toHijriDate(base) : null;
