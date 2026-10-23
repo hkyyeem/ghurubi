@@ -26,7 +26,9 @@
     --secondary-foreground: 0 0% 90%;
     
     --muted: 222 10% 20%;
-    --muted-foreground: 220 10% 55%;
+    /* Light enough for 4.5:1 on the secondary chips, not only the page background. */
+    --muted-foreground: 220 10% 64%;
+    --accent-ink: 45 90% 55%;
     
     --accent: 45 90% 55%;
     --accent-foreground: 222 20% 10%;
@@ -71,10 +73,12 @@
     --secondary-foreground: 222 15% 25%;
     
     --muted: 220 10% 92%;
-    --muted-foreground: 220 10% 45%;
+    --muted-foreground: 220 10% 38%;
     
     --accent: 35 90% 50%;
-    --accent-foreground: 0 0% 100%;
+    /* Dark ink on the gold fill; light text on this gold fails contrast. */
+    --accent-foreground: 222 20% 10%;
+    --accent-ink: 32 70% 28%;
     
     --border: 220 15% 88%;
     --input: 220 10% 92%;
@@ -212,4 +216,9 @@
   .link-subtle {
     @apply text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline;
   }
+}
+
+/* Day-mode gold is too light to be text on white. Fills still use --accent. */
+.text-accent {
+  color: hsl(var(--accent-ink));
 }
