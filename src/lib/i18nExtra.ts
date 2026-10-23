@@ -19,7 +19,7 @@ const x = {
     privacyH1: 'Privacy Policy',
     privacyP: [
       'Ghurubi is a sunset-based natural clock. We do not collect, store, or share any personal data on our servers.',
-      'Location (GPS): your coordinates are used only inside your browser to calculate sunrise, sunset, and prayer times for your exact position. They are never sent to or stored on our servers.',
+      'Location (GPS): the site does not ask for your position on its own. Coordinates are used only inside your browser, and only after you choose “Use my location”, to calculate sunrise, sunset, and prayer times. They are never sent to or stored on our servers.',
       'Local storage: your preferences (language, seasonal hours, prayer settings, and chosen location) are saved only on your own device via browser local storage, and you can clear them at any time.',
       'City search: when you search for a city not in our built-in list, the name you type is sent to the OpenStreetMap Nominatim service to find its coordinates. No other data is shared.',
       'We use no tracking cookies, no analytics profiles, and no advertising networks.',
@@ -44,7 +44,7 @@ const x = {
     privacyH1: 'سياسة الخصوصية',
     privacyP: [
       'غروبي ساعة طبيعية مبنية على الغروب. نحن لا نجمع ولا نخزّن ولا نشارك أي بيانات شخصية على خوادمنا.',
-      'الموقع الجغرافي (GPS): تُستخدم إحداثياتك داخل متصفحك فقط لحساب الشروق والغروب ومواقيت الصلاة لموقعك الدقيق، ولا تُرسل أبداً إلى خوادمنا ولا تُخزَّن فيها.',
+      'الموقع الجغرافي (GPS): لا يطلب الموقع إذن الموقع من تلقاء نفسه. تُستخدم إحداثياتك داخل متصفحك فقط بعد أن تختار «استخدم موقعي»، لحساب الشروق والغروب ومواقيت الصلاة، ولا تُرسل أبداً إلى خوادمنا ولا تُخزَّن فيها.',
       'التخزين المحلي: تُحفظ تفضيلاتك (اللغة، الساعات الزمانية، إعدادات الصلاة، والموقع المختار) على جهازك فقط عبر التخزين المحلي للمتصفح، ويمكنك مسحها في أي وقت.',
       'البحث عن المدن: عند البحث عن مدينة غير موجودة في قائمتنا، يُرسل اسم المدينة الذي تكتبه إلى خدمة Nominatim التابعة لـ OpenStreetMap لمعرفة إحداثياتها، ولا تُشارك أي بيانات أخرى.',
       'لا نستخدم ملفات تعريف تتبع، ولا تحليلات شخصية، ولا شبكات إعلانية.',
@@ -69,7 +69,7 @@ const x = {
     privacyH1: 'Gizlilik Politikası',
     privacyP: [
       'Ghurubi, gün batımına dayalı doğal bir saattir. Sunucularımızda hiçbir kişisel veri toplamaz, saklamaz veya paylaşmayız.',
-      'Konum (GPS): koordinatlarınız yalnızca tarayıcınızda, bulunduğunuz nokta için gün doğumu, gün batımı ve namaz vakitlerini hesaplamak amacıyla kullanılır. Asla sunucularımıza gönderilmez veya saklanmaz.',
+      'Konum (GPS): site konumu kendiliğinden istemez. Koordinatlarınız yalnızca “Konumumu kullan”ı seçtikten sonra, tarayıcınızın içinde gün doğumu, gün batımı ve namaz vakitlerini hesaplamak için kullanılır. Asla sunucularımıza gönderilmez veya saklanmaz.',
       'Yerel depolama: tercihleriniz (dil, zamanî saatler, namaz ayarları ve seçilen konum) yalnızca kendi cihazınızda tarayıcı yerel depolamasında tutulur; istediğiniz zaman silebilirsiniz.',
       'Şehir arama: yerleşik listemizde olmayan bir şehir aradığınızda, yazdığınız şehir adı koordinatlarını bulmak için OpenStreetMap Nominatim hizmetine gönderilir. Başka hiçbir veri paylaşılmaz.',
       'İzleme çerezi, kişisel analiz profili veya reklam ağı kullanmıyoruz.',
@@ -94,7 +94,7 @@ const x = {
     privacyH1: 'מדיניות פרטיות',
     privacyP: [
       'Ghurubi הוא שעון טבעי המבוסס על השקיעה. איננו אוספים, שומרים או משתפים נתונים אישיים בשרתים שלנו.',
-      'מיקום (GPS): הקואורדינטות שלך משמשות רק בדפדפן שלך לחישוב זריחה, שקיעה וזמני תפילה עבור מיקומך המדויק. הן לעולם אינן נשלחות לשרתים שלנו או נשמרות בהם.',
+      'מיקום (GPS): האתר אינו מבקש את המיקום מעצמו. הקואורדינטות משמשות רק בדפדפן, ורק אחרי שבוחרים «השתמש במיקום שלי», לחישוב זריחה, שקיעה וזמני תפילה. הן לעולם אינן נשלחות לשרתים שלנו או נשמרות בהם.',
       'אחסון מקומי: ההעדפות שלך (שפה, שעות זמניות, הגדרות תפילה והמיקום הנבחר) נשמרות רק במכשירך באחסון המקומי של הדפדפן, וניתן למחוק אותן בכל עת.',
       'חיפוש ערים: כשאתה מחפש עיר שאינה ברשימה המובנית, שם העיר שהקלדת נשלח לשירות Nominatim של OpenStreetMap כדי למצוא את הקואורדינטות שלה. שום נתון אחר אינו משותף.',
       'איננו משתמשים בעוגיות מעקב, פרופילי ניתוח אישיים או רשתות פרסום.',

@@ -23,9 +23,6 @@ export default function Watch() {
 
   useEffect(() => {
     document.title = 'Ghurubi Watch';
-    // Use GPS on open unless the user typed a city by name
-    if (localStorage.getItem(MANUAL_KEY) !== '1') retryLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Keep the screen awake while the watch page is visible

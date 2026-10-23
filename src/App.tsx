@@ -1,4 +1,4 @@
-import NowPage from "./pages/NowPage";
+import { lazy, Suspense } from "react";
 import { ArticlesIndex, ArticlePage } from "@/pages/ArticlesPage";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,32 +6,40 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Watch from "./pages/Watch";
 import CityPage from "./pages/CityPage";
-import ComparePage from "./pages/ComparePage";
-import CitiesPage from "./pages/CitiesPage";
-import CompareIndex from "./pages/CompareIndex";
-import EventPage from "./pages/EventPage";
-import SitemapPage from "./pages/SitemapPage";
-import PrivacyPage from "./pages/PrivacyPage";
-import AboutPage from "./pages/AboutPage";
-import WearPage from "./pages/WearPage";
-import LoginPage from "./pages/LoginPage";
-import AdminPage from "./pages/AdminPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { LegacyLangRedirect } from "./components/LegacyLangRedirect";
 
+const NowPage = lazy(() => import("./pages/NowPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Watch = lazy(() => import("./pages/Watch"));
+const ComparePage = lazy(() => import("./pages/ComparePage"));
+const CitiesPage = lazy(() => import("./pages/CitiesPage"));
+const CompareIndex = lazy(() => import("./pages/CompareIndex"));
+const EventPage = lazy(() => import("./pages/EventPage"));
+const SitemapPage = lazy(() => import("./pages/SitemapPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const WearPage = lazy(() => import("./pages/WearPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+
+function RouteFallback() {
+  return <div className="min-h-screen bg-background" />;
+}
+
 const queryClient = new QueryClient();
 
-const App = () => (
+/** Routes and providers, without a router so the server can mount a StaticRouter. */
+export function AppTree() {
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
         <ScrollToTop />
         <LegacyLangRedirect />
+        <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/watch" element={<Watch />} />
@@ -71,9 +79,16 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+        </Suspense>
     </TooltipProvider>
   </QueryClientProvider>
+  );
+}
+
+const App = () => (
+  <BrowserRouter>
+    <AppTree />
+  </BrowserRouter>
 );
 
 export default App;

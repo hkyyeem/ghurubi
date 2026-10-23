@@ -6,7 +6,6 @@ import { SimpleHeader } from '@/components/SimpleHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n, useLangPath, langPath } from '@/lib/i18n';
 import { ARTICLES, ARTICLES_LABEL, articleBody, getArticle, dbToArticle, type Article, type DbArticle } from '@/lib/articles';
-import { supabase } from '@/integrations/supabase/client';
 
 const SITE = 'https://ghurubi.com';
 const xIntent = (text: string, url: string) =>
@@ -16,12 +15,17 @@ const xIntent = (text: string, url: string) =>
 function useAllArticles() {
   const [list, setList] = useState<Article[] | null>(null);
   useEffect(() => {
-    supabase.from('articles').select('*').eq('published', true).order('published_at', { ascending: false })
-      .then(({ data }) => {
-        const db = ((data ?? []) as DbArticle[]).map(dbToArticle);
-        const slugs = new Set(db.map(a => a.slug));
-        setList([...db, ...ARTICLES.filter(a => !slugs.has(a.slug))]);
-      });
+    let cancelled = false;
+    import('@/integrations/supabase/client').then(({ supabase }) =>
+      supabase.from('articles').select('*').eq('published', true).order('published_at', { ascending: false })
+        .then(({ data }) => {
+          if (cancelled) return;
+          const db = ((data ?? []) as DbArticle[]).map(dbToArticle);
+          const slugs = new Set(db.map(a => a.slug));
+          setList([...db, ...ARTICLES.filter(a => !slugs.has(a.slug))]);
+        }),
+    );
+    return () => { cancelled = true; };
   }, []);
   return list;
 }
@@ -89,7 +93,19 @@ export const ArticlePage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <SeoHead path={`/articles/${a.slug}`} title={b.title} desc={b.desc} />
+      <SeoHead path={`/articles/${a.slug}`} title={b.title} desc={b.desc}>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: b.h1,
+          description: b.desc,
+          datePublished: a.date,
+          inLanguage: lang,
+          mainEntityOfPage: url,
+          author: { '@type': 'Organization', name: 'غروبي', url: 'https://ghurubi.com/' },
+          publisher: { '@type': 'Organization', name: 'غروبي', url: 'https://ghurubi.com/' },
+        })}</script>
+      </SeoHead>
       <SimpleHeader />
       <main className="container-narrow py-12 md:py-20 max-w-3xl">
         <Link to={lp('/articles')} className="text-sm text-muted-foreground hover:text-foreground">← {ARTICLES_LABEL[lang]}</Link>

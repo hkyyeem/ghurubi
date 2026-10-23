@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -28,7 +26,9 @@
     --secondary-foreground: 0 0% 90%;
     
     --muted: 222 10% 20%;
-    --muted-foreground: 220 10% 55%;
+    /* Light enough for 4.5:1 on the secondary chips, not only the page background. */
+    --muted-foreground: 220 10% 64%;
+    --accent-ink: 45 90% 55%;
     
     --accent: 45 90% 55%;
     --accent-foreground: 222 20% 10%;
@@ -50,9 +50,10 @@
     --status-night: 230 50% 60%;
     --status-day: 45 90% 55%;
     
-    /* Typography */
-    --font-display: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    /* Typography. Metric-matched local faces sit under the web fonts so a swap
+       (when the font is already cached) does not resize the clock. */
+    --font-display: 'Inter', 'IBM Plex Sans Arabic', 'Ghurubi Sans', 'Ghurubi Arabic', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Ghurubi Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
 
   .day-mode {
@@ -72,10 +73,12 @@
     --secondary-foreground: 222 15% 25%;
     
     --muted: 220 10% 92%;
-    --muted-foreground: 220 10% 45%;
+    --muted-foreground: 220 10% 38%;
     
     --accent: 35 90% 50%;
-    --accent-foreground: 0 0% 100%;
+    /* Dark ink on the gold fill; light text on this gold fails contrast. */
+    --accent-foreground: 222 20% 10%;
+    --accent-ink: 32 70% 28%;
     
     --border: 220 15% 88%;
     --input: 220 10% 92%;
@@ -87,6 +90,32 @@
     --status-night: 230 40% 45%;
     --status-day: 35 90% 50%;
   }
+}
+
+/* Local fallbacks with overrides close to Inter / IBM Plex Arabic / JetBrains Mono. */
+@font-face {
+  font-family: 'Ghurubi Sans';
+  src: local('Arial'), local('Helvetica Neue'), local('Nimbus Sans');
+  size-adjust: 107.4%;
+  ascent-override: 90%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Ghurubi Arabic';
+  src: local('Tahoma'), local('Noto Naskh Arabic'), local('Geeza Pro');
+  size-adjust: 105%;
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Ghurubi Mono';
+  src: local('ui-monospace'), local('Cascadia Mono'), local('Segoe UI Mono'), local('Menlo'), local('Consolas');
+  size-adjust: 100%;
+  ascent-override: 74%;
+  descent-override: 22%;
+  line-gap-override: 0%;
 }
 
 @layer base {
@@ -120,6 +149,7 @@
   .time-hero {
     font-family: var(--font-mono);
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
     line-height: 1;
     color: hsl(var(--time-primary));
@@ -186,4 +216,9 @@
   .link-subtle {
     @apply text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline;
   }
+}
+
+/* Day-mode gold is too light to be text on white. Fills still use --accent. */
+.text-accent {
+  color: hsl(var(--accent-ink));
 }

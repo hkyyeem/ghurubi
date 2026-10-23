@@ -1,17 +1,20 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MAJOR_CITIES, citySlug } from '@/lib/cityCoordinates';
+import { MAJOR_CITIES, citySlug, type CityInfo } from '@/lib/cityCoordinates';
 import { getDiscoveredCities } from '@/lib/searchCity';
 import { useI18n, useLangPath, cityName } from '@/lib/i18n';
 import { useX } from '@/lib/i18nExtra';
-import { ABOUT_LABEL } from '@/pages/AboutPage';
-import { WEAR_LABEL } from '@/pages/WearPage';
+import { ABOUT_LABEL, WEAR_LABEL } from '@/lib/pageLabels';
 import { ARTICLES_LABEL } from '@/lib/articles';
 
 export function SiteFooter() {
   const { lang, t } = useI18n();
   const lp = useLangPath();
   const x = useX();
-  const recent = getDiscoveredCities().filter(d => !MAJOR_CITIES.some(m => citySlug(m) === citySlug(d)));
+  const [recent, setRecent] = useState<CityInfo[]>([]);
+  useEffect(() => {
+    setRecent(getDiscoveredCities().filter(d => !MAJOR_CITIES.some(m => citySlug(m) === citySlug(d))));
+  }, []);
   const link = 'hover:text-foreground hover:underline';
   return (
     <footer className="border-t border-border mt-12 py-10 text-sm text-muted-foreground">

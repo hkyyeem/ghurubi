@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import SunCalc from 'suncalc';
 import { findNearestCity, DEFAULT_CITY, type CityInfo } from '@/lib/cityCoordinates';
 import { STORAGE_KEYS, type SavedLocation } from '@/hooks/useLocalStorage';
+import { readBoot } from '@/lib/boot';
 
 export interface NaturalTime {
   hours: number;
@@ -22,6 +23,10 @@ export interface NaturalTime {
   sunrise: Date;
   dayLength: number;
   nightLength: number;
+  /** Instant these figures were calculated for. Build snapshots and the live clock both set it. */
+  now: Date;
+  /** True for the build-time snapshot. Hydration replaces it with the live clock. */
+  frozen?: boolean;
 }
 
 export interface SeasonalTime extends NaturalTime {
@@ -70,6 +75,10 @@ function saveLocation(location: Location): void {
 export function useGeolocation() {
   // Initialize with saved location or default (sync read to prevent flicker)
   const [location, setLocation] = useState<Location>(() => {
+    // Prerendered HTML used the default city. Match it, then apply a saved city after hydration.
+    if (typeof window === 'undefined' || readBoot()) {
+      return { ...DEFAULT_CITY, city: DEFAULT_CITY };
+    }
     const saved = getSavedLocation();
     if (saved) {
       return {
@@ -92,11 +101,30 @@ export function useGeolocation() {
   });
   
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isUsingDefault, setIsUsingDefault] = useState(() => {
+    if (typeof window === 'undefined' || readBoot()) return true;
     return !getSavedLocation();
   });
-  const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    if (!readBoot()) return;
+    const saved = getSavedLocation();
+    if (!saved) return;
+    setLocation({
+      latitude: saved.latitude,
+      longitude: saved.longitude,
+      city: saved.cityName ? {
+        name: saved.cityName,
+        nameAr: saved.cityNameAr || saved.cityName,
+        latitude: saved.latitude,
+        longitude: saved.longitude,
+        country: '',
+        countryAr: '',
+      } : undefined,
+    });
+    setIsUsingDefault(false);
+  }, []);
 
   // Manual location setter for city search
   const setManualLocation = useCallback((newLocation: Location) => {
@@ -166,23 +194,8 @@ export function useGeolocation() {
     );
   }, []);
 
-  useEffect(() => {
-    // Only request new location if no saved location exists
-    const saved = getSavedLocation();
-    if (saved) {
-      setLoading(false);
-      return;
-    }
-    
-    const timer = setTimeout(() => {
-      requestLocation();
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, [retryCount, requestLocation]);
-
+  // Geolocation is a user gesture. Page load keeps the saved city, or Makkah.
   const retryLocation = useCallback(() => {
-    setRetryCount(c => c + 1);
     requestLocation();
   }, [requestLocation]);
 
@@ -190,9 +203,14 @@ export function useGeolocation() {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(STORAGE_KEYS.SAVED_LOCATION);
     }
+    setLocation({
+      ...DEFAULT_CITY,
+      city: DEFAULT_CITY,
+    });
     setIsUsingDefault(true);
-    requestLocation();
-  }, [requestLocation]);
+    setError(null);
+    setLoading(false);
+  }, []);
 
   return { location, error, loading, isUsingDefault, retryLocation, clearSavedLocation, setManualLocation };
 }
@@ -321,6 +339,7 @@ function calculateNaturalTime(now: Date, location: Location): NaturalTime {
     sunrise: getNextSunrise(now, location),
     dayLength: dayLengthMs / (1000 * 60 * 60),
     nightLength: nightLengthMs / (1000 * 60 * 60),
+    now,
   };
 }
 
@@ -375,20 +394,30 @@ function calculateSeasonalTime(naturalTime: NaturalTime, now: Date, location: Lo
   };
 }
 
+function timeAt(now: Date, location: Location, useSeasonalHours: boolean, frozen: boolean) {
+  const naturalTime = calculateNaturalTime(now, location);
+  const value = useSeasonalHours ? calculateSeasonalTime(naturalTime, now, location) : naturalTime;
+  if (frozen) value.frozen = true;
+  return value;
+}
+
 export function useNaturalTime(location: Location | null, useSeasonalHours: boolean = false) {
-  const [time, setTime] = useState<NaturalTime | SeasonalTime | null>(null);
+  const [time, setTime] = useState<NaturalTime | SeasonalTime | null>(() => {
+    if (!location) return null;
+    const boot = readBoot();
+    if (!boot?.asOf) return null;
+    const now = new Date(boot.asOf);
+    if (Number.isNaN(now.getTime())) return null;
+    const value = timeAt(now, location, useSeasonalHours, true);
+    (globalThis as { __GHURUBI_NIGHT__?: boolean }).__GHURUBI_NIGHT__ = value.isNight;
+    return value;
+  });
   
   const updateTime = useCallback(() => {
     if (!location) return;
-    
-    const now = new Date();
-    const naturalTime = calculateNaturalTime(now, location);
-    
-    if (useSeasonalHours) {
-      setTime(calculateSeasonalTime(naturalTime, now, location));
-    } else {
-      setTime(naturalTime);
-    }
+    const boot = readBoot();
+    if (boot?.asOf) boot.asOf = '';
+    setTime(timeAt(new Date(), location, useSeasonalHours, false));
   }, [location, useSeasonalHours]);
   
   useEffect(() => {

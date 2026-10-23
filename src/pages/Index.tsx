@@ -1,23 +1,22 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, lazy, Suspense } from 'react';
+import { LocateFixed } from 'lucide-react';
 import { SeoHead } from '@/components/SeoHead';
 import { SiteFooter } from '@/components/SiteFooter';
-import { useI18n } from '@/lib/i18n';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useI18n, cityName, langPath } from '@/lib/i18n';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
+import { TimeAnswer } from '@/components/TimeAnswer';
 import { useLocalStorage, STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { NavigationBar } from '@/components/NavigationBar';
 import { HeroTimeDisplay } from '@/components/HeroTimeDisplay';
 import { InfoGrid } from '@/components/InfoGrid';
-import { PrayerTimesDisplay } from '@/components/PrayerTimesDisplay';
 import type { CityInfo } from '@/lib/cityCoordinates';
 
+const PrayerTimesDisplay = lazy(() => import('@/components/PrayerTimesDisplay').then(m => ({ default: m.PrayerTimesDisplay })));
+
 const Index = () => {
-  const { t } = useI18n();
-  const { location, setManualLocation, retryLocation } = useGeolocation();
-  // Always refresh real location on open (same behaviour as the watch)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { retryLocation(); }, []);
-  
+  const { t, lang } = useI18n();
+  const { location, setManualLocation, retryLocation, loading, error } = useGeolocation();
+
   // Persistent state with localStorage (sync initialization prevents flicker)
   const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(
     STORAGE_KEYS.SEASONAL_HOURS,
@@ -52,7 +51,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <SeoHead path="/" title={t.homeTitle} desc={t.homeDesc} />
+      <SeoHead path="/" title={t.homeTitle} desc={t.homeDesc}>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: t.homeTitle,
+          description: t.homeDesc,
+          url: `https://ghurubi.com${langPath('/', lang)}`,
+          inLanguage: lang,
+          isPartOf: { '@id': 'https://ghurubi.com/#site' },
+        })}</script>
+      </SeoHead>
       {/* Navigation Bar */}
       <NavigationBar
         onCitySelect={handleCitySelect}
@@ -79,31 +88,40 @@ const Index = () => {
             language="en"
           />
         </section>
+
+        <div className="container-narrow flex flex-col items-center pb-4">
+          <button
+            type="button"
+            onClick={() => retryLocation()}
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors disabled:opacity-70"
+          >
+            <LocateFixed className="w-4 h-4" aria-hidden />
+            {loading ? t.locating : t.useMyLocation}
+          </button>
+          {error && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
+        </div>
+
+        <TimeAnswer cityLabel={cityName(location?.city, lang) || t.useMyLocation} time={time} />
         
-        {/* Prayer times section - optional */}
-        <AnimatePresence>
-          {showPrayerTimes && (
-            <motion.section
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="container-narrow pb-12"
-            >
-              <div className="bg-card border border-border rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-foreground mb-4">
-                  {t.prayer}
-                </h2>
-                <PrayerTimesDisplay 
-                  location={location} 
+        {showPrayerTimes && (
+          <section className="container-narrow pb-12">
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                {t.prayer}
+              </h2>
+              <Suspense fallback={<p className="text-sm text-muted-foreground">{t.locating}</p>}>
+                <PrayerTimesDisplay
+                  location={location}
                   useSeasonalHours={showSeasonalHours}
                   hour12={hour12}
                 />
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
+              </Suspense>
+            </div>
+          </section>
+        )}
         {/* Info Grid */}
-        <InfoGrid time={time} />
+        <InfoGrid time={time} location={location} />
         
       </main>
       
