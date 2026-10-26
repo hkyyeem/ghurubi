@@ -57,7 +57,6 @@ const NowPage = () => {
   }, [identity]);
 
   useEffect(() => {
-    document.title = requested ? `${requested} — غروبي` : "غروبي — الوقت الآن";
     if (!requested) return;
     let alive = true;
     const load = () =>
