@@ -46,7 +46,9 @@ function pageHtml(templateHtml, { lang, dir, isNight, head, body, boot }) {
   // crawlers looking for the standard attribute want lowercase hreflang.
   html = html.replace(/\bhrefLang=/g, "hreflang=");
   const bootJson = JSON.stringify(boot).replace(/</g, "\\u003c");
-  const scripts = `<script>window.__GHURUBI__=${bootJson};</script><script>(function(){try{var b=window.__GHURUBI__;if(!b)return;var seg=location.pathname.split("/")[1];if(seg==="ar"||seg==="tr"||seg==="he")return;var q=new URLSearchParams(location.search).get("lang");if(q==="ar"||q==="en"||q==="tr"||q==="he")return;var saved=localStorage.getItem("ghurubi-lang");var nav=(navigator.language||"en").slice(0,2).toLowerCase();if(nav==="iw")nav="he";var want=(saved==="ar"||saved==="en"||saved==="tr"||saved==="he")?saved:(nav==="ar"||nav==="tr"||nav==="he"||nav==="en"?nav:"en");if(want!==b.lang)document.documentElement.setAttribute("data-lang-mismatch","1");}catch(e){}})();</script>`;
+  // /now is Arabic-only (no /ar/now in the sitemap). Skipping the language
+  // check keeps the prerendered sentence instead of discarding the snapshot.
+  const scripts = `<script>window.__GHURUBI__=${bootJson};</script><script>(function(){try{var b=window.__GHURUBI__;if(!b)return;var seg=location.pathname.split("/")[1];if(seg==="ar"||seg==="tr"||seg==="he"||seg==="now")return;var q=new URLSearchParams(location.search).get("lang");if(q==="ar"||q==="en"||q==="tr"||q==="he")return;var saved=localStorage.getItem("ghurubi-lang");var nav=(navigator.language||"en").slice(0,2).toLowerCase();if(nav==="iw")nav="he";var want=(saved==="ar"||saved==="en"||saved==="tr"||saved==="he")?saved:(nav==="ar"||nav==="tr"||nav==="he"||nav==="en"?nav:"en");if(want!==b.lang)document.documentElement.setAttribute("data-lang-mismatch","1");}catch(e){}})();</script>`;
   if (!html.includes('<div id="root"></div>')) throw new Error("dist/index.html has no empty #root");
   html = html.replace('<div id="root"></div>', `${scripts}<div id="root">${body}</div>`);
   return html;
