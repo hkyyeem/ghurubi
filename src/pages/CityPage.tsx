@@ -97,7 +97,7 @@ const CityPage = () => {
           <HeroTimeDisplay time={time} location={location} showSeasonalTime={showSeasonalHours} hour12={hour12} />
         </section>
         <InfoGrid time={time} location={location} />
-        <TimeAnswer cityLabel={cn} time={time} />
+        <TimeAnswer cityLabel={cn} time={time} location={location} />
         {inList && (
           <section className="container-narrow mt-10 text-sm">
             <h2 className="font-semibold mb-3">{x.compareWith(cn)}</h2>

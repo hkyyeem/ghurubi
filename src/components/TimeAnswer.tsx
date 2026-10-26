@@ -1,5 +1,6 @@
-import type { NaturalTime, SeasonalTime } from '@/hooks/useNaturalTime';
+import type { Location, NaturalTime, SeasonalTime } from '@/hooks/useNaturalTime';
 import { readBoot } from '@/lib/boot';
+import { formatGhurubiHM, ghurubiDay, toGhurubiClock } from '@/lib/ghurubiClock';
 import { useI18n, type Lang } from '@/lib/i18n';
 
 const ANSWER_H: Record<Lang, (c: string) => string> = {
@@ -53,15 +54,24 @@ function stamp(iso: string): string {
 }
 
 /** Readable explanation for people and crawlers that do not run JavaScript. */
-export function TimeAnswer({ cityLabel, time }: { cityLabel: string; time: NaturalTime | SeasonalTime | null }) {
+export function TimeAnswer({ cityLabel, time, location }: { cityLabel: string; time: NaturalTime | SeasonalTime | null; location?: Location | null }) {
   const { lang } = useI18n();
   const boot = time?.frozen ? readBoot() : null;
   const note = boot?.asOf ? AS_OF[lang](stamp(boot.asOf)) : LIVE[lang];
+  const seasonal = !!time && 'seasonalHours' in time;
+  const sunriseLabel = time && location
+    ? formatGhurubiHM(toGhurubiClock(
+      ghurubiDay(time.now, location.latitude, location.longitude).sunrise,
+      location.latitude,
+      location.longitude,
+      seasonal,
+    ))
+    : (time ? fmt(...hm((time.sunrise.getTime() - time.lastSunset.getTime()) / 3600000)) : '');
   const body = time
     ? (ANSWER_P[lang] ?? ANSWER_P.en)(
       cityLabel,
       fmt(time.hours, time.minutes),
-      fmt(...hm((time.sunrise.getTime() - time.lastSunset.getTime()) / 3600000)),
+      sunriseLabel,
       fmt(...hm(time.nightLength)),
       fmt(...hm(time.dayLength)),
     )

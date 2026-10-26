@@ -102,7 +102,7 @@ const Index = () => {
           {error && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
         </div>
 
-        <TimeAnswer cityLabel={cityName(location?.city, lang) || t.useMyLocation} time={time} />
+        <TimeAnswer cityLabel={cityName(location?.city, lang) || t.useMyLocation} time={time} location={location} />
         
         {showPrayerTimes && (
           <section className="container-narrow pb-12">
@@ -112,6 +112,7 @@ const Index = () => {
               </h2>
               <Suspense fallback={<p className="text-sm text-muted-foreground">{t.locating}</p>}>
                 <PrayerTimesDisplay
+                  key={`${location.latitude},${location.longitude}`}
                   location={location}
                   useSeasonalHours={showSeasonalHours}
                   hour12={hour12}

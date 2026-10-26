@@ -9,8 +9,8 @@ import {
   type HijriDate,
   type PrayerAdjustments 
 } from '@/lib/prayerCalculations';
-import type { Location, NaturalTime } from './useNaturalTime';
-import SunCalc from 'suncalc';
+import type { Location } from './useNaturalTime';
+import { toGhurubiClock } from '@/lib/ghurubiClock';
 
 export interface PrayerTimeDisplay {
   name: string;
@@ -38,105 +38,14 @@ const PRAYER_INFO: Record<string, { nameAr: string; icon: string }> = {
   isha: { nameAr: 'العشاء', icon: '🌃' },
 };
 
-/**
- * Convert standard time to natural time (sunset = 00:00)
- * 
- * In Seasonal Hours mode:
- * - Night (Sunset to Sunrise) = 00:00 to 12:00 (12 stretched hours)
- * - Day (Sunrise to Sunset) = 12:00 to 24:00 (12 stretched hours)
- * 
- * Fajr occurs BEFORE sunrise, so it's during the night period,
- * and should appear around 10:00-11:00 seasonal time (end of night).
- */
+/** Sunset is 00:00. Seasonal mode stretches night and day to twelve hours each. */
 function toNaturalTime(
-  prayerTime: Date, 
-  location: Location,
+  prayerTime: Date,
+  latitude: number,
+  longitude: number,
   useSeasonalHours: boolean = false
 ): { hours: number; minutes: number; seconds: number } {
-  const sunTimes = SunCalc.getTimes(prayerTime, location.latitude, location.longitude);
-  
-  // Determine if prayer time is during night or day
-  // Night: from sunset to next sunrise
-  // Day: from sunrise to sunset
-  const isBeforeSunrise = prayerTime < sunTimes.sunrise;
-  const isAfterSunset = prayerTime >= sunTimes.sunset;
-  const isNight = isBeforeSunrise || isAfterSunset;
-  
-  if (useSeasonalHours) {
-    if (isNight) {
-      // Night period: 00:00 to 12:00 (seasonal)
-      let relevantSunset: Date;
-      let relevantSunrise: Date;
-      
-      if (isAfterSunset) {
-        // After today's sunset - use today's sunset and tomorrow's sunrise
-        relevantSunset = sunTimes.sunset;
-        const tomorrow = new Date(prayerTime);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        relevantSunrise = SunCalc.getTimes(tomorrow, location.latitude, location.longitude).sunrise;
-      } else {
-        // Before today's sunrise - use yesterday's sunset and today's sunrise
-        const yesterday = new Date(prayerTime);
-        yesterday.setDate(yesterday.getDate() - 1);
-        relevantSunset = SunCalc.getTimes(yesterday, location.latitude, location.longitude).sunset;
-        relevantSunrise = sunTimes.sunrise;
-      }
-      
-      const nightDurationMs = relevantSunrise.getTime() - relevantSunset.getTime();
-      const msSinceSunset = prayerTime.getTime() - relevantSunset.getTime();
-      
-      // Progress through the night (0 = sunset, 1 = sunrise)
-      const progress = Math.max(0, Math.min(1, msSinceSunset / nightDurationMs));
-      
-      // Night = 12 seasonal hours (00:00 to 12:00)
-      const totalSeasonalSeconds = progress * 12 * 3600;
-      
-      return {
-        hours: Math.floor(totalSeasonalSeconds / 3600),
-        minutes: Math.floor((totalSeasonalSeconds % 3600) / 60),
-        seconds: Math.floor(totalSeasonalSeconds % 60),
-      };
-    } else {
-      // Day period: 12:00 to 24:00 (seasonal)
-      const sunrise = sunTimes.sunrise;
-      const sunset = sunTimes.sunset;
-      const dayDurationMs = sunset.getTime() - sunrise.getTime();
-      const msSinceSunrise = prayerTime.getTime() - sunrise.getTime();
-      
-      // Progress through the day (0 = sunrise, 1 = sunset)
-      const progress = Math.max(0, Math.min(1, msSinceSunrise / dayDurationMs));
-      
-      // Day = 12 seasonal hours (12:00 to 24:00)
-      const totalSeasonalSeconds = progress * 12 * 3600;
-      
-      return {
-        hours: 12 + Math.floor(totalSeasonalSeconds / 3600),
-        minutes: Math.floor((totalSeasonalSeconds % 3600) / 60),
-        seconds: Math.floor(totalSeasonalSeconds % 60),
-      };
-    }
-  } else {
-    // Standard natural time (fixed 24 hours starting at sunset)
-    let relevantSunset: Date;
-    
-    if (prayerTime >= sunTimes.sunset) {
-      relevantSunset = sunTimes.sunset;
-    } else {
-      const yesterday = new Date(prayerTime);
-      yesterday.setDate(yesterday.getDate() - 1);
-      relevantSunset = SunCalc.getTimes(yesterday, location.latitude, location.longitude).sunset;
-    }
-    
-    const msSinceSunset = prayerTime.getTime() - relevantSunset.getTime();
-    const secondsSinceSunset = msSinceSunset / 1000;
-    const totalSeconds = Math.max(0, secondsSinceSunset % 86400);
-    
-    return {
-      hours: Math.floor(totalSeconds / 3600),
-      minutes: Math.floor((totalSeconds % 3600) / 60),
-      seconds: Math.floor(totalSeconds % 60),
-    };
-  }
+  return toGhurubiClock(prayerTime, latitude, longitude, useSeasonalHours);
 }
 
 export function usePrayerTimes(
@@ -144,25 +53,29 @@ export function usePrayerTimes(
   useSeasonalHours: boolean = false
 ): UsePrayerTimesResult | null {
   const [config, setConfig] = useState<PrayerTimeConfig>(getDefaultPrayerConfig);
-  
+  // Primitives, not the location object: a new city must recompute even when a
+  // parent reuses the same object and only replaces its coordinates.
+  const latitude = location?.latitude;
+  const longitude = location?.longitude;
+
   const result = useMemo(() => {
-    if (!location) return null;
-    
+    if (latitude == null || longitude == null) return null;
+
     const now = new Date();
     const prayerTimes = calculatePrayerTimes(
       now,
-      location.latitude,
-      location.longitude,
+      latitude,
+      longitude,
       config
     );
-    
+
     const prayers: PrayerTimeDisplay[] = (Object.keys(prayerTimes) as Array<keyof PrayerTimesResult>)
       .map(key => ({
         name: key,
         nameAr: PRAYER_INFO[key].nameAr,
         icon: PRAYER_INFO[key].icon,
         time: prayerTimes[key],
-        naturalTime: toNaturalTime(prayerTimes[key], location, useSeasonalHours),
+        naturalTime: toNaturalTime(prayerTimes[key], latitude, longitude, useSeasonalHours),
       }));
     
     const hijriDate = toHijriDate(now);
@@ -187,7 +100,7 @@ export function usePrayerTimes(
         setConfig(prev => ({ ...prev, asrJuristic: juristic }));
       },
     };
-  }, [location, config, useSeasonalHours]);
+  }, [latitude, longitude, config, useSeasonalHours]);
   
   // Update Ramadan status daily
   useEffect(() => {

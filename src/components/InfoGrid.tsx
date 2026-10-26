@@ -1,5 +1,6 @@
 import { useI18n } from '@/lib/i18n';
 import type { NaturalTime, SeasonalTime, Location } from '@/hooks/useNaturalTime';
+import { formatGhurubiHM, toGhurubiClock } from '@/lib/ghurubiClock';
 import { formatHmInZone, zoneOf } from '@/lib/zonedTime';
 
 interface InfoGridProps {
@@ -47,14 +48,12 @@ export function InfoGrid({ time, location }: InfoGridProps) {
   const zone = location ? zoneOf(location.latitude, location.longitude) : 'UTC';
   const formatLocalTime = (date: Date) => formatHmInZone(date, zone);
 
-  // Calculate natural time for sunrise and sunset
-  const formatNaturalTime = (hours: number, minutes: number) => {
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-  };
-
-  // Sunrise is at approximately 12:00 natural time (end of night)
-  // Sunset is at 00:00 natural time (start of day cycle)
-  const sunriseNatural = '12:00';
+  // Sunset opens the Ghurubi day at 00:00. Sunrise is 12:00 only in seasonal
+  // hours; in equal hours it is the real length of the night.
+  const seasonal = 'seasonalHours' in time;
+  const sunriseNatural = location
+    ? formatGhurubiHM(toGhurubiClock(time.sunrise, location.latitude, location.longitude, seasonal))
+    : '12:00';
   const sunsetNatural = '00:00';
 
   const dayPercentage = Math.round((time.dayLength / 24) * 100);
