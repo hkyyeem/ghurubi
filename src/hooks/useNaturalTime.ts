@@ -428,3 +428,27 @@ export function useNaturalTime(location: Location | null, useSeasonalHours: bool
   
   return time;
 }
+
+/** Clock reading of an instant. Same sun model as the live Ghurubi clock. */
+export function ghurubiAt(at: Date, location: Location, useSeasonalHours: boolean) {
+  const value = timeAt(at, location, useSeasonalHours, false);
+  return { hours: value.hours, minutes: value.minutes, seconds: value.seconds };
+}
+
+/**
+ * Sunsets after `now` and at or before `event`.
+ * An event that falls before the next sunset is still in the current Ghurubi day, so the count is 0.
+ */
+export function sunsetsUntil(now: Date, event: Date, location: Location): number {
+  if (!(event.getTime() > now.getTime())) return 0;
+  let count = 0;
+  let cursor = now;
+  for (let i = 0; i < 3660; i++) {
+    const sunset = getNextSunset(cursor, location);
+    if (Number.isNaN(sunset.getTime()) || sunset.getTime() <= cursor.getTime()) return count;
+    if (sunset.getTime() > event.getTime()) return count;
+    count += 1;
+    cursor = new Date(sunset.getTime() + 1000);
+  }
+  return count;
+}

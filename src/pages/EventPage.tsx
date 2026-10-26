@@ -6,9 +6,19 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { toast } from 'sonner';
 import { Share2 } from 'lucide-react';
 import { useX } from '@/lib/i18nExtra';
+import { cityName, useI18n } from '@/lib/i18n';
+import { ghurubiAt, sunsetsUntil, useGeolocation } from '@/hooks/useNaturalTime';
+import { STORAGE_KEYS, useLocalStorage } from '@/hooks/useLocalStorage';
+
+function padHM(hours: number, minutes: number) {
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
 
 const EventPage = () => {
   const x = useX();
+  const { lang } = useI18n();
+  const { location } = useGeolocation();
+  const [seasonal] = useLocalStorage(STORAGE_KEYS.SEASONAL_HOURS, false);
   const [params, setParams] = useSearchParams();
   const name = params.get('name') || '';
   const date = params.get('date') || '';
@@ -24,6 +34,10 @@ const EventPage = () => {
     [Math.floor(diff / 86400), x.days], [Math.floor(diff / 3600) % 24, x.hours],
     [Math.floor(diff / 60) % 60, x.minutes], [diff % 60, x.seconds],
   ] as const;
+  const ghurubi = valid && location ? ghurubiAt(target!, location, seasonal) : null;
+  const hm = ghurubi ? padHM(ghurubi.hours, ghurubi.minutes) : '';
+  const sunsets = valid && location && diff > 0 ? sunsetsUntil(new Date(now), target!, location) : 0;
+  const place = cityName(location?.city, lang);
   const title = valid && name ? `${name} — ${x.remaining} | Ghurubi` : x.eventTitle;
   const inp = 'w-full bg-background border border-border rounded-md px-3 py-2';
 
@@ -39,13 +53,16 @@ const EventPage = () => {
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{name}</h1>
             {diff > 0 ? (
               <>
-                <div className="mt-10 grid grid-cols-4 gap-2 md:gap-4 max-w-2xl mx-auto">
+                <div dir="ltr" data-testid="countdown" className="mt-10 grid grid-cols-4 gap-2 md:gap-4 max-w-2xl mx-auto">
                   {parts.map(([v, l]) => (
                     <div key={l} className="border border-border rounded-xl py-4 md:py-6"><p className="text-4xl md:text-7xl font-bold tabular-nums tracking-tight">{String(v).padStart(2, '0')}</p>
                       <p className="text-xs md:text-sm uppercase tracking-wider text-muted-foreground mt-2">{l}</p></div>
                   ))}
                 </div>
-                <p className="mt-6 text-muted-foreground">{x.sunsetsLeft(Math.ceil(diff / 86400))}</p>
+                <p className="mt-6 text-muted-foreground" data-testid="event-time">
+                  {x.eventAt(hm, place)}
+                  {sunsets > 0 && <span data-testid="sunsets" className="block">{x.sunsetsLeft(sunsets)}</span>}
+                </p>
               </>
             ) : <p className="mt-8 text-xl text-muted-foreground">{x.passed}</p>}
             <button className="mt-10 inline-flex items-center gap-2 bg-foreground text-background rounded-full px-6 py-3 text-sm font-medium hover:opacity-90 transition-opacity"

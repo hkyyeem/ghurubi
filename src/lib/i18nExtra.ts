@@ -1,5 +1,38 @@
 import { useI18n, type Lang } from '@/lib/i18n';
 
+/** The event instant in Ghurubi time. No civil or zawali clock is included. */
+export function eventAtPhrase(lang: Lang, hm: string, city: string): string {
+  switch (lang) {
+    case 'ar':
+      return city ? `المناسبة الساعة ${hm} بتوقيت غروبي في ${city}` : `المناسبة الساعة ${hm} بتوقيت غروبي`;
+    case 'tr':
+      return city ? `Etkinlik, ${city} için Ghurubi saatiyle ${hm}` : `Etkinlik Ghurubi saatiyle ${hm}`;
+    case 'he':
+      return city ? `האירוע בשעה ${hm} לפי שעון השקיעה ב${city}` : `האירוע בשעה ${hm} לפי שעון השקיעה`;
+    default:
+      return city ? `The event is at ${hm} Ghurubi time in ${city}` : `The event is at ${hm} Ghurubi time`;
+  }
+}
+
+/** Sunset count with each language's plural rules. Turkish keeps a singular noun after a number. */
+export function eventSunsets(lang: Lang, n: number): string {
+  switch (lang) {
+    case 'ar':
+      if (n === 1) return 'باقي غروب واحد حتى المناسبة';
+      if (n === 2) return 'باقي غروبان حتى المناسبة';
+      if (n % 100 >= 3 && n % 100 <= 10) return `باقي ${n} غروبات حتى المناسبة`;
+      return `باقي ${n} غروبًا حتى المناسبة`;
+    case 'tr':
+      return `${n} gün batımı kaldı`;
+    case 'he':
+      if (n === 1) return 'עוד שקיעה אחת';
+      if (n === 2) return 'עוד שתי שקיעות';
+      return `עוד ${n} שקיעות`;
+    default:
+      return n === 1 ? '1 sunset until then' : `${n} sunsets until then`;
+  }
+}
+
 const x = {
   en: {
     compare: 'Compare cities', compareTitle: 'Compare Ghurubi Time Between Cities | Ghurubi',
@@ -9,7 +42,8 @@ const x = {
     eventDesc: 'Create a shareable countdown page for any event, counted in natural days that begin at sunset.',
     eventName: 'Event name', eventDate: 'Date & time', create: 'Create page', share: 'Copy link', copied: 'Copied',
     remaining: 'Remaining', passed: 'This event has passed', days: 'days', hours: 'hours', minutes: 'minutes', seconds: 'seconds',
-    sunsetsLeft: (n: number) => `${n} sunsets until then`,
+    eventAt: (hm: string, city: string) => eventAtPhrase('en', hm, city),
+    sunsetsLeft: (n: number) => eventSunsets('en', n),
     sitemap: 'Site map', sitemapTitle: 'Site Map — All Pages | Ghurubi', sitemapDesc: 'Every page on Ghurubi: cities, comparisons, and tools.',
     watch: 'Watch face', home: 'Home', cityCloud: 'Ghurubi time in cities', tools: 'Tools', recent: 'Recently searched',
     hourNight: 'Seasonal night hour', hourDay: 'Seasonal day hour', sunsetGap: 'Sunset gap',
@@ -34,7 +68,8 @@ const x = {
     eventDesc: 'أنشئ صفحة عد تنازلي لأي مناسبة وشاركها، بأيام طبيعية تبدأ من الغروب.',
     eventName: 'اسم المناسبة', eventDate: 'التاريخ والوقت', create: 'أنشئ الصفحة', share: 'انسخ الرابط', copied: 'تم النسخ',
     remaining: 'المتبقي', passed: 'انتهت هذه المناسبة', days: 'يوم', hours: 'ساعة', minutes: 'دقيقة', seconds: 'ثانية',
-    sunsetsLeft: (n: number) => `باقي ${n} غروب حتى المناسبة`,
+    eventAt: (hm: string, city: string) => eventAtPhrase('ar', hm, city),
+    sunsetsLeft: (n: number) => eventSunsets('ar', n),
     sitemap: 'خريطة الموقع', sitemapTitle: 'خريطة الموقع — كل الصفحات | غروبي', sitemapDesc: 'كل صفحات غروبي: المدن والمقارنات والأدوات.',
     watch: 'وجه الساعة', home: 'الرئيسية', cityCloud: 'التوقيت الغروبي في المدن', tools: 'الأدوات', recent: 'بحثت عنها مؤخراً',
     hourNight: 'الساعة الزمانية لليل', hourDay: 'الساعة الزمانية للنهار', sunsetGap: 'فارق الغروب',
@@ -59,7 +94,8 @@ const x = {
     eventDesc: 'Herhangi bir etkinlik için paylaşılabilir geri sayım sayfası; günler gün batımında başlar.',
     eventName: 'Etkinlik adı', eventDate: 'Tarih ve saat', create: 'Sayfa oluştur', share: 'Bağlantıyı kopyala', copied: 'Kopyalandı',
     remaining: 'Kalan', passed: 'Bu etkinlik geçti', days: 'gün', hours: 'saat', minutes: 'dakika', seconds: 'saniye',
-    sunsetsLeft: (n: number) => `${n} gün batımı kaldı`,
+    eventAt: (hm: string, city: string) => eventAtPhrase('tr', hm, city),
+    sunsetsLeft: (n: number) => eventSunsets('tr', n),
     sitemap: 'Site haritası', sitemapTitle: 'Site Haritası — Tüm Sayfalar | Ghurubi', sitemapDesc: 'Ghurubi’deki tüm sayfalar: şehirler, karşılaştırmalar ve araçlar.',
     watch: 'Saat kadranı', home: 'Ana sayfa', cityCloud: 'Şehirlerde ezanî saat', tools: 'Araçlar', recent: 'Son aramalar',
     hourNight: 'Zamanî gece saati', hourDay: 'Zamanî gündüz saati', sunsetGap: 'Gün batımı farkı',
@@ -84,7 +120,8 @@ const x = {
     eventDesc: 'צרו דף ספירה לאחור לכל אירוע ושתפו אותו; הימים מתחילים בשקיעה.',
     eventName: 'שם האירוע', eventDate: 'תאריך ושעה', create: 'צור דף', share: 'העתק קישור', copied: 'הועתק',
     remaining: 'נותרו', passed: 'האירוע עבר', days: 'ימים', hours: 'שעות', minutes: 'דקות', seconds: 'שניות',
-    sunsetsLeft: (n: number) => `עוד ${n} שקיעות`,
+    eventAt: (hm: string, city: string) => eventAtPhrase('he', hm, city),
+    sunsetsLeft: (n: number) => eventSunsets('he', n),
     sitemap: 'מפת האתר', sitemapTitle: 'מפת האתר — כל הדפים | Ghurubi', sitemapDesc: 'כל הדפים ב־Ghurubi: ערים, השוואות וכלים.',
     watch: 'פני שעון', home: 'בית', cityCloud: 'זמן שקיעה בערים', tools: 'כלים', recent: 'חיפושים אחרונים',
     hourNight: 'שעה זמנית בלילה', hourDay: 'שעה זמנית ביום', sunsetGap: 'הפרש השקיעה',
