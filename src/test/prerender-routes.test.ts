@@ -1,28 +1,32 @@
 import { describe, expect, it } from "vitest";
-import { getCityBySlug } from "@/lib/cityCoordinates";
-import { PILOT_CITY_SLUGS, prerenderTargets } from "@/prerender/routes";
+import { MAJOR_CITIES, citySlug, getCityBySlug } from "@/lib/cityCoordinates";
+import { SITEMAP_STATIC_PATHS, prerenderTargets } from "@/prerender/routes";
 
 describe("prerender targets", () => {
-  it("covers ten cities in four languages, the article, and localized homepages", () => {
+  it("covers every sitemap city, static page, and /now url", () => {
     const targets = prerenderTargets();
-    expect(PILOT_CITY_SLUGS).toHaveLength(10);
-    expect(PILOT_CITY_SLUGS).toContain("riyadh");
-    expect(PILOT_CITY_SLUGS).toContain("gaziantep");
-    expect(PILOT_CITY_SLUGS).toContain("makkah");
-    const cities = targets.filter(t => t.citySlug);
-    expect(cities).toHaveLength(40);
-    expect(targets.filter(t => t.path.endsWith("/articles/sunset-workday"))).toHaveLength(4);
-    expect(targets.map(t => t.path)).toEqual(expect.arrayContaining(["/ar", "/tr", "/he", "/city/riyadh", "/ar/city/riyadh", "/tr/city/gaziantep"]));
-    expect(targets.some(t => t.path === "/")).toBe(false);
-    for (const slug of PILOT_CITY_SLUGS) {
-      expect(getCityBySlug(slug)?.name).toBeTruthy();
+    const paths = new Set(targets.map(t => t.path));
+    expect(paths.has("/")).toBe(true);
+    expect(paths.has("/ar")).toBe(true);
+    expect(paths.has("/city/abha")).toBe(true);
+    expect(paths.has("/ar/city/abha")).toBe(true);
+    expect(paths.has("/tr/city/gaziantep")).toBe(true);
+    expect(paths.has("/now")).toBe(true);
+    expect(paths.has("/now/riyadh")).toBe(true);
+    for (const path of SITEMAP_STATIC_PATHS) {
+      expect(paths.has(path)).toBe(true);
+      expect(paths.has(`/ar${path === "/" ? "" : path}`)).toBe(true);
     }
-  });
-
-  it("can name every built-in city without including the SPA shell", () => {
-    const all = prerenderTargets({ allCities: true });
-    expect(all.filter(t => t.citySlug).length).toBeGreaterThan(40 * 4);
-    expect(all.some(t => t.path === "/")).toBe(false);
-    expect(all.find(t => t.path === "/ar/city/riyadh")?.expect).toContain("الرياض");
+    const cityPages = targets.filter(t => t.path.includes("/city/"));
+    expect(cityPages).toHaveLength(MAJOR_CITIES.length * 4);
+    expect(targets.filter(t => t.path.startsWith("/now"))).toHaveLength(1 + MAJOR_CITIES.length);
+    expect(targets.find(t => t.path === "/ar/city/riyadh")?.expect).toContain("الرياض");
+    expect(targets.find(t => t.path === "/now/makkah")?.expect).toContain("مكة");
+    expect(targets.find(t => t.path === "/now")?.hreflang).toBe(false);
+    expect(targets.find(t => t.path === "/city/riyadh")?.hreflang).toBe(true);
+    for (const city of MAJOR_CITIES) {
+      expect(getCityBySlug(citySlug(city))?.name).toBe(city.name);
+    }
+    expect(new Set(targets.map(t => t.path)).size).toBe(targets.length);
   });
 });

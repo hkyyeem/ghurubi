@@ -2,67 +2,83 @@ import { MAJOR_CITIES, citySlug, getCityBySlug } from '@/lib/cityCoordinates';
 import { cityName, langPath, type Lang } from '@/lib/i18n';
 
 /**
- * Pilot cities. To prerender every city, set PRERENDER_ALL_CITIES=1
- * (or pass `{ allCities: true }`). That emits one HTML file per language
- * for each entry in MAJOR_CITIES — the ~388 localized city URLs.
+ * Unprefixed paths in public/sitemap.xml, aside from /city/:slug and /now.
+ * English lives at the path itself; ar/tr/he get a prefix. `/` is the English
+ * homepage and is written to dist/index.html.
  */
-export const PILOT_CITY_SLUGS = [
-  'riyadh',
-  'makkah',
-  'madinah',
-  'jeddah',
-  'dubai',
-  'cairo',
-  'istanbul',
-  'gaziantep',
-  'jerusalem',
-  'london',
+export const SITEMAP_STATIC_PATHS = [
+  '/',
+  '/watch',
+  '/about',
+  '/wear',
+  '/cities',
+  '/compare',
+  '/event',
+  '/sitemap',
+  '/privacy',
+  '/articles',
+  '/articles/sunset-workday',
 ] as const;
 
 const LANGS: Lang[] = ['en', 'ar', 'tr', 'he'];
 
 export interface PrerenderTarget {
-  /** URL path with no trailing slash. `/` is intentionally absent: it is the SPA fallback. */
+  /** URL path with no trailing slash, except `/` itself. */
   path: string;
   lang: Lang;
   citySlug?: string;
   /** Substring the built HTML must contain. */
   expect: string;
+  /** City and static pages advertise hreflang. /now does not; it has no language prefix. */
+  hreflang: boolean;
 }
 
-export function prerenderTargets(opts?: { allCities?: boolean }): PrerenderTarget[] {
-  const slugs = opts?.allCities ? MAJOR_CITIES.map(citySlug) : [...PILOT_CITY_SLUGS];
+function staticExpect(path: string, lang: Lang): string {
+  if (path === '/articles/sunset-workday') {
+    return lang === 'ar' ? 'يوم العمل بتوقيت غروبي' : 'The workday in Ghurubi time';
+  }
+  return lang === 'ar' ? 'غروبي' : 'Ghurubi';
+}
+
+/** Every URL the sitemap lists. This is the default build, not a pilot flag. */
+export function prerenderTargets(): PrerenderTarget[] {
   const out: PrerenderTarget[] = [];
 
-  // Localized homepages have their own files. English `/` stays the shell that
-  // unknown routes fall back to, so it is not overwritten with homepage HTML.
-  for (const lang of ['ar', 'tr', 'he'] as const) {
-    out.push({ path: langPath('/', lang), lang, expect: 'غروبي' });
+  for (const path of SITEMAP_STATIC_PATHS) {
+    for (const lang of LANGS) {
+      out.push({ path: langPath(path, lang), lang, expect: staticExpect(path, lang), hreflang: true });
+    }
   }
 
-  for (const slug of slugs) {
-    const city = getCityBySlug(slug);
-    if (!city) throw new Error(`Unknown city slug in prerender list: ${slug}`);
+  for (const city of MAJOR_CITIES) {
+    const slug = citySlug(city);
+    if (!getCityBySlug(slug)) throw new Error(`City slug did not round-trip: ${slug}`);
     for (const lang of LANGS) {
       out.push({
         path: langPath(`/city/${slug}`, lang),
         lang,
         citySlug: slug,
         expect: cityName(city, lang),
+        hreflang: true,
       });
     }
   }
 
-  for (const lang of LANGS) {
+  // /now is plain text for assistants and is not under a language prefix.
+  out.push({ path: '/now', lang: 'ar', expect: 'غروبي', hreflang: false });
+  for (const city of MAJOR_CITIES) {
     out.push({
-      path: langPath('/articles/sunset-workday', lang),
-      lang,
-      expect: lang === 'ar' ? 'يوم العمل بتوقيت غروبي' : 'The workday in Ghurubi time',
+      path: `/now/${citySlug(city)}`,
+      lang: 'ar',
+      citySlug: citySlug(city),
+      expect: city.nameAr,
+      hreflang: false,
     });
   }
 
-  if (out.some(t => t.path === '/')) {
-    throw new Error('Refusing to prerender `/`: that file is the SPA fallback.');
+  const paths = out.map(t => t.path);
+  if (new Set(paths).size !== paths.length) {
+    throw new Error('Duplicate prerender path');
   }
   return out;
 }

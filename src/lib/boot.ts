@@ -2,7 +2,7 @@ import type { Lang } from '@/lib/i18n';
 
 /** Stamped into prerendered HTML and read during the hydration render. */
 export interface GhurubiBoot {
-  /** Path that was rendered, e.g. `/ar/city/riyadh`. Never the SPA fallback. */
+  /** Path that was rendered, e.g. `/ar/city/riyadh` or `/` for the English homepage. */
   path: string;
   lang: Lang;
   /** ISO time the sun figures were calculated for. Cleared after the first live tick. */

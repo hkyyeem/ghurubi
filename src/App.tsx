@@ -7,20 +7,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import CityPage from "./pages/CityPage";
+import NowPage from "./pages/NowPage";
+import Watch from "./pages/Watch";
+import CitiesPage from "./pages/CitiesPage";
+import CompareIndex from "./pages/CompareIndex";
+import EventPage from "./pages/EventPage";
+import SitemapPage from "./pages/SitemapPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import AboutPage from "./pages/AboutPage";
+import WearPage from "./pages/WearPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { LegacyLangRedirect } from "./components/LegacyLangRedirect";
 
-const NowPage = lazy(() => import("./pages/NowPage"));
+// Login, admin, and compare pairs are not in the sitemap, so they stay split.
+// NotFound is also imported by city pages, so it already sits in the main chunk.
 const NotFound = lazy(() => import("./pages/NotFound"));
-const Watch = lazy(() => import("./pages/Watch"));
 const ComparePage = lazy(() => import("./pages/ComparePage"));
-const CitiesPage = lazy(() => import("./pages/CitiesPage"));
-const CompareIndex = lazy(() => import("./pages/CompareIndex"));
-const EventPage = lazy(() => import("./pages/EventPage"));
-const SitemapPage = lazy(() => import("./pages/SitemapPage"));
-const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const WearPage = lazy(() => import("./pages/WearPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 

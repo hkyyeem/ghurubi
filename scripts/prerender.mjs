@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirFor, prerenderTargets, renderPage } from "../dist-ssr/entry-server.js";
@@ -7,8 +7,8 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
 const template = readFileSync(join(dist, "index.html"), "utf8");
 const asOf = new Date().toISOString();
-const allCities = process.env.PRERENDER_ALL_CITIES === "1";
-const targets = prerenderTargets({ allCities });
+const started = Date.now();
+const targets = prerenderTargets();
 
 const DROP = [
   /<title>[\s\S]*?<\/title>\s*/g,
@@ -23,17 +23,32 @@ const DROP = [
   /<meta\s+name="twitter:description"[^>]*>\s*/gi,
 ];
 
+/**
+ * dist/index.html is both the English homepage and Lovable's fallback for
+ * unknown URLs. A static noindex would hide the homepage. This script adds
+ * noindex only when the request path is not `/`, so a crawler that runs the
+ * inline script does not index typos as the homepage. Real prerendered files
+ * do not include it.
+ */
+const FALLBACK_NOINDEX = `<script>(function(){try{var p=location.pathname.replace(/\\/+$/,"")||"/";if(p!=="/"){var m=document.createElement("meta");m.name="robots";m.content="noindex";document.head.appendChild(m);}}catch(e){}})();</script>`;
+
 function pageHtml(templateHtml, { lang, dir, isNight, head, body, boot }) {
   let html = templateHtml;
   html = html.replace(/<html\b[^>]*>/, `<html lang="${lang}" dir="${dir}"${isNight ? "" : ' class="day-mode"'}>`);
-  for (const re of DROP) html = html.replace(re, "");
+  for (const re of DROP) {
+    re.lastIndex = 0;
+    html = html.replace(re, "");
+  }
   const style = `<style>html[data-lang-mismatch] #root{visibility:hidden}</style>`;
-  html = html.replace("</head>", `${head}\n${style}\n</head>`);
+  const guard = boot.path === "/" ? FALLBACK_NOINDEX : "";
+  html = html.replace("</head>", `${head}\n${style}\n${guard}\n</head>`);
   // react-helmet-async emits React's hrefLang. HTML parsers accept it, but
   // crawlers looking for the standard attribute want lowercase hreflang.
   html = html.replace(/\bhrefLang=/g, "hreflang=");
   const bootJson = JSON.stringify(boot).replace(/</g, "\\u003c");
-  const scripts = `<script>window.__GHURUBI__=${bootJson};</script><script>(function(){try{var b=window.__GHURUBI__;if(!b)return;var seg=location.pathname.split("/")[1];if(seg==="ar"||seg==="tr"||seg==="he")return;var q=new URLSearchParams(location.search).get("lang");if(q==="ar"||q==="en"||q==="tr"||q==="he")return;var saved=localStorage.getItem("ghurubi-lang");var nav=(navigator.language||"en").slice(0,2).toLowerCase();if(nav==="iw")nav="he";var want=(saved==="ar"||saved==="en"||saved==="tr"||saved==="he")?saved:(nav==="ar"||nav==="tr"||nav==="he"||nav==="en"?nav:"en");if(want!==b.lang)document.documentElement.setAttribute("data-lang-mismatch","1");}catch(e){}})();</script>`;
+  // /now is Arabic-only (no /ar/now in the sitemap). Skipping the language
+  // check keeps the prerendered sentence instead of discarding the snapshot.
+  const scripts = `<script>window.__GHURUBI__=${bootJson};</script><script>(function(){try{var b=window.__GHURUBI__;if(!b)return;var seg=location.pathname.split("/")[1];if(seg==="ar"||seg==="tr"||seg==="he"||seg==="now")return;var q=new URLSearchParams(location.search).get("lang");if(q==="ar"||q==="en"||q==="tr"||q==="he")return;var saved=localStorage.getItem("ghurubi-lang");var nav=(navigator.language||"en").slice(0,2).toLowerCase();if(nav==="iw")nav="he";var want=(saved==="ar"||saved==="en"||saved==="tr"||saved==="he")?saved:(nav==="ar"||nav==="tr"||nav==="he"||nav==="en"?nav:"en");if(want!==b.lang)document.documentElement.setAttribute("data-lang-mismatch","1");}catch(e){}})();</script>`;
   if (!html.includes('<div id="root"></div>')) throw new Error("dist/index.html has no empty #root");
   html = html.replace('<div id="root"></div>', `${scripts}<div id="root">${body}</div>`);
   return html;
@@ -43,7 +58,7 @@ const failures = [];
 for (const target of targets) {
   const boot = { path: target.path, lang: target.lang, asOf };
   const { html: body, head, isNight } = renderPage(boot);
-  const file = join(dist, target.path.slice(1), "index.html");
+  const file = target.path === "/" ? join(dist, "index.html") : join(dist, target.path.slice(1), "index.html");
   const html = pageHtml(template, {
     lang: target.lang,
     dir: dirFor(target.lang),
@@ -67,7 +82,7 @@ for (const target of targets) {
   if (!html.includes(target.expect)) problems.push(`missing ${JSON.stringify(target.expect)}`);
   if (target.citySlug && !title.includes(target.expect)) problems.push("title missing city name");
   if (!html.includes('rel="canonical"')) problems.push("missing canonical");
-  if (!/hreflang=/i.test(html)) problems.push("missing hreflang");
+  if (target.hreflang !== false && !/hreflang=/i.test(html)) problems.push("missing hreflang");
   if (!html.includes("og:title")) problems.push("missing og:title");
   if (!html.includes("<h1")) problems.push("missing h1");
   if (target.citySlug && !html.includes('application/ld+json')) problems.push("missing JSON-LD");
@@ -83,10 +98,68 @@ if (failures.length) {
   process.exit(1);
 }
 
-const shell = readFileSync(join(dist, "index.html"), "utf8");
-if (shell.includes("window.__GHURUBI__")) {
-  console.error("SPA fallback index.html was overwritten. Refusing to publish that.");
+assertSitemap(dist);
+
+const home = readFileSync(join(dist, "index.html"), "utf8");
+if (!home.includes("window.__GHURUBI__")) {
+  console.error("English homepage was not written to dist/index.html");
+  process.exit(1);
+}
+if (canonicalOf(home) !== "https://ghurubi.com/") {
+  console.error(`Homepage canonical is ${canonicalOf(home)}, expected https://ghurubi.com/`);
+  process.exit(1);
+}
+if (!home.includes('if(p!=="/")')) {
+  console.error("Fallback noindex guard missing from dist/index.html");
   process.exit(1);
 }
 
-console.log(`prerendered ${targets.length} pages at ${asOf}${allCities ? " (all cities)" : ""}`);
+const bytes = targets.reduce((sum, target) => {
+  const file = target.path === "/" ? join(dist, "index.html") : join(dist, target.path.slice(1), "index.html");
+  return sum + statSync(file).size;
+}, 0);
+const seconds = ((Date.now() - started) / 1000).toFixed(1);
+console.log(`prerendered ${targets.length} pages at ${asOf} in ${seconds}s (${(bytes / 1024 / 1024).toFixed(1)} MiB of HTML)`);
+
+function canonicalOf(html) {
+  const tags = [...html.matchAll(/<link\b[^>]*>/gi)].map(m => m[0]).filter(tag => /rel="canonical"/i.test(tag));
+  if (tags.length !== 1) return null;
+  return tags[0].match(/href="([^"]*)"/)?.[1] ?? null;
+}
+
+function assertSitemap(distDir) {
+  const xmlPath = join(distDir, "sitemap.xml");
+  if (!existsSync(xmlPath)) {
+    console.error("dist/sitemap.xml is missing");
+    process.exit(1);
+  }
+  const xml = readFileSync(xmlPath, "utf8");
+  if (xml.includes("<sitemapindex")) {
+    console.error("Prerender check does not understand a sitemap index");
+    process.exit(1);
+  }
+  const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map(m =>
+    m[1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+  );
+  const problems = [];
+  for (const loc of locs) {
+    let url;
+    try { url = new URL(loc); } catch { problems.push(`${loc}: not a URL`); continue; }
+    if (url.origin !== "https://ghurubi.com") { problems.push(`${loc}: unexpected origin`); continue; }
+    if (url.search || url.hash) { problems.push(`${loc}: query or hash`); continue; }
+    const pathname = url.pathname;
+    if (pathname.length > 1 && pathname.endsWith("/")) { problems.push(`${loc}: trailing slash`); continue; }
+    const file = pathname === "/" ? join(distDir, "index.html") : join(distDir, pathname.slice(1), "index.html");
+    if (!existsSync(file)) { problems.push(`${loc}: no ${file}`); continue; }
+    const html = readFileSync(file, "utf8");
+    const canon = canonicalOf(html);
+    if (canon !== loc) problems.push(`${loc}: canonical ${canon ?? "missing"}`);
+    if (/<meta\b[^>]*\bname="robots"[^>]*\bnoindex/i.test(html)) problems.push(`${loc}: static noindex`);
+  }
+  if (problems.length) {
+    console.error(problems.slice(0, 40).join("\n"));
+    console.error(`${problems.length} sitemap URL(s) failed the prerender check`);
+    process.exit(1);
+  }
+  console.log(`sitemap check ok (${locs.length} urls, each with a self-canonical)`);
+}
