@@ -128,13 +128,14 @@ function calculateAsrTime(
   const noonPosition = SunCalc.getPosition(solarNoon, latitude, longitude);
   const noonAltitude = noonPosition.altitude * (180 / Math.PI);
   
-  // Shadow ratio: Shafi'i = 1, Hanafi = 2
+  // Shadow ratio: Shafi'i = 1, Hanafi = 2.
+  // At Asr the shadow is the noon shadow plus this many object-lengths:
+  // cot(asr) = cot(noon) + ratio, so asr = arccot(ratio + cot(noon)).
+  // cot(noon) is 1/tan(noon altitude), not tan(noon altitude).
   const shadowRatio = juristic === 'shafii' ? 1 : 2;
-  
-  // Calculate the angle when shadow = object length * ratio
-  // tan(angle) = 1 / (tan(noonAlt) + ratio)
-  const tanNoonAlt = Math.tan(noonAltitude * Math.PI / 180);
-  const asrAltitude = Math.atan(1 / (shadowRatio + tanNoonAlt)) * (180 / Math.PI);
+  const noonAltRad = noonAltitude * Math.PI / 180;
+  const cotNoonAlt = 1 / Math.tan(noonAltRad);
+  const asrAltitude = Math.atan(1 / (shadowRatio + cotNoonAlt)) * (180 / Math.PI);
   
   // Find time when sun reaches this altitude (afternoon)
   return findTimeForAltitude(date, latitude, longitude, asrAltitude, false);
@@ -195,7 +196,7 @@ function binarySearchAltitude(
   let low = start.getTime();
   let high = end.getTime();
   
-  while (high - low > 60000) { // 1 minute precision
+  while (high - low > 1000) { // 1 second; a 1-minute window can floor the displayed minute
     const mid = (low + high) / 2;
     const midDate = new Date(mid);
     const position = SunCalc.getPosition(midDate, latitude, longitude);
