@@ -30,11 +30,15 @@ export default defineConfig(({ mode, isSsrBuild }) => ({
       devOptions: { enabled: false },
       manifest: false,
       workbox: {
-        navigateFallbackDenylist: [/^\/~oauth/],
+        // Prerender writes HTML after this service worker is generated, and
+        // every sitemap URL already has its own file. A navigation fallback to
+        // index.html would serve the homepage (and its unknown-URL noindex
+        // guard) for city pages. Navigations use the network instead.
+        navigateFallback: null,
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
-        globPatterns: ["**/*.{js,css,html,png,svg,ico,webmanifest}"],
+        globPatterns: ["**/*.{js,css,png,svg,ico,webmanifest}"],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.mode === "navigate",

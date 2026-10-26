@@ -1,16 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import { ArrowLeft, Maximize, Moon, Sun, Hourglass, Clock, Hash, LocateFixed, Search } from 'lucide-react';
 import { useGeolocation, useNaturalTime } from '@/hooks/useNaturalTime';
 import { useStoredState } from '@/hooks/useWatchPrefs';
 import { STORAGE_KEYS } from '@/hooks/useLocalStorage';
 import { searchCityByName } from '@/lib/searchCity';
+import { SeoHead } from '@/components/SeoHead';
+import { useI18n } from '@/lib/i18n';
+import { zoneOf, zonedCivilDate } from '@/lib/zonedTime';
 
 const pad = (n: number) => String(Math.max(0, n)).padStart(2, '0');
 
 const MANUAL_KEY = 'ghurubi-manual-city';
 
+const WATCH_COPY = {
+  ar: { title: 'وجه الساعة | غروبي', desc: 'ساعة غروبي على الشاشة: الغروب 00:00 والليل أولاً.' },
+  en: { title: 'Watch face | Ghurubi', desc: 'Ghurubi on screen: sunset is 00:00 and night comes first.' },
+  tr: { title: 'Saat kadranı | Ghurubi', desc: 'Ghurubi ekranda: gün batımı 00:00 ve önce gece gelir.' },
+  he: { title: 'פני שעון | Ghurubi', desc: 'Ghurubi על המסך: השקיעה היא 00:00 והלילה קודם.' },
+} as const;
+
 export default function Watch() {
+  const { lang } = useI18n();
+  const copy = WATCH_COPY[lang];
   const { location, retryLocation, loading, setManualLocation } = useGeolocation();
   const [seasonal, setSeasonal] = useStoredState<boolean>(STORAGE_KEYS.SEASONAL_HOURS, false);
   const [digital, setDigital] = useStoredState('ghurubi-watch-digital', false);
@@ -20,10 +34,6 @@ export default function Watch() {
   const [cityQuery, setCityQuery] = useState('');
   const [cityBusy, setCityBusy] = useState(false);
   const [cityErr, setCityErr] = useState('');
-
-  useEffect(() => {
-    document.title = 'Ghurubi Watch';
-  }, []);
 
   // Keep the screen awake while the watch page is visible
   useEffect(() => {
@@ -76,8 +86,10 @@ export default function Watch() {
     ? (night ? 'hsl(165 75% 50%)' : 'hsl(24 95% 58%)')
     : (night ? 'hsl(210 90% 70%)' : 'hsl(45 95% 58%)');
   const dim = ambient ? 0.45 : 1;
-  const wBase = time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : new Date();
-  const cycleLabel = `${time.isNight ? 'ليلة' : 'نهار'} ${wBase.toLocaleDateString('ar', { weekday: 'long' })}`;
+  const zone = zoneOf(location.latitude, location.longitude);
+  const instant = time.isNight ? new Date(time.lastSunset.getTime() + 86400000) : time.now;
+  const weekday = format(zonedCivilDate(instant, zone), 'EEEE', { locale: ar });
+  const cycleLabel = `${time.isNight ? 'ليلة' : 'نهار'} ${weekday}`;
   const modeLabel = seasonal ? 'ساعات زمانية' : 'ساعات مستوية';
 
   const hand = (frac: number, len: number, w: number, color: string) => (
@@ -92,6 +104,8 @@ export default function Watch() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-4" style={{ background: '#000' }}>
+      <SeoHead path="/watch" title={copy.title} desc={copy.desc} />
+      <h1 className="sr-only">{copy.title}</h1>
       <div
         className="relative rounded-full overflow-hidden"
         style={{ width: 'min(90vw, 90vh, 420px)', aspectRatio: '1', background: '#000', boxShadow: '0 0 0 6px #1a1a1a' }}
