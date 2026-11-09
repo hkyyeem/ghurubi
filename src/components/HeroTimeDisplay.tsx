@@ -13,6 +13,7 @@ interface HeroTimeDisplayProps {
   language?: string;
   hour12?: boolean;
   actions?: React.ReactNode;
+  modeSwitch?: React.ReactNode;
 }
 
 const HIJRI_EN = ['Muharram', 'Safar', 'Rabi I', 'Rabi II', 'Jumada I', 'Jumada II', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal', "Dhu al-Qa'dah", 'Dhu al-Hijjah'];
@@ -25,7 +26,7 @@ const PERIOD: Record<string, (night: boolean, wd: string) => string> = {
   he: (n, wd) => n ? `ליל ${wd.replace(/^יום\s*/, '')}` : wd,
 };
 
-export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour12 = false, actions }: HeroTimeDisplayProps) {
+export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour12 = false, actions, modeSwitch }: HeroTimeDisplayProps) {
   const { lang, t } = useI18n();
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
 
@@ -92,7 +93,8 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
         {time ? `${secondary} — ${cityName}${countryName ? `، ${countryName}`.replace('،', lang === 'ar' ? '،' : ',') : ''}` : ' '}
       </div>
 
-      <div className="mt-6 min-h-10 flex flex-wrap items-center justify-center gap-2">
+      {modeSwitch && <div className="mt-6 flex justify-center">{modeSwitch}</div>}
+      <div className={`${modeSwitch ? 'mt-3' : 'mt-6'} min-h-10 flex flex-wrap items-center justify-center gap-2`}>
         {actions}
         {time && (
           <ShareTimeCard

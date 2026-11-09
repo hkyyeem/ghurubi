@@ -96,18 +96,28 @@ const Index = () => {
                 <LocateFixed className="w-4 h-4" aria-hidden />
                 {loading ? t.locating : t.useMyLocation}
               </button>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={showSeasonalHours}
-                onClick={() => setShowSeasonalHours(!showSeasonalHours)}
-                title={t.seasonalSub}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors"
-              >
-                <Hourglass className="w-4 h-4" aria-hidden />
-                {showSeasonalHours ? t.seasonal : t.equalHours}
-              </button>
             </>}
+            modeSwitch={
+              <div role="radiogroup" title={t.seasonalSub} className="inline-flex items-center gap-1 rounded-full border border-border p-1 text-sm">
+                <Hourglass className="w-4 h-4 mx-2 text-muted-foreground" aria-hidden />
+                {([true, false] as const).map((val) => {
+                  const active = showSeasonalHours === val;
+                  return (
+                    <button
+                      key={String(val)}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => setShowSeasonalHours(val)}
+                      className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 transition-colors ${active ? 'bg-secondary text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+                    >
+                      {active && <span className="w-2 h-2 rounded-full" style={{ background: val ? 'hsl(var(--seasonal-night))' : 'hsl(var(--equal-night))' }} aria-hidden />}
+                      {val ? t.seasonal : t.equalHours}
+                    </button>
+                  );
+                })}
+              </div>
+            }
           />
         </section>
 
