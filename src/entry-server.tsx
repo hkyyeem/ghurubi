@@ -26,7 +26,7 @@ export function renderPage(boot: GhurubiBoot): { html: string; head: string; isN
   const helmet = helmetContext.helmet;
   if (!helmet) throw new Error(`Helmet did not render for ${boot.path}`);
   const head = [helmet.title, helmet.meta, helmet.link, helmet.script].map(part => part.toString()).join("\n");
-  return { html, head, isNight: g.__GHURUBI_NIGHT__ !== false };
+  return { html, head, isNight: (g as NightGlobal).__GHURUBI_NIGHT__ !== false };
 }
 
 export function dirFor(lang: Lang): "rtl" | "ltr" {
