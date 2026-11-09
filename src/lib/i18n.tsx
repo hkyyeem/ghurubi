@@ -13,7 +13,7 @@ const KEY = 'ghurubi-lang';
 const dict = {
   en: {
     tagline: 'Sunset Time', night: 'Night', day: 'Day', seasonalHour: 'Seasonal hour',
-    settings: 'Settings', seasonal: 'Seasonal Hours', seasonalSub: '12h night / 12h day',
+    settings: 'Settings', seasonal: 'Seasonal Hours', seasonalSub: '12h night / 12h day', equalHours: 'Equal Hours',
     hour12: '12-Hour Clock', hour12Sub: 'Show 12 hours instead of 24',
     useMyLocation: 'Use my location', locating: 'Locating…',
     prayer: 'Prayer Times', prayerSub: 'Show Islamic prayer times', search: 'Search location...',
@@ -37,7 +37,7 @@ const dict = {
   },
   ar: {
     tagline: 'التوقيت الغروبي', night: 'ليل', day: 'نهار', seasonalHour: 'الساعة الزمانية',
-    settings: 'الإعدادات', seasonal: 'الساعات الزمانية', seasonalSub: '12 ساعة لليل / 12 للنهار',
+    settings: 'الإعدادات', seasonal: 'الساعات الزمانية', seasonalSub: '12 ساعة لليل / 12 للنهار', equalHours: 'الساعات المستوية',
     hour12: 'نظام 12 ساعة', hour12Sub: 'إظهار الوقت بنظام 12 ساعة بدل 24',
     useMyLocation: 'استخدم موقعي', locating: 'جارٍ تحديد الموقع…',
     prayer: 'مواقيت الصلاة', prayerSub: 'إظهار مواقيت الصلاة', search: 'ابحث عن مدينة...',
@@ -61,7 +61,7 @@ const dict = {
   },
   tr: {
     tagline: 'Ezanî Saat', night: 'Gece', day: 'Gündüz', seasonalHour: 'Zamanî saat',
-    settings: 'Ayarlar', seasonal: 'Zamanî Saatler', seasonalSub: '12 saat gece / 12 saat gündüz',
+    settings: 'Ayarlar', seasonal: 'Zamanî Saatler', seasonalSub: '12 saat gece / 12 saat gündüz', equalHours: 'Eşit Saatler',
     hour12: '12 Saat Formatı', hour12Sub: '24 saat yerine 12 saat göster',
     useMyLocation: 'Konumumu kullan', locating: 'Konum alınıyor…',
     prayer: 'Namaz Vakitleri', prayerSub: 'Namaz vakitlerini göster', search: 'Şehir ara...',
@@ -85,7 +85,7 @@ const dict = {
   },
   he: {
     tagline: 'זמן שקיעה', night: 'לילה', day: 'יום', seasonalHour: 'שעה זמנית',
-    settings: 'הגדרות', seasonal: 'שעות זמניות', seasonalSub: '12 שעות לילה / 12 שעות יום',
+    settings: 'הגדרות', seasonal: 'שעות זמניות', seasonalSub: '12 שעות לילה / 12 שעות יום', equalHours: 'שעות שוות',
     hour12: 'שעון 12 שעות', hour12Sub: 'הצג 12 שעות במקום 24',
     useMyLocation: 'השתמש במיקום שלי', locating: 'מאתר מיקום…',
     prayer: 'זמני תפילה', prayerSub: 'הצג זמני תפילה (אסלאם)', search: 'חפש עיר...',
