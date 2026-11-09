@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import CityPage from "./pages/CityPage";
 import NowPage from "./pages/NowPage";
@@ -44,6 +44,7 @@ export function AppTree() {
         <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/en" element={<Index />} />
           <Route path="/watch" element={<Watch />} />
           <Route path="/now" element={<NowPage />} />
           <Route path="/now/:city" element={<NowPage />} />
@@ -63,7 +64,7 @@ export function AppTree() {
           {/* Localized public routes: /ar/..., /tr/..., /he/... (crawlable per-language URLs) */}
           {(['ar', 'tr', 'he'] as const).map((l) => (
             <Route key={l} path={`/${l}`}>
-              <Route index element={<Index />} />
+              <Route index element={l === 'ar' ? <Navigate to="/" replace /> : <Index />} />
               <Route path="watch" element={<Watch />} />
               <Route path="cities" element={<CitiesPage />} />
               <Route path="city/:slug" element={<CityPage />} />

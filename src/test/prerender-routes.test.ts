@@ -7,15 +7,17 @@ describe("prerender targets", () => {
     const targets = prerenderTargets();
     const paths = new Set(targets.map(t => t.path));
     expect(paths.has("/")).toBe(true);
-    expect(paths.has("/ar")).toBe(true);
+    expect(paths.has("/en")).toBe(true);
+    expect(paths.has("/ar")).toBe(false);
     expect(paths.has("/city/abha")).toBe(true);
     expect(paths.has("/ar/city/abha")).toBe(true);
     expect(paths.has("/tr/city/gaziantep")).toBe(true);
     expect(paths.has("/now")).toBe(true);
     expect(paths.has("/now/riyadh")).toBe(true);
     for (const path of SITEMAP_STATIC_PATHS) {
+      if (path === "/") continue;
       expect(paths.has(path)).toBe(true);
-      expect(paths.has(`/ar${path === "/" ? "" : path}`)).toBe(true);
+      expect(paths.has(`/ar${path}`)).toBe(true);
     }
     const cityPages = targets.filter(t => t.path.includes("/city/"));
     expect(cityPages).toHaveLength(MAJOR_CITIES.length * 4);
