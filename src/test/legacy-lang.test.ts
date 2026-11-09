@@ -7,7 +7,8 @@ describe("legacyLangRedirect", () => {
     expect(legacyLangRedirect("/wear", "?lang=tr")).toBe("/tr/wear");
     expect(legacyLangRedirect("/wear", "?lang=he")).toBe("/he/wear");
     expect(legacyLangRedirect("/wear", "?lang=en")).toBe("/wear");
-    expect(legacyLangRedirect("/", "?lang=ar")).toBe("/ar");
+    expect(legacyLangRedirect("/", "?lang=ar")).toBe("/");
+    expect(legacyLangRedirect("/", "?lang=en")).toBe("/en");
     expect(legacyLangRedirect("/city/muscat", "?lang=AR")).toBe("/ar/city/muscat");
   });
 

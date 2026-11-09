@@ -48,7 +48,7 @@ function pageHtml(templateHtml, { lang, dir, isNight, head, body, boot }) {
   const bootJson = JSON.stringify(boot).replace(/</g, "\\u003c");
   // /now is Arabic-only (no /ar/now in the sitemap). Skipping the language
   // check keeps the prerendered sentence instead of discarding the snapshot.
-  const scripts = `<script>window.__GHURUBI__=${bootJson};</script><script>(function(){try{var b=window.__GHURUBI__;if(!b)return;var seg=location.pathname.split("/")[1];if(seg==="ar"||seg==="tr"||seg==="he"||seg==="now")return;var q=new URLSearchParams(location.search).get("lang");if(q==="ar"||q==="en"||q==="tr"||q==="he")return;var saved=localStorage.getItem("ghurubi-lang");var nav=(navigator.language||"en").slice(0,2).toLowerCase();if(nav==="iw")nav="he";var want=(saved==="ar"||saved==="en"||saved==="tr"||saved==="he")?saved:(nav==="ar"||nav==="tr"||nav==="he"||nav==="en"?nav:"en");if(want!==b.lang)document.documentElement.setAttribute("data-lang-mismatch","1");}catch(e){}})();</script>`;
+  const scripts = `<script>window.__GHURUBI__=${bootJson};</script><script>(function(){try{var b=window.__GHURUBI__;if(!b)return;var seg=location.pathname.split("/")[1];if(location.pathname.replace(/\\/+$/,"")===""||seg==="en"||seg==="ar"||seg==="tr"||seg==="he"||seg==="now")return;var q=new URLSearchParams(location.search).get("lang");if(q==="ar"||q==="en"||q==="tr"||q==="he")return;var saved=localStorage.getItem("ghurubi-lang");var nav=(navigator.language||"en").slice(0,2).toLowerCase();if(nav==="iw")nav="he";var want=(saved==="ar"||saved==="en"||saved==="tr"||saved==="he")?saved:(nav==="ar"||nav==="tr"||nav==="he"||nav==="en"?nav:"en");if(want!==b.lang)document.documentElement.setAttribute("data-lang-mismatch","1");}catch(e){}})();</script>`;
   if (!html.includes('<div id="root"></div>')) throw new Error("dist/index.html has no empty #root");
   html = html.replace('<div id="root"></div>', `${scripts}<div id="root">${body}</div>`);
   return html;
@@ -78,7 +78,7 @@ for (const target of targets) {
   if (!title) problems.push("missing <title>");
   // Arabic homepage title is the same string as the shell. Every other page must differ.
   const shellTitle = "غروبي — التوقيت الغروبي الطبيعي ومواقيت الصلاة | Ghurubi";
-  if (title === shellTitle && target.path !== "/ar") problems.push("still the generic shell title");
+  if (title === shellTitle && target.path !== "/") problems.push("still the generic shell title");
   if (!html.includes(target.expect)) problems.push(`missing ${JSON.stringify(target.expect)}`);
   if (target.citySlug && !title.includes(target.expect)) problems.push("title missing city name");
   if (!html.includes('rel="canonical"')) problems.push("missing canonical");

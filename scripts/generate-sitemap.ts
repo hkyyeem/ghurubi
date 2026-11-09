@@ -30,13 +30,15 @@ if (INCLUDE_COMPARE_PAIRS) {
 }
 
 const href = (p: string, l: string) => {
+  // Homepage: Arabic at "/", English at "/en".
+  if (p === "/") return l === "ar" ? `${BASE_URL}/` : `${BASE_URL}/${l}`;
   const raw = l === "en" ? `${BASE_URL}${p === "/" ? "/" : p}` : `${BASE_URL}/${l}${p === "/" ? "" : p}`;
   return raw.replace(/&/g, "&amp;");
 };
 
 function localized(p: string) {
   const alts = LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${l}" href="${href(p, l)}"/>`).join("")
-    + `<xhtml:link rel="alternate" hreflang="x-default" href="${href(p, "en")}"/>`;
+    + `<xhtml:link rel="alternate" hreflang="x-default" href="${href(p, p === "/" ? "ar" : "en")}"/>`;
   return LANGS.map((l) => `  <url><loc>${href(p, l)}</loc><lastmod>${LASTMOD}</lastmod>${alts}</url>`);
 }
 

@@ -128,8 +128,12 @@ function detect(): Lang {
     const boot = readBoot();
     if (typeof window !== 'undefined') {
       // Language path prefix (/ar/..., /tr/..., /he/...) wins — used for crawlable per-language URLs.
-      const seg = window.location.pathname.split('/')[1] as Lang;
+      const pn = window.location.pathname.replace(/\/+$/, '') || '/';
+      const seg = pn.split('/')[1] as Lang;
+      if (pn === '/en') return 'en';
       if (seg !== 'en' && LANGS.includes(seg)) return seg;
+      // The homepage is Arabic by default (English lives at /en).
+      if (pn === '/' && !new URLSearchParams(window.location.search).get('lang')) return 'ar';
       const q = new URLSearchParams(window.location.search).get('lang') as Lang | null;
       if (q && LANGS.includes(q)) return q;
       // Prerendered HTML was built in this language. Match it for hydration.
@@ -176,8 +180,9 @@ export function useLangPath() {
   return (path: string) => langPath(path, lang);
 }
 
-/** URL for a path in a given language: English at the root, others under /ar, /tr, /he. */
+/** URL for a path in a given language. Homepage: Arabic at `/`, English at `/en`. Other pages: English at the root, others under /ar, /tr, /he. */
 export function langPath(path: string, lang: Lang): string {
+  if (path === '/') return lang === 'ar' ? '/' : `/${lang}`;
   return lang === 'en' ? path : `/${lang}${path === '/' ? '' : path}`;
 }
 
@@ -203,6 +208,7 @@ export function legacyLangRedirect(pathname: string, search: string): string | n
 
 /** Remove a leading language prefix from a pathname, returning the clean path. */
 export function stripLangPrefix(pathname: string): string {
+  if (pathname.replace(/\/+$/, '') === '/en') return '/';
   const seg = pathname.split('/')[1] as Lang;
   if (seg !== 'en' && LANGS.includes(seg)) {
     const rest = pathname.slice(seg.length + 1);
@@ -218,7 +224,7 @@ export function langLinks(path: string, lang: Lang) {
     canonical: href(lang),
     alternates: [
       ...LANGS.map(l => ({ hreflang: l, href: href(l) })),
-      { hreflang: 'x-default', href: href('en') },
+      { hreflang: 'x-default', href: href(path === '/' ? 'ar' : 'en') },
     ],
   };
 }

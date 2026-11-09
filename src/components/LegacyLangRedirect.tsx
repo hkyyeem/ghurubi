@@ -4,7 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LANGS, legacyLangRedirect, useI18n, type Lang } from '@/lib/i18n';
 
 function langOf(path: string): Lang {
-  const seg = path.split('/')[1] as Lang;
+  const p = path.replace(/\/+$/, '') || '/';
+  if (p === '/') return 'ar';
+  if (p === '/en') return 'en';
+  const seg = p.split('/')[1] as Lang;
   return seg !== 'en' && LANGS.includes(seg) ? seg : 'en';
 }
 
