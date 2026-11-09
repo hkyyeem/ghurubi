@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams, useSearchParams } from "react-router-dom";
 import { getCityBySlug, type CityInfo } from "@/lib/cityCoordinates";
@@ -30,9 +30,10 @@ const NowPage = () => {
   const requested = slug || queryCity;
   const lang = sp.get("lang") === "en" ? "en" : "ar";
   const known = slug ? getCityBySlug(slug) : undefined;
-  const location: Location | null = known
-    ? { latitude: known.latitude, longitude: known.longitude, city: known }
-    : null;
+  const location: Location | null = useMemo(
+    () => (known ? { latitude: known.latitude, longitude: known.longitude, city: known } : null),
+    [known],
+  );
   const time = useNaturalTime(location, false);
 
   const help = lang === "ar"
