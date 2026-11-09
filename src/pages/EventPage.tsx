@@ -18,7 +18,7 @@ const EventPage = () => {
   const x = useX();
   const { lang } = useI18n();
   const { location } = useGeolocation();
-  const [seasonal] = useLocalStorage(STORAGE_KEYS.SEASONAL_HOURS, false);
+  const [seasonal] = useLocalStorage(STORAGE_KEYS.SEASONAL_HOURS, true);
   const [params, setParams] = useSearchParams();
   const name = params.get('name') || '';
   const date = params.get('date') || '';
