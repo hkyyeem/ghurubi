@@ -2113,7 +2113,7 @@ function findTimeForAltitude(date, latitude, longitude, targetAltitude, beforeNo
 function binarySearchAltitude(start, end, latitude, longitude, targetAltitude, descending) {
   let low = start.getTime();
   let high = end.getTime();
-  while (high - low > 1000) {
+  while (high - low > 1e3) {
     const mid = (low + high) / 2;
     const midDate = new Date(mid);
     const position = SunCalc.getPosition(midDate, latitude, longitude);
