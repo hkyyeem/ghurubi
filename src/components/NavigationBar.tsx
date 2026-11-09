@@ -125,29 +125,6 @@ export function NavigationBar({
                   <div className="p-4 space-y-4">
                     <h3 className="font-medium text-sm text-foreground">{t.settings}</h3>
                     
-                    {/* Seasonal Hours Toggle */}
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <div>
-                        <span className="text-sm text-foreground">{t.seasonal}</span>
-                        <p className="text-xs text-muted-foreground">{t.seasonalSub}</p>
-                      </div>
-                      <button
-                        onClick={() => onToggleSeasonalHours(!showSeasonalHours)}
-                        role="switch" aria-checked={showSeasonalHours} aria-label={t.seasonal}
-                        className={cn(
-                          "w-11 h-6 rounded-full transition-colors relative",
-                          showSeasonalHours ? "bg-accent" : "bg-secondary"
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "absolute top-1 w-4 h-4 rounded-full bg-white transition-transform",
-                            showSeasonalHours ? "translate-x-6" : "translate-x-1"
-                          )}
-                        />
-                      </button>
-                    </label>
-
                     {/* Prayer Times Toggle */}
                     <label className="flex items-center justify-between cursor-pointer">
                       <div>
