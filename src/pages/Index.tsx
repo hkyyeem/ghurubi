@@ -1,5 +1,5 @@
 import { useEffect, useCallback, lazy, Suspense } from 'react';
-import { LocateFixed } from 'lucide-react';
+import { LocateFixed, Hourglass } from 'lucide-react';
 import { SeoHead } from '@/components/SeoHead';
 import { SiteFooter } from '@/components/SiteFooter';
 import { useI18n, cityName, langPath } from '@/lib/i18n';
@@ -20,7 +20,7 @@ const Index = () => {
   // Persistent state with localStorage (sync initialization prevents flicker)
   const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(
     STORAGE_KEYS.SEASONAL_HOURS,
-    false
+    true
   );
   const [showPrayerTimes, setShowPrayerTimes] = useLocalStorage(
     STORAGE_KEYS.SHOW_PRAYER_TIMES,
@@ -86,21 +86,32 @@ const Index = () => {
             showSeasonalTime={showSeasonalHours}
             hour12={hour12}
             language="en"
+            actions={<>
+              <button
+                type="button"
+                onClick={() => retryLocation()}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors disabled:opacity-70"
+              >
+                <LocateFixed className="w-4 h-4" aria-hidden />
+                {loading ? t.locating : t.useMyLocation}
+              </button>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={showSeasonalHours}
+                onClick={() => setShowSeasonalHours(!showSeasonalHours)}
+                title={t.seasonalSub}
+                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors"
+              >
+                <Hourglass className="w-4 h-4" aria-hidden />
+                {showSeasonalHours ? t.seasonal : t.equalHours}
+              </button>
+            </>}
           />
         </section>
 
-        <div className="container-narrow flex flex-col items-center pb-4">
-          <button
-            type="button"
-            onClick={() => retryLocation()}
-            disabled={loading}
-            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors disabled:opacity-70"
-          >
-            <LocateFixed className="w-4 h-4" aria-hidden />
-            {loading ? t.locating : t.useMyLocation}
-          </button>
-          {error && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
-        </div>
+        {error && <p className="container-narrow pb-4 text-center text-sm text-destructive" role="alert">{error}</p>}
 
         <TimeAnswer cityLabel={cityName(location?.city, lang) || t.useMyLocation} time={time} location={location} />
         

@@ -12,6 +12,7 @@ interface HeroTimeDisplayProps {
   showSeasonalTime?: boolean;
   language?: string;
   hour12?: boolean;
+  actions?: React.ReactNode;
 }
 
 const HIJRI_EN = ['Muharram', 'Safar', 'Rabi I', 'Rabi II', 'Jumada I', 'Jumada II', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal', "Dhu al-Qa'dah", 'Dhu al-Hijjah'];
@@ -24,7 +25,7 @@ const PERIOD: Record<string, (night: boolean, wd: string) => string> = {
   he: (n, wd) => n ? `ליל ${wd.replace(/^יום\s*/, '')}` : wd,
 };
 
-export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour12 = false }: HeroTimeDisplayProps) {
+export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour12 = false, actions }: HeroTimeDisplayProps) {
   const { lang, t } = useI18n();
   const formatNumber = (n: number) => n.toString().padStart(2, '0');
 
@@ -55,10 +56,17 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
       : `${formatNumber(time.hours)}:${formatNumber(time.minutes)}`)
     : '--:--';
   const shareTime = time ? clock : '--:--';
+  // Same palette as /watch: seasonal = turquoise / amber, equal = sky blue / gold
+  const night = time ? (isSeasonalTime ? time.hours < 12 : time.isNight) : true;
+  const accent = time
+    ? (isSeasonalTime
+      ? (night ? 'hsl(var(--seasonal-night))' : 'hsl(var(--seasonal-day))')
+      : (night ? 'hsl(var(--equal-night))' : 'hsl(var(--equal-day))'))
+    : undefined;
 
   return (
     <div className="flex flex-col items-center justify-center py-8 md:py-16 min-h-[22rem] sm:min-h-[26rem] md:min-h-[34rem]">
-      <div dir="ltr" className={`time-hero text-7xl sm:text-8xl md:text-[10rem] lg:text-[12rem] tabular-nums ${time ? '' : 'animate-pulse'}`}>
+      <div dir="ltr" style={accent ? { color: accent } : undefined} className={`time-hero text-7xl sm:text-8xl md:text-[10rem] lg:text-[12rem] tabular-nums transition-colors duration-500 ${time ? '' : 'animate-pulse'}`}>
         {clock}
         <span className="text-muted-foreground">:{time ? formatNumber(time.seconds) : '--'}</span>
         {hour12 && time && (
@@ -84,7 +92,8 @@ export function HeroTimeDisplay({ time, location, showSeasonalTime = false, hour
         {time ? `${secondary} — ${cityName}${countryName ? `، ${countryName}`.replace('،', lang === 'ar' ? '،' : ',') : ''}` : ' '}
       </div>
 
-      <div className="mt-6 min-h-10">
+      <div className="mt-6 min-h-10 flex flex-wrap items-center justify-center gap-2">
+        {actions}
         {time && (
           <ShareTimeCard
             time={shareTime}

@@ -26,7 +26,7 @@ export default function Watch() {
   const { lang } = useI18n();
   const copy = WATCH_COPY[lang];
   const { location, retryLocation, loading, setManualLocation } = useGeolocation();
-  const [seasonal, setSeasonal] = useStoredState<boolean>(STORAGE_KEYS.SEASONAL_HOURS, false);
+  const [seasonal, setSeasonal] = useStoredState<boolean>(STORAGE_KEYS.SEASONAL_HOURS, true);
   const [digital, setDigital] = useStoredState('ghurubi-watch-digital', false);
   const time = useNaturalTime(location, seasonal);
   const [ambient, setAmbient] = useState(false);
