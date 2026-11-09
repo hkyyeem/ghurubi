@@ -20,7 +20,7 @@ const Index = () => {
   // Persistent state with localStorage (sync initialization prevents flicker)
   const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(
     STORAGE_KEYS.SEASONAL_HOURS,
-    false
+    true
   );
   const [showPrayerTimes, setShowPrayerTimes] = useLocalStorage(
     STORAGE_KEYS.SHOW_PRAYER_TIMES,

@@ -34,7 +34,7 @@ const CityPage = () => {
     resolveCitySlug(slug).then(setFound).catch(() => setFound(null));
   }, [slug, builtIn]);
 
-  const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(STORAGE_KEYS.SEASONAL_HOURS, false);
+  const [showSeasonalHours, setShowSeasonalHours] = useLocalStorage(STORAGE_KEYS.SEASONAL_HOURS, true);
   const [showPrayerTimes, setShowPrayerTimes] = useLocalStorage(STORAGE_KEYS.SHOW_PRAYER_TIMES, false);
   const [hour12, setHour12] = useLocalStorage(STORAGE_KEYS.HOUR12, false);
   const location: Location | null = useMemo(
