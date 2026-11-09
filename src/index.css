@@ -10,6 +10,10 @@
 @layer base {
   :root {
     /* Clean, minimal palette - Dark mode (night) */
+    --seasonal-night: 165 75% 50%;
+    --seasonal-day: 24 95% 58%;
+    --equal-night: 210 90% 70%;
+    --equal-day: 45 95% 58%;
     --background: 222 20% 10%;
     --foreground: 0 0% 98%;
     
@@ -57,6 +61,10 @@
   }
 
   .day-mode {
+    --seasonal-night: 165 70% 32%;
+    --seasonal-day: 24 90% 45%;
+    --equal-night: 210 80% 45%;
+    --equal-day: 40 90% 40%;
     --background: 0 0% 100%;
     --foreground: 222 20% 10%;
     
